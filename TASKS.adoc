@@ -1,0 +1,161 @@
+:toc:
+
+= AIDIR
+
+== TODO
+
+=== figma primereact
+prototype mode vs mockup mode
+preserving components
+uikit?
+
+
+
+=== how to track social media shares?
+
+=== Audit tables
+
+=== Data retention
+
+=== Check if drupal has any alternatives for loyalty/gamification
+
+=== Consider caching strategy
+- both for wordpress and pg
+
+=== Set up development server
+==== Pricing
+[cols="1,1,1,1,1,1,1"]
+|===
+|Provider |CPU | RAM| Storage| Traffic |Price/m (with tax)|Link
+
+|DigitalOcean |2v | 4 | 80 |4 TB |$29 (~€25) |https://cloud.digitalocean.com/droplets/new?i=db48cd&fleetUuid=fb640037-9297-4ddc-9ff4-6862eca5fe55&distro=ubuntu&distroImage=ubuntu-24-04-x64&region=fra1&size=s-2vcpu-4gb
+
+|Hetzner
+|6@3.6Ghz
+|64
+|2x512 NVMe
+|?
+|€45
+|https://www.hetzner.com/dedicated-rootserver/
+
+|Netcup
+|4v
+|4
+|128
+|free+throttle
+|€4.84
+|https://www.netcup.com/en/server/vps/vps-500-g11s-iv
+
+|OVHcloud
+|4v
+|8
+|75 Nvme
+|unlimited
+|€4.47
+|https://www.ovhcloud.com/en/vps/configurator/?planCode=vps-2025-model1&brick=VPS%2BModel%2B1&pricing=upfront12&processor=%20&vcore=4__vCore&storage=75__SSD__NVMe
+
+|Ionos
+|6v
+|8
+|240 NVme
+|unlimited
+|€5.77 for 24 months
+|https://www.ionos.co.uk/servers/vps
+|===
+
+=== look for loyalty programme framework
+
+=== Fix directus tags upload
+
+=== Add Spring security
+
+=== Find out how to serve static pages from external directory
+
+=== Check directus/strapi video link support
+
+=== Design initial database tables
+For this phase, just the minimum amount of structure that would support phase 0 features.
+
+==== User accounts
+[square]
+* registration
+* basic log in
+* roles
+* basic profile information
+
+==== Tool submission
+Q: should the approved submissions be stored in the CMS?
+
+[square]
+* review queue
+* table for approved listings
+** id
+** name
+** url
+** pricing (enum: free|freemium|paid)
+** short description (20-30 words)
+** long description
+** category (for hierarchical display)
+** tags (indexed jsonb array)
+** image (maybe cms object id)
+** ratings
+** submitted by
+** approved by
+** approved at
+** last verified
+* worth storing rejected submissions?
+
+=== Locally hosted Wiki option
+for docs and bringing people up to speed
+
+https://www.bookstackapp.com/
+https://js.wiki/
+https://github.com/docmost/docmost
+
+==== Paid listings
+Q: how are we going to accept payments?
+
+[square]
+* table for tracking paid listings
+** campaign id
+** listing id (fk)
+** created
+** expires
+** expired? (bool flag for quick filtering)
+
+
+==== Taxonomy (categories/tags)
+Should be covered by listing table.
+
+==== Newsletter
+Users/emails that subscribe to the newsletter should be added to a table, support easy unsubscribe. Assuming we won't require an account for subscribing to the newsletter, the email address is basically the only piece of data we need to store.
+
+* table
+** email
+
+==== Analytics
+Q: look into some off the shelf solutions for this
+
+==== Languages
+Multilingual support should hopefully be covered by the CMS, a lot of decisions hang on where we store most of the site data (and the CMS obviously makes sense as a general solution)
+
+=== Evaluate CMS options
+
+Since this is one of the core features of the website, choosing the right CMS is going to be an essential decision. Most likely it will run in headless mode: the site will retrieve document information via a REST api and populate whatever custom components we define.
+
+It'll also be used for the blog and the newsletter. While the blog is part of the site and will use the same rendering strategy as the other documents, the newsletter will probably use whatever the CMS supports, so I need to weigh its document rendering features.
+
+Can the CMS push notifications to the backend when a new document is created, so the backend is aware? (listings, for example, blog posts etc.)
+
+==== Candidates:
+
+===== Directus
+
+===== Strapi
+
+===== Bloomreach
+
+
+
+
+== DONE

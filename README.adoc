@@ -1,0 +1,25 @@
+= AIDIR
+
+== db setup
+
+=== required grants for new db
+[source, sql]
+----
+
+drop owned by aidir;
+
+
+grant all privileges on database aidir to aidir;
+grant all on schema public to aidir;
+----
+
+
+=== wordpress local info
+
+----
+user:
+aidir
+
+pass:
+G@193KHWmwUZu8WTi1
+----
