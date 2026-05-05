@@ -18,5 +18,4 @@ public class ToolDTO {
     private List<String> tags;
     private Boolean approved;
     private OffsetDateTime submittedAt;
-
 }

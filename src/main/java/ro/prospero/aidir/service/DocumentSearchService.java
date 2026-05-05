@@ -43,7 +43,7 @@ public class DocumentSearchService {
     };
 
     private static final Map<String, Float> BOOSTS = Map.of(
-            LuceneToolFields.NAME, 4.0f,
+            LuceneToolFields.NAME, 10.0f,
             LuceneToolFields.SHORT_DESCRIPTION, 2.0f,
             LuceneToolFields.LONG_DESCRIPTION, 1.0f
     );

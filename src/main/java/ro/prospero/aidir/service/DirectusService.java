@@ -48,17 +48,15 @@ public class DirectusService {
         uploadItem(endpoint, tool);
     }
 
-    public List<ToolDTO> getAllTools() {
-        String endpoint = directusConfig.getUrl() + "/items/tool";
+    public ToolDTO getTool(Long id) {
+        String endpoint = directusConfig.getUrl() + "/items/tool/" + id;
         HttpGet getRequest = new HttpGet(endpoint);
         addHeaders(getRequest);
 
         try {
             return closeableHttpClient.execute(getRequest, response -> {
                 String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-
                 ToolResponseWrapper wrapper = objectMapper.readValue(body, ToolResponseWrapper.class);
-
                 return wrapper.data;
             });
         } catch (IOException e) {
@@ -69,11 +67,30 @@ public class DirectusService {
 
     @Data
     private static class ToolResponseWrapper {
+        ToolDTO data;
+    }
+
+    public List<ToolDTO> getAllTools() {
+        String endpoint = directusConfig.getUrl() + "/items/tool";
+        HttpGet getRequest = new HttpGet(endpoint);
+        addHeaders(getRequest);
+
+        try {
+            return closeableHttpClient.execute(getRequest, response -> {
+                String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+
+                ToolListResponseWrapper wrapper = objectMapper.readValue(body, ToolListResponseWrapper.class);
+                return wrapper.data;
+            });
+        } catch (IOException e) {
+            LOGGER.error("Error when retrieving from: {}", endpoint, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Data
+    private static class ToolListResponseWrapper {
         List<ToolDTO> data;
-
-        ToolResponseWrapper() {
-        };
-
     }
 
     private void uploadItem(String endpoint, Object payload) {
