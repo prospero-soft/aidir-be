@@ -6,11 +6,12 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -42,25 +43,55 @@ public class DocumentSearchService {
             LuceneToolFields.LONG_DESCRIPTION
     };
 
-    private static final Map<String, Float> BOOSTS = Map.of(
+    private static final Map<String, Float> SEARCH_BOOSTS = Map.of(
             LuceneToolFields.NAME, 10.0f,
             LuceneToolFields.SHORT_DESCRIPTION, 2.0f,
             LuceneToolFields.LONG_DESCRIPTION, 1.0f
+    );
+
+    private static final String[] AUTOCOMPLETE_FIELDS = {
+            LuceneToolFields.NAME_AUTOCOMPLETE,
+            LuceneToolFields.SHORT_DESCRIPTION_AUTOCOMPLETE
+    };
+
+    private static final Map<String, Float> AUTOCOMPLETE_BOOSTS = Map.of(
+            LuceneToolFields.NAME_AUTOCOMPLETE, 20.0f,
+            LuceneToolFields.SHORT_DESCRIPTION_AUTOCOMPLETE, 2.0f
     );
 
     private final LuceneIndexManager indexManager;
     private final LuceneDocumentMapper mapper;
 
     public List<ToolSearchHit> search(String queryText, int limit) {
+        try {
+            Query searchQuery = buildTextQuery(queryText);
+            Query autocompleteQuery = buildAutcompleteQuery(queryText);
+            BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+            queryBuilder.add(new BoostQuery(searchQuery, 1.0f), BooleanClause.Occur.SHOULD);
+            queryBuilder.add(new BoostQuery(autocompleteQuery, 0.25f), BooleanClause.Occur.SHOULD);
+
+            return search(queryBuilder.build(), limit);
+        } catch (ParseException e) {
+            throw new IllegalStateException("Could not parse query text:", e);
+        }
+    }
+
+    public List<ToolSearchHit> searchAutocomplete(String queryText, int limit) {
+        try {
+            Query query = buildAutcompleteQuery(queryText);
+            return search(query, limit);
+        } catch (ParseException e) {
+            throw new IllegalStateException("Could not parse query text:", e);
+        }
+    }
+
+    private List<ToolSearchHit> search(Query query, int limit) {
         SearcherManager searcherManager = indexManager.getSearcherManager();
         IndexSearcher searcher = null;
 
         try {
             searcher = searcherManager.acquire();
-
-            Query textQuery = buildTextQuery(queryText);
-
-            TopDocs topDocs = searcher.search(textQuery, Math.max(1, limit));
+            TopDocs topDocs = searcher.search(query, Math.max(1, limit));
 
             List<ToolSearchHit> results = new ArrayList<>(topDocs.scoreDocs.length);
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
@@ -76,7 +107,7 @@ public class DocumentSearchService {
 
             return results;
         } catch (Exception e) {
-            throw new IllegalStateException("Search failed for query: " + queryText, e);
+            throw new IllegalStateException("Search failed for query: " + query, e);
         } finally {
             if (searcher != null) {
                 try {
@@ -86,6 +117,7 @@ public class DocumentSearchService {
             }
         }
     }
+
 
     public List<ToolSearchHit> search(String queryText, String docType, List<String> exactTags, int limit) {
         SearcherManager searcherManager = indexManager.getSearcherManager();
@@ -222,8 +254,24 @@ public class DocumentSearchService {
 
         MultiFieldQueryParser parser = new MultiFieldQueryParser(
                 SEARCH_FIELDS,
-                indexManager.getAnalyzer(),
-                BOOSTS
+                indexManager.getSearchAnalyzer(),
+                SEARCH_BOOSTS
+        );
+        parser.setDefaultOperator(QueryParser.Operator.OR);
+
+        return parser.parse(QueryParser.escape(normalized));
+    }
+
+    private Query buildAutcompleteQuery(String queryText) throws ParseException {
+        String normalized = queryText == null ? "" : queryText.trim();
+        if (normalized.isBlank()) {
+            return MatchNoDocsQuery.INSTANCE;
+        }
+
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(
+                AUTOCOMPLETE_FIELDS,
+                indexManager.getSearchAnalyzer(),
+                AUTOCOMPLETE_BOOSTS
         );
         parser.setDefaultOperator(QueryParser.Operator.OR);
 

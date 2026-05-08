@@ -4,12 +4,12 @@
 
 == TODO
 
-=== figma primereact
-prototype mode vs mockup mode
-preserving components
-uikit?
+=== paginated search results
 
-
+=== auth
+==== Add Spring security
+==== add login support
+==== sign in with... support
 
 === how to track social media shares?
 
@@ -17,10 +17,8 @@ uikit?
 
 === Data retention
 
-=== Check if drupal has any alternatives for loyalty/gamification
-
 === Consider caching strategy
-- both for wordpress and pg
+- both for directus and pg
 
 === Set up development server
 ==== Pricing
@@ -65,9 +63,6 @@ uikit?
 
 === look for loyalty programme framework
 
-=== Fix directus tags upload
-
-=== Add Spring security
 
 === Find out how to serve static pages from external directory
 

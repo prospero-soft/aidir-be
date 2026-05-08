@@ -25,12 +25,16 @@ public class LuceneDocumentMapper {
 
         Long safeId = required(toolDTO.getId());
         String docKey = docKey(toolDTO);
+        String name = safe(toolDTO.getName());
+        String shortDescription = safe(toolDTO.getShortDescription());
 
         document.add(new StringField(LuceneToolFields.DOC_KEY, docKey, Field.Store.YES));
-        document.add(new LongField(LuceneToolFields.ID, safeId,Field.Store.YES));
-        document.add(new TextField(LuceneToolFields.NAME, safe(toolDTO.getName()), Field.Store.YES));
+        document.add(new LongField(LuceneToolFields.ID, safeId, Field.Store.YES));
+        document.add(new TextField(LuceneToolFields.NAME, name, Field.Store.YES));
+        document.add(new TextField(LuceneToolFields.NAME_AUTOCOMPLETE, name, Field.Store.NO));
         document.add(new StringField(LuceneToolFields.CATEGORY_EXACT, safe(toolDTO.getCategory()), Field.Store.YES));
-        document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION, safe(toolDTO.getShortDescription()), Field.Store.YES));
+        document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION, shortDescription, Field.Store.YES));
+        document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION_AUTOCOMPLETE, shortDescription, Field.Store.NO));
         document.add(new TextField(LuceneToolFields.LONG_DESCRIPTION, safe(toolDTO.getLongDescription()), Field.Store.NO));
 
         for (String tag : normalizeTags(toolDTO.getTags())) {

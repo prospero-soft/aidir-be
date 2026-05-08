@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import ro.prospero.aidir.data.SearchRequest;
 import ro.prospero.aidir.data.ToolSearchHit;
 import ro.prospero.aidir.service.DocumentIndexService;
 import ro.prospero.aidir.service.DocumentSearchService;
@@ -22,8 +21,8 @@ public class SearchEndpoint {
 
     @GetMapping("preview")
     @ResponseBody
-    public List<ToolSearchHit> autoCompletePreview(@RequestParam String query) {
-        return documentSearchService.search(query, 5);
+    public List<ToolSearchHit> autocomplete(@RequestParam String query) {
+        return documentSearchService.searchAutocomplete(query, 5);
     }
 
     @GetMapping
