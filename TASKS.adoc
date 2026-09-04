@@ -4,6 +4,43 @@
 
 == TODO
 
+=== on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
+
+=== [FE] when onboarding, if user attempts to advance to next step but cannot because of validation errors, those errors need to be displayed (currently not the case for at least CompanyInformationStep)
+
+=== [FE] split user onboarding into two flows based on free/talent tier selection; free tier only has the create account step, talent tier also has to upload/fill-in CV (+ payment)
+
+=== sign up with... options
+What 3rd party signup options should we offer for users? Google, GitHub, FB?
+
+=== marketing metrics
+(marketing metrics best practice/most useful)
+
+=== update model with new fields:
+==== Key Features
+array of strings
+
+==== Media
+multiple images and one video
+
+==== faq
+list of string pairs (q, a)
+
+=== api for details page:
+==== generate alternatives for details page
+
+==== get pricing information from somewhere?
+
+=== sorting for search results
+what dimensions even make sense for sorting?
+
+
+
+=== store rating information
+==== rating per user per tool
+==== compute average rating for tools
+
+=== store search/query metrics
 === paginated search results
 
 === auth

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.config.Jank;
 import ro.prospero.aidir.data.ToolDTO;
-import ro.prospero.aidir.data.ToolSubmissionDTO;
+import ro.prospero.aidir.data.VendorSubmissionPayload;
 import ro.prospero.aidir.event.ToolUploadEventPublisher;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
 
@@ -38,18 +38,18 @@ public class ToolSubmissionService {
         this.toolUploadEventPublisher = toolUploadEventPublisher;
     }
 
-    public void saveSubmission(ToolSubmissionDTO toolSubmissionDTO) {
-        ToolSubmissionRecord toolSubmissionRecord = beanMapper.map(toolSubmissionDTO, ToolSubmissionRecord.class);
-        toolSubmissionRecord.setSubmittedBy(Jank.SUBMITTED_BY);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String jsonTagList = objectMapper.writeValueAsString(toolSubmissionDTO.getTags());
-            toolSubmissionRecord.setTags(JSONB.valueOf(jsonTagList)); // fixme: this back and forth is stupid, try taking a serialized String in the DTO
-            dslContext.insertInto(TOOL_SUBMISSION).set(toolSubmissionRecord).execute();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public void saveSubmission(VendorSubmissionPayload vendorSubmissionPayload) {
+//        ToolSubmissionRecord toolSubmissionRecord = beanMapper.map(vendorSubmissionPayload, ToolSubmissionRecord.class);
+//        toolSubmissionRecord.setSubmittedBy(Jank.SUBMITTED_BY);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            String jsonTagList = objectMapper.writeValueAsString(vendorSubmissionPayload.getTags());
+//            toolSubmissionRecord.setTags(JSONB.valueOf(jsonTagList)); // fixme: this back and forth is stupid, try taking a serialized String in the DTO
+//            dslContext.insertInto(TOOL_SUBMISSION).set(toolSubmissionRecord).execute();
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public List<ToolDTO> getQueue() {
