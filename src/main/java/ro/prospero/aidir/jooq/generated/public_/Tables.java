@@ -5,12 +5,43 @@ package ro.prospero.aidir.jooq.generated.public_;
 
 
 import ro.prospero.aidir.jooq.generated.public_.tables.Account;
+import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon;
+import ro.prospero.aidir.jooq.generated.public_.tables.AccountTypes;
+import ro.prospero.aidir.jooq.generated.public_.tables.Addon;
+import ro.prospero.aidir.jooq.generated.public_.tables.AddonBilling;
+import ro.prospero.aidir.jooq.generated.public_.tables.AddonFeature;
+import ro.prospero.aidir.jooq.generated.public_.tables.Category;
+import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation;
 import ro.prospero.aidir.jooq.generated.public_.tables.DataPermission;
+import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
+import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
+import ro.prospero.aidir.jooq.generated.public_.tables.FeatureKind;
+import ro.prospero.aidir.jooq.generated.public_.tables.Language;
+import ro.prospero.aidir.jooq.generated.public_.tables.Location;
 import ro.prospero.aidir.jooq.generated.public_.tables.Permission;
+import ro.prospero.aidir.jooq.generated.public_.tables.Plan;
+import ro.prospero.aidir.jooq.generated.public_.tables.PlanAddon;
+import ro.prospero.aidir.jooq.generated.public_.tables.PlanFeature;
+import ro.prospero.aidir.jooq.generated.public_.tables.PlanPrice;
 import ro.prospero.aidir.jooq.generated.public_.tables.Pricing;
+import ro.prospero.aidir.jooq.generated.public_.tables.Recurrence;
 import ro.prospero.aidir.jooq.generated.public_.tables.Role;
 import ro.prospero.aidir.jooq.generated.public_.tables.RolePermission;
+import ro.prospero.aidir.jooq.generated.public_.tables.Skill;
+import ro.prospero.aidir.jooq.generated.public_.tables.Subscription;
+import ro.prospero.aidir.jooq.generated.public_.tables.SubscriptionEnd;
+import ro.prospero.aidir.jooq.generated.public_.tables.SubscriptionReason;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentCertification;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentCourse;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentEducation;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentExperience;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentLanguage;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentProfile;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentProject;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentSkill;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmission;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionCategory;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionImageMetadata;
 
 
 /**
@@ -25,9 +56,69 @@ public class Tables {
     public static final Account ACCOUNT = Account.ACCOUNT;
 
     /**
+     * The table <code>public.account_addon</code>.
+     */
+    public static final AccountAddon ACCOUNT_ADDON = AccountAddon.ACCOUNT_ADDON;
+
+    /**
+     * The table <code>public.account_types</code>.
+     */
+    public static final AccountTypes ACCOUNT_TYPES = AccountTypes.ACCOUNT_TYPES;
+
+    /**
+     * The table <code>public.addon</code>.
+     */
+    public static final Addon ADDON = Addon.ADDON;
+
+    /**
+     * The table <code>public.addon_billing</code>.
+     */
+    public static final AddonBilling ADDON_BILLING = AddonBilling.ADDON_BILLING;
+
+    /**
+     * The table <code>public.addon_feature</code>.
+     */
+    public static final AddonFeature ADDON_FEATURE = AddonFeature.ADDON_FEATURE;
+
+    /**
+     * The table <code>public.category</code>.
+     */
+    public static final Category CATEGORY = Category.CATEGORY;
+
+    /**
+     * The table <code>public.company_information</code>.
+     */
+    public static final CompanyInformation COMPANY_INFORMATION = CompanyInformation.COMPANY_INFORMATION;
+
+    /**
      * The table <code>public.data_permission</code>.
      */
     public static final DataPermission DATA_PERMISSION = DataPermission.DATA_PERMISSION;
+
+    /**
+     * The table <code>public.feature</code>.
+     */
+    public static final Feature FEATURE = Feature.FEATURE;
+
+    /**
+     * The table <code>public.feature_grant</code>.
+     */
+    public static final FeatureGrant FEATURE_GRANT = FeatureGrant.FEATURE_GRANT;
+
+    /**
+     * The table <code>public.feature_kind</code>.
+     */
+    public static final FeatureKind FEATURE_KIND = FeatureKind.FEATURE_KIND;
+
+    /**
+     * The table <code>public.language</code>.
+     */
+    public static final Language LANGUAGE = Language.LANGUAGE;
+
+    /**
+     * The table <code>public.location</code>.
+     */
+    public static final Location LOCATION = Location.LOCATION;
 
     /**
      * The table <code>public.permission</code>.
@@ -35,9 +126,34 @@ public class Tables {
     public static final Permission PERMISSION = Permission.PERMISSION;
 
     /**
+     * The table <code>public.plan</code>.
+     */
+    public static final Plan PLAN = Plan.PLAN;
+
+    /**
+     * The table <code>public.plan_addon</code>.
+     */
+    public static final PlanAddon PLAN_ADDON = PlanAddon.PLAN_ADDON;
+
+    /**
+     * The table <code>public.plan_feature</code>.
+     */
+    public static final PlanFeature PLAN_FEATURE = PlanFeature.PLAN_FEATURE;
+
+    /**
+     * The table <code>public.plan_price</code>.
+     */
+    public static final PlanPrice PLAN_PRICE = PlanPrice.PLAN_PRICE;
+
+    /**
      * The table <code>public.pricing</code>.
      */
     public static final Pricing PRICING = Pricing.PRICING;
+
+    /**
+     * The table <code>public.recurrence</code>.
+     */
+    public static final Recurrence RECURRENCE = Recurrence.RECURRENCE;
 
     /**
      * The table <code>public.role</code>.
@@ -50,7 +166,77 @@ public class Tables {
     public static final RolePermission ROLE_PERMISSION = RolePermission.ROLE_PERMISSION;
 
     /**
+     * The table <code>public.skill</code>.
+     */
+    public static final Skill SKILL = Skill.SKILL;
+
+    /**
+     * The table <code>public.subscription</code>.
+     */
+    public static final Subscription SUBSCRIPTION = Subscription.SUBSCRIPTION;
+
+    /**
+     * The table <code>public.subscription_end</code>.
+     */
+    public static final SubscriptionEnd SUBSCRIPTION_END = SubscriptionEnd.SUBSCRIPTION_END;
+
+    /**
+     * The table <code>public.subscription_reason</code>.
+     */
+    public static final SubscriptionReason SUBSCRIPTION_REASON = SubscriptionReason.SUBSCRIPTION_REASON;
+
+    /**
+     * The table <code>public.talent_certification</code>.
+     */
+    public static final TalentCertification TALENT_CERTIFICATION = TalentCertification.TALENT_CERTIFICATION;
+
+    /**
+     * The table <code>public.talent_course</code>.
+     */
+    public static final TalentCourse TALENT_COURSE = TalentCourse.TALENT_COURSE;
+
+    /**
+     * The table <code>public.talent_education</code>.
+     */
+    public static final TalentEducation TALENT_EDUCATION = TalentEducation.TALENT_EDUCATION;
+
+    /**
+     * The table <code>public.talent_experience</code>.
+     */
+    public static final TalentExperience TALENT_EXPERIENCE = TalentExperience.TALENT_EXPERIENCE;
+
+    /**
+     * The table <code>public.talent_language</code>.
+     */
+    public static final TalentLanguage TALENT_LANGUAGE = TalentLanguage.TALENT_LANGUAGE;
+
+    /**
+     * The table <code>public.talent_profile</code>.
+     */
+    public static final TalentProfile TALENT_PROFILE = TalentProfile.TALENT_PROFILE;
+
+    /**
+     * The table <code>public.talent_project</code>.
+     */
+    public static final TalentProject TALENT_PROJECT = TalentProject.TALENT_PROJECT;
+
+    /**
+     * The table <code>public.talent_skill</code>.
+     */
+    public static final TalentSkill TALENT_SKILL = TalentSkill.TALENT_SKILL;
+
+    /**
      * The table <code>public.tool_submission</code>.
      */
     public static final ToolSubmission TOOL_SUBMISSION = ToolSubmission.TOOL_SUBMISSION;
+
+    /**
+     * The table <code>public.tool_submission_category</code>.
+     */
+    public static final ToolSubmissionCategory TOOL_SUBMISSION_CATEGORY = ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY;
+
+    /**
+     * The table <code>public.tool_submission_image_metadata</code>.
+     */
+    public static final ToolSubmissionImageMetadata TOOL_SUBMISSION_IMAGE_METADATA = ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA;
 }

@@ -4,6 +4,8 @@
 package ro.prospero.aidir.jooq.generated.public_.tables.records;
 
 
+import java.time.OffsetDateTime;
+
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -33,44 +35,44 @@ public class AccountRecord extends UpdatableRecordImpl<AccountRecord> {
     }
 
     /**
-     * Setter for <code>public.account.username</code>.
-     */
-    public void setUsername(String value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.account.username</code>.
-     */
-    public String getUsername() {
-        return (String) get(1);
-    }
-
-    /**
      * Setter for <code>public.account.email</code>.
      */
     public void setEmail(String value) {
-        set(2, value);
+        set(1, value);
     }
 
     /**
      * Getter for <code>public.account.email</code>.
      */
     public String getEmail() {
-        return (String) get(2);
+        return (String) get(1);
     }
 
     /**
      * Setter for <code>public.account.password</code>.
      */
     public void setPassword(String value) {
-        set(3, value);
+        set(2, value);
     }
 
     /**
      * Getter for <code>public.account.password</code>.
      */
     public String getPassword() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.account.account_type</code>.
+     */
+    public void setAccountType(String value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.account.account_type</code>.
+     */
+    public String getAccountType() {
         return (String) get(3);
     }
 
@@ -86,6 +88,20 @@ public class AccountRecord extends UpdatableRecordImpl<AccountRecord> {
      */
     public Long getRole() {
         return (Long) get(4);
+    }
+
+    /**
+     * Setter for <code>public.account.terms_accepted_at</code>.
+     */
+    public void setTermsAcceptedAt(OffsetDateTime value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.account.terms_accepted_at</code>.
+     */
+    public OffsetDateTime getTermsAcceptedAt() {
+        return (OffsetDateTime) get(5);
     }
 
     // -------------------------------------------------------------------------
@@ -111,14 +127,15 @@ public class AccountRecord extends UpdatableRecordImpl<AccountRecord> {
     /**
      * Create a detached, initialised AccountRecord
      */
-    public AccountRecord(Long id, String username, String email, String password, Long role) {
+    public AccountRecord(Long id, String email, String password, String accountType, Long role, OffsetDateTime termsAcceptedAt) {
         super(Account.ACCOUNT);
 
         setId(id);
-        setUsername(username);
         setEmail(email);
         setPassword(password);
+        setAccountType(accountType);
         setRole(role);
+        setTermsAcceptedAt(termsAcceptedAt);
         resetChangedOnNotNull();
     }
 }

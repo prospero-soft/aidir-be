@@ -4,6 +4,7 @@
 package ro.prospero.aidir.jooq.generated.public_.tables;
 
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +33,13 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon.AccountAddonPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.AccountTypes.AccountTypesPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation.CompanyInformationPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant.FeatureGrantPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Role.RolePath;
+import ro.prospero.aidir.jooq.generated.public_.tables.Subscription.SubscriptionPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.TalentProfile.TalentProfilePath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
 
 
@@ -63,11 +70,6 @@ public class Account extends TableImpl<AccountRecord> {
     public final TableField<AccountRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>public.account.username</code>.
-     */
-    public final TableField<AccountRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(50).nullable(false), this, "");
-
-    /**
      * The column <code>public.account.email</code>.
      */
     public final TableField<AccountRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.VARCHAR(250).nullable(false), this, "");
@@ -78,9 +80,19 @@ public class Account extends TableImpl<AccountRecord> {
     public final TableField<AccountRecord, String> PASSWORD = createField(DSL.name("password"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
+     * The column <code>public.account.account_type</code>.
+     */
+    public final TableField<AccountRecord, String> ACCOUNT_TYPE = createField(DSL.name("account_type"), SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
      * The column <code>public.account.role</code>.
      */
     public final TableField<AccountRecord, Long> ROLE = createField(DSL.name("role"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.account.terms_accepted_at</code>.
+     */
+    public final TableField<AccountRecord, OffsetDateTime> TERMS_ACCEPTED_AT = createField(DSL.name("terms_accepted_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     private Account(Name alias, Table<AccountRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -161,12 +173,25 @@ public class Account extends TableImpl<AccountRecord> {
 
     @Override
     public List<UniqueKey<AccountRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.ACCOUNT_EMAIL_KEY, Keys.ACCOUNT_USERNAME_KEY);
+        return Arrays.asList(Keys.ACCOUNT_EMAIL_KEY);
     }
 
     @Override
     public List<ForeignKey<AccountRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ACCOUNT__ACCOUNT_ROLE_FKEY);
+        return Arrays.asList(Keys.ACCOUNT__ACCOUNT_ACCOUNT_TYPE_FKEY, Keys.ACCOUNT__ACCOUNT_ROLE_FKEY);
+    }
+
+    private transient AccountTypesPath _accountTypes;
+
+    /**
+     * Get the implicit join path to the <code>public.account_types</code>
+     * table.
+     */
+    public AccountTypesPath accountTypes() {
+        if (_accountTypes == null)
+            _accountTypes = new AccountTypesPath(this, Keys.ACCOUNT__ACCOUNT_ACCOUNT_TYPE_FKEY, null);
+
+        return _accountTypes;
     }
 
     private transient RolePath _role;
@@ -179,6 +204,71 @@ public class Account extends TableImpl<AccountRecord> {
             _role = new RolePath(this, Keys.ACCOUNT__ACCOUNT_ROLE_FKEY, null);
 
         return _role;
+    }
+
+    private transient AccountAddonPath _accountAddon;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.account_addon</code> table
+     */
+    public AccountAddonPath accountAddon() {
+        if (_accountAddon == null)
+            _accountAddon = new AccountAddonPath(this, null, Keys.ACCOUNT_ADDON__ACCOUNT_ADDON_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _accountAddon;
+    }
+
+    private transient CompanyInformationPath _companyInformation;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.company_information</code> table
+     */
+    public CompanyInformationPath companyInformation() {
+        if (_companyInformation == null)
+            _companyInformation = new CompanyInformationPath(this, null, Keys.COMPANY_INFORMATION__COMPANY_INFORMATION_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _companyInformation;
+    }
+
+    private transient FeatureGrantPath _featureGrant;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.feature_grant</code> table
+     */
+    public FeatureGrantPath featureGrant() {
+        if (_featureGrant == null)
+            _featureGrant = new FeatureGrantPath(this, null, Keys.FEATURE_GRANT__FEATURE_GRANT_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _featureGrant;
+    }
+
+    private transient SubscriptionPath _subscription;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.subscription</code> table
+     */
+    public SubscriptionPath subscription() {
+        if (_subscription == null)
+            _subscription = new SubscriptionPath(this, null, Keys.SUBSCRIPTION__SUBSCRIPTION_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _subscription;
+    }
+
+    private transient TalentProfilePath _talentProfile;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.talent_profile</code> table
+     */
+    public TalentProfilePath talentProfile() {
+        if (_talentProfile == null)
+            _talentProfile = new TalentProfilePath(this, null, Keys.TALENT_PROFILE__TALENT_PROFILE_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _talentProfile;
     }
 
     @Override

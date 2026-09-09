@@ -34,7 +34,10 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.Category.CategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Pricing.PricingPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionCategory.ToolSubmissionCategoryPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionImageMetadata.ToolSubmissionImageMetadataPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
 
 
@@ -90,24 +93,44 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
     public final TableField<ToolSubmissionRecord, String> LONG_DESCRIPTION = createField(DSL.name("long_description"), SQLDataType.VARCHAR, this, "");
 
     /**
-     * The column <code>public.tool_submission.category</code>.
-     */
-    public final TableField<ToolSubmissionRecord, String> CATEGORY = createField(DSL.name("category"), SQLDataType.VARCHAR(50), this, "");
-
-    /**
      * The column <code>public.tool_submission.tags</code>.
      */
     public final TableField<ToolSubmissionRecord, JSONB> TAGS = createField(DSL.name("tags"), SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.tool_submission.image</code>.
+     * The column <code>public.tool_submission.categories</code>.
      */
-    public final TableField<ToolSubmissionRecord, String> IMAGE = createField(DSL.name("image"), SQLDataType.VARCHAR, this, "");
+    public final TableField<ToolSubmissionRecord, JSONB> CATEGORIES = createField(DSL.name("categories"), SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.tool_submission.ratings</code>.
+     * The column <code>public.tool_submission.features</code>.
      */
-    public final TableField<ToolSubmissionRecord, Long> RATINGS = createField(DSL.name("ratings"), SQLDataType.BIGINT, this, "");
+    public final TableField<ToolSubmissionRecord, JSONB> FEATURES = createField(DSL.name("features"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.plans</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> PLANS = createField(DSL.name("plans"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.free_tier_plan_id</code>.
+     */
+    public final TableField<ToolSubmissionRecord, String> FREE_TIER_PLAN_ID = createField(DSL.name("free_tier_plan_id"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.tool_submission.highlight_plan_id</code>.
+     */
+    public final TableField<ToolSubmissionRecord, String> HIGHLIGHT_PLAN_ID = createField(DSL.name("highlight_plan_id"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.tool_submission.integrations</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> INTEGRATIONS = createField(DSL.name("integrations"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.demo_video_url</code>.
+     */
+    public final TableField<ToolSubmissionRecord, String> DEMO_VIDEO_URL = createField(DSL.name("demo_video_url"), SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.tool_submission.submitted_by</code>.
@@ -226,6 +249,40 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
             _pricing = new PricingPath(this, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY, null);
 
         return _pricing;
+    }
+
+    private transient ToolSubmissionCategoryPath _toolSubmissionCategory;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tool_submission_category</code> table
+     */
+    public ToolSubmissionCategoryPath toolSubmissionCategory() {
+        if (_toolSubmissionCategory == null)
+            _toolSubmissionCategory = new ToolSubmissionCategoryPath(this, null, Keys.TOOL_SUBMISSION_CATEGORY__TOOL_SUBMISSION_CATEGORY_TOOL_SUBMISSION_ID_FKEY.getInverseKey());
+
+        return _toolSubmissionCategory;
+    }
+
+    private transient ToolSubmissionImageMetadataPath _toolSubmissionImageMetadata;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tool_submission_image_metadata</code> table
+     */
+    public ToolSubmissionImageMetadataPath toolSubmissionImageMetadata() {
+        if (_toolSubmissionImageMetadata == null)
+            _toolSubmissionImageMetadata = new ToolSubmissionImageMetadataPath(this, null, Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_TOOL_SUBMISSION_ID_FKEY.getInverseKey());
+
+        return _toolSubmissionImageMetadata;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.category</code> table
+     */
+    public CategoryPath category() {
+        return toolSubmissionCategory().category();
     }
 
     @Override
