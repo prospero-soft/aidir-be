@@ -45,41 +45,464 @@ CREATE TABLE account (
     terms_accepted_at TIMESTAMPTZ -- the onboarding "I agree" checkbox, kept as when rather than whether
 );
 
+-- ---------------------------------------------------------------------------
+-- Plans, features, add-ons, subscriptions.
+-- ---------------------------------------------------------------------------
+
+-- needed for the account_id equality term of the subscription exclusion constraint
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+CREATE TABLE feature_kind (
+    name VARCHAR PRIMARY KEY
+);
+
+INSERT INTO feature_kind (name) VALUES
+    ('boolean'),     -- on for as long as it is granted
+    ('quota'),       -- N per billing period, resets when the period rolls over
+    ('consumable');  -- N uses, decremented as spent, outliving the period
+
+CREATE TABLE feature (
+    code VARCHAR PRIMARY KEY,  -- prefixed by account type: the two audiences have
+                               -- same-named perks that are not the same feature
+    account_type VARCHAR NOT NULL REFERENCES account_types(name),
+    name VARCHAR NOT NULL,     -- as shown on the pricing page
+    kind VARCHAR NOT NULL REFERENCES feature_kind(name),
+    display_section VARCHAR,   -- groups the rows of the compare table
+    display_order INT NOT NULL DEFAULT 0,
+    CONSTRAINT feature_code_account_type UNIQUE (code, account_type)
+);
+
+CREATE INDEX feature_display_idx ON feature (account_type, display_section, display_order);
+
+INSERT INTO feature (code, account_type, name, kind, display_section, display_order) VALUES
+    ('vendor_directory_listing','vendor','Directory listing','boolean','Basic Features',1),
+    ('vendor_company_profile_page','vendor','Company profile page','boolean','Basic Features',2),
+    ('vendor_category_placement','vendor','Category placement','boolean','Basic Features',3),
+    ('vendor_search_visibility','vendor','Search visibility','boolean','Basic Features',4),
+
+    ('vendor_verified_badge','vendor','Verified badge','boolean','Trust & Credibility',1),
+    ('vendor_enhanced_profile','vendor','Enhanced profile','boolean','Trust & Credibility',2),
+    ('vendor_priority_listing','vendor','Priority listing','boolean','Trust & Credibility',3),
+    ('vendor_trust_score_display','vendor','Trust score display','boolean','Trust & Credibility',4),
+
+    ('vendor_standard_ranking','vendor','Standard ranking','boolean','Visibility & Rankings',1),
+    ('vendor_top_10_ranking','vendor','Top 10 ranking','boolean','Visibility & Rankings',2),
+    ('vendor_top_3_ranking','vendor','#1-3 ranking guarantee','boolean','Visibility & Rankings',3),
+    ('vendor_hall_of_fame','vendor','Hall of Fame placement','boolean','Visibility & Rankings',4),
+    ('vendor_homepage_spotlight','vendor','Homepage spotlight','boolean','Visibility & Rankings',5),
+    ('vendor_category_featured','vendor','Category page featured','boolean','Visibility & Rankings',6),
+    ('vendor_search_boost','vendor','Search ranking boost','boolean','Visibility & Rankings',7),
+
+    ('vendor_newsletter_feature','vendor','Featured in newsletter','consumable','Marketing & Promotion',1),
+    ('vendor_social_promotion','vendor','Social media promotion','boolean','Marketing & Promotion',2),
+    ('vendor_blog_article','vendor','Blog feature article','consumable','Marketing & Promotion',3),
+    ('vendor_premium_profile_media','vendor','Premium profile with media','boolean','Marketing & Promotion',4),
+    ('vendor_video_showcase','vendor','Video showcase','boolean','Marketing & Promotion',5),
+
+    ('vendor_analytics_monthly','vendor','Monthly analytics','boolean','Analytics & Insights',1),
+    ('vendor_analytics_weekly','vendor','Weekly analytics','boolean','Analytics & Insights',2),
+    ('vendor_analytics_daily','vendor','Daily analytics & insights','boolean','Analytics & Insights',3),
+    ('vendor_custom_reports','vendor','Custom reports','boolean','Analytics & Insights',4),
+    ('vendor_competitor_analysis','vendor','Competitor analysis','boolean','Analytics & Insights',5),
+
+    ('vendor_email_support','vendor','Email support','boolean','Support & Services',1),
+    ('vendor_priority_support','vendor','Priority support','boolean','Support & Services',2),
+    ('vendor_account_manager','vendor','Dedicated account manager','boolean','Support & Services',3),
+    ('vendor_partnerships','vendor','Partnership opportunities','boolean','Support & Services',4),
+    ('vendor_call_center','vendor','Call center integration','boolean','Support & Services',5),
+    ('vendor_custom_integrations','vendor','Custom integrations','boolean','Support & Services',6),
+    ('vendor_reverification','vendor','Re-verification','consumable','Support & Services',7),
+
+    ('talent_browse_directory','talent','Browse AI Directory','boolean','Core Access',1),
+    ('talent_save_favorites','talent','Save Favorite AI Tools','boolean','Core Access',2),
+    ('talent_rate_tools','talent','Rate AI Tools','boolean','Core Access',3),
+    ('talent_newsletter','talent','AI Newsletter','boolean','Core Access',4),
+
+    ('talent_basic_profile','talent','Basic User Profile','boolean','Profile & Verification',1),
+    ('talent_verified_badge','talent','Verified Talent Badge','boolean','Profile & Verification',2),
+    ('talent_featured_badge','talent','Featured Talent Badge','boolean','Profile & Verification',3),
+    ('talent_skills_verification','talent','AI Skills Verification','boolean','Profile & Verification',4),
+    ('talent_linked_certifications','talent','Linked Certifications','boolean','Profile & Verification',5),
+
+    ('talent_visible_in_search','talent','Visible in Talent Search','boolean','Visibility & Discovery',1),
+    ('talent_priority_ranking','talent','Priority Talent Ranking','boolean','Visibility & Discovery',2),
+    ('talent_employer_visibility','talent','Premium Employer Visibility','boolean','Visibility & Discovery',3),
+    ('talent_trust_score','talent','Trust Score for Employers','boolean','Visibility & Discovery',4),
+    ('talent_search_boost','talent','Search ranking boost','boolean','Visibility & Discovery',5),
+
+    ('talent_job_applications','talent','Apply to Jobs','quota','Opportunities',1),
+    ('talent_sponsored_priority','talent','Sponsored Project Priority','boolean','Opportunities',2),
+    ('talent_paid_projects','talent','Work on Paid AI Projects','boolean','Opportunities',3),
+    ('talent_verified_clients','talent','Verified Client Access','boolean','Opportunities',4),
+
+    ('talent_training_center','talent','Free Training Center Access','boolean','Growth & Insights',1),
+    ('talent_profile_analytics','talent','Advanced Profile Analytics','boolean','Growth & Insights',2),
+    ('talent_career_guidance','talent','AI Career Guidance','boolean','Growth & Insights',3),
+    ('talent_build_reputation','talent','Build Reputation','boolean','Growth & Insights',4),
+    ('talent_marketplace_exposure','talent','Marketplace Exposure','boolean','Growth & Insights',5);
+
 CREATE TABLE plan (
     id BIGINT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
     account_type VARCHAR NOT NULL REFERENCES account_types(name), -- a vendor 'free' is not a talent 'free'
     name VARCHAR NOT NULL,
-    CONSTRAINT plan_name_per_account_type UNIQUE (account_type, name)
+    tier INT NOT NULL DEFAULT 0,             -- position in the ladder; decides upgrade vs downgrade
+    available BOOLEAN NOT NULL DEFAULT true, -- retire by clearing this; never delete a plan
+                                             -- that subscription rows still point at
+    grace_days INT NOT NULL DEFAULT 7,       -- how long the grace period runs after a failed
+                                             -- renewal. The free plans never lapse, so it is
+                                             -- never read for them
+    CONSTRAINT plan_name_per_account_type UNIQUE (account_type, name),
+    CONSTRAINT plan_id_account_type UNIQUE (id, account_type)
 );
 
-INSERT INTO plan (account_type, name) VALUES
-    ('vendor','free'),('vendor','verified'),('vendor','growth'),('vendor','premium'),
-    ('talent','free'),('talent','verified'),('talent','pro'),('talent','marketplace');
+INSERT INTO plan (account_type, name, tier) VALUES
+    ('vendor','free',0),
+    ('vendor','verified',1),
+    ('vendor','growth',2),
+    ('vendor','premium',3),
+    ('talent','free',0),
+    ('talent','verified',1),
+    ('talent','pro',2),
+    ('talent','marketplace',0);
 
-CREATE TABLE plan_addon (
+CREATE TABLE plan_feature (
+    plan_id BIGINT NOT NULL,
+    feature_code VARCHAR NOT NULL,
+    account_type VARCHAR NOT NULL REFERENCES account_types(name),
+    quota INT,  -- for 'quota' features; NULL for boolean ones
+    PRIMARY KEY (plan_id, feature_code),
+    FOREIGN KEY (plan_id, account_type) REFERENCES plan (id, account_type),
+    FOREIGN KEY (feature_code, account_type) REFERENCES feature (code, account_type)
+);
+
+INSERT INTO plan_feature (plan_id, feature_code, account_type)
+SELECT p.id, v.feature_code, 'vendor'
+FROM (VALUES
+    ('vendor_directory_listing',    ARRAY['free','verified','growth','premium']),
+    ('vendor_company_profile_page', ARRAY['free','verified','growth','premium']),
+    ('vendor_category_placement',   ARRAY['free','verified','growth','premium']),
+    ('vendor_search_visibility',    ARRAY['free','verified','growth','premium']),
+    ('vendor_standard_ranking',     ARRAY['free','verified','growth','premium']),
+    ('vendor_analytics_monthly',    ARRAY['free','verified','growth','premium']),
+    ('vendor_email_support',        ARRAY['free','verified','growth','premium']),
+    ('vendor_verified_badge',       ARRAY['verified','growth','premium']),
+    ('vendor_enhanced_profile',     ARRAY['verified','growth','premium']),
+    ('vendor_priority_listing',     ARRAY['verified','growth','premium']),
+    ('vendor_trust_score_display',  ARRAY['verified','growth','premium']),
+    ('vendor_analytics_weekly',     ARRAY['verified','growth','premium']),
+    ('vendor_top_10_ranking',       ARRAY['growth','premium']),
+    ('vendor_category_featured',    ARRAY['growth','premium']),
+    ('vendor_newsletter_feature',   ARRAY['growth','premium']),
+    ('vendor_premium_profile_media',ARRAY['growth','premium']),
+    ('vendor_video_showcase',       ARRAY['growth','premium']),
+    ('vendor_analytics_daily',      ARRAY['growth','premium']),
+    ('vendor_custom_reports',       ARRAY['growth','premium']),
+    ('vendor_priority_support',     ARRAY['growth','premium']),
+    ('vendor_top_3_ranking',        ARRAY['premium']),
+    ('vendor_hall_of_fame',         ARRAY['premium']),
+    ('vendor_homepage_spotlight',   ARRAY['premium']),
+    ('vendor_social_promotion',     ARRAY['premium']),
+    ('vendor_blog_article',         ARRAY['premium']),
+    ('vendor_competitor_analysis',  ARRAY['premium']),
+    ('vendor_account_manager',      ARRAY['premium']),
+    ('vendor_partnerships',         ARRAY['premium']),
+    ('vendor_call_center',          ARRAY['premium']),
+    ('vendor_custom_integrations',  ARRAY['premium'])
+) AS v(feature_code, plan_names)
+JOIN plan p ON p.account_type = 'vendor' AND p.name = ANY(v.plan_names);
+
+INSERT INTO plan_feature (plan_id, feature_code, account_type)
+SELECT p.id, v.feature_code, 'talent'
+FROM (VALUES
+    ('talent_browse_directory',     ARRAY['free','verified','pro','marketplace']),
+    ('talent_save_favorites',       ARRAY['free','verified','pro','marketplace']),
+    ('talent_rate_tools',           ARRAY['free','verified','pro','marketplace']),
+    ('talent_basic_profile',        ARRAY['free','verified','pro','marketplace']),
+    ('talent_newsletter',           ARRAY['free','verified','pro']),
+    ('talent_training_center',      ARRAY['free','verified','pro']),
+    ('talent_verified_badge',       ARRAY['verified','pro']),
+    ('talent_skills_verification',  ARRAY['verified','pro']),
+    ('talent_linked_certifications',ARRAY['verified','pro']),
+    ('talent_visible_in_search',    ARRAY['verified','pro']),
+    ('talent_trust_score',          ARRAY['verified','pro']),
+    ('talent_featured_badge',       ARRAY['pro']),
+    ('talent_priority_ranking',     ARRAY['pro']),
+    ('talent_employer_visibility',  ARRAY['pro']),
+    ('talent_sponsored_priority',   ARRAY['pro']),
+    ('talent_profile_analytics',    ARRAY['pro']),
+    ('talent_career_guidance',      ARRAY['pro']),
+    ('talent_paid_projects',        ARRAY['marketplace']),
+    ('talent_verified_clients',     ARRAY['marketplace']),
+    ('talent_build_reputation',     ARRAY['marketplace']),
+    ('talent_marketplace_exposure', ARRAY['marketplace'])
+) AS v(feature_code, plan_names)
+JOIN plan p ON p.account_type = 'talent' AND p.name = ANY(v.plan_names);
+
+INSERT INTO plan_feature (plan_id, feature_code, account_type, quota)
+SELECT p.id, 'talent_job_applications', 'talent', v.quota
+FROM (VALUES ('verified', 3), ('pro', 5)) AS v(plan_name, quota)
+JOIN plan p ON p.account_type = 'talent' AND p.name = v.plan_name;
+
+CREATE TABLE recurrence (
+    name VARCHAR PRIMARY KEY
+);
+
+INSERT INTO recurrence (name) VALUES ('monthly'), ('yearly');
+
+CREATE TABLE plan_price (
+    plan_id BIGINT NOT NULL REFERENCES plan(id),
+    recurrence VARCHAR NOT NULL REFERENCES recurrence(name),
+    amount_cents INT NOT NULL,
+    currency CHAR(3) NOT NULL DEFAULT 'EUR',
+    PRIMARY KEY (plan_id, recurrence)
+);
+
+-- Seeded from what the pricing pages currently quote: vendors monthly, talent yearly.
+-- The other recurrence for each is a row away once the numbers are decided.
+INSERT INTO plan_price (plan_id, recurrence, amount_cents)
+SELECT p.id, v.recurrence, v.amount_cents
+FROM (VALUES
+    ('vendor','free','monthly',0),
+    ('vendor','verified','monthly',19900),
+    ('vendor','growth','monthly',29900),
+    ('vendor','premium','monthly',79900),
+    ('talent','free','yearly',0),
+    ('talent','verified','yearly',2900),
+    ('talent','pro','yearly',4900)
+) AS v(account_type, plan_name, recurrence, amount_cents)
+JOIN plan p ON p.account_type = v.account_type AND p.name = v.plan_name;
+
+-- ---------------------------------------------------------------------------
+-- Add-ons.
+-- ---------------------------------------------------------------------------
+CREATE TABLE addon_billing (
+    name VARCHAR PRIMARY KEY
+);
+
+INSERT INTO addon_billing (name) VALUES
+    ('recurring'),  -- renews with the subscription until cancelled
+    ('one_time');   -- charged once; lasts for default_duration_days, or until consumed
+
+CREATE TABLE addon (
     id BIGINT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
-    name VARCHAR NOT NULL
-    -- might want recurrence to live here as well
+    code VARCHAR NOT NULL UNIQUE,
+    account_type VARCHAR NOT NULL REFERENCES account_types(name),
+    name VARCHAR NOT NULL,
+    billing VARCHAR NOT NULL REFERENCES addon_billing(name),
+    default_duration_days INT,  -- how long a purchase stays live; NULL = indefinite,
+                                -- or until the consumable it grants is used up
+    available BOOLEAN NOT NULL DEFAULT true,
+    CONSTRAINT addon_id_account_type UNIQUE (id, account_type)
 );
 
--- need to handle upgrades, subscription history
+-- quantity is NULL for the boolean features an add-on switches on, and a number for the
+-- 'quota' and 'consumable' ones it grants. There is no stacking rule to record: numeric
+-- grants become feature_grant rows and add up because they are separate rows, and a
+-- boolean is on as soon as one source says so.
+CREATE TABLE addon_feature (
+    addon_id BIGINT NOT NULL,
+    feature_code VARCHAR NOT NULL,
+    account_type VARCHAR NOT NULL REFERENCES account_types(name),
+    quantity INT,
+    PRIMARY KEY (addon_id, feature_code),
+    FOREIGN KEY (addon_id, account_type) REFERENCES addon (id, account_type),
+    FOREIGN KEY (feature_code, account_type) REFERENCES feature (code, account_type)
+);
+
+INSERT INTO addon (code, account_type, name, billing, default_duration_days) VALUES
+    ('vendor_newsletter_slot','vendor','Featured in the next newsletter','one_time',NULL),
+    ('vendor_blog_article','vendor','Blog feature article','one_time',NULL),
+    ('vendor_search_boost_30d','vendor','30-day search ranking boost','one_time',30),
+    ('vendor_reverification','vendor','Re-verification','one_time',NULL),
+    ('vendor_alc_top_10_ranking','vendor','Top 10 ranking','recurring',NULL),
+    ('vendor_alc_premium_media','vendor','Premium profile with media','recurring',NULL),
+    ('talent_search_boost_30d','talent','30-day search ranking boost','one_time',30),
+    ('talent_alc_priority_ranking','talent','Priority Talent Ranking','recurring',NULL),
+    ('talent_alc_profile_analytics','talent','Advanced Profile Analytics','recurring',NULL),
+    ('talent_job_application_pack','talent','5 extra job applications per month','recurring',NULL);
+
+INSERT INTO addon_feature (addon_id, feature_code, account_type, quantity)
+SELECT a.id, v.feature_code, a.account_type, v.quantity
+FROM (VALUES
+    ('vendor_newsletter_slot',      'vendor_newsletter_feature',   1),
+    ('vendor_blog_article',         'vendor_blog_article',         1),
+    ('vendor_search_boost_30d',     'vendor_search_boost',         NULL),
+    ('vendor_reverification',       'vendor_reverification',       1),
+    ('vendor_alc_top_10_ranking',   'vendor_top_10_ranking',       NULL),
+    ('vendor_alc_premium_media',    'vendor_premium_profile_media',NULL),
+    ('talent_search_boost_30d',     'talent_search_boost',         NULL),
+    ('talent_alc_priority_ranking', 'talent_priority_ranking',     NULL),
+    ('talent_alc_profile_analytics','talent_profile_analytics',    NULL),
+    ('talent_job_application_pack', 'talent_job_applications',     5)
+) AS v(addon_code, feature_code, quantity)
+JOIN addon a ON a.code = v.addon_code;
+
+-- Which plans may buy which add-on, and for how much.
+CREATE TABLE plan_addon (
+    plan_id BIGINT NOT NULL REFERENCES plan(id),
+    addon_id BIGINT NOT NULL REFERENCES addon(id),
+    price_cents INT NOT NULL,
+    currency CHAR(3) NOT NULL DEFAULT 'EUR',
+    PRIMARY KEY (plan_id, addon_id)
+);
+
+-- ---------------------------------------------------------------------------
+-- Subscriptions.
+--
+-- One row per period, and nothing about an account's standing is held anywhere
+-- else: a grace period is a row like any other, so there is no status to mutate
+-- in place and no deadline column to keep in step with the dates. period_end is
+-- truncated when a period is cut short by an early plan change or a demotion.
+-- ---------------------------------------------------------------------------
+CREATE TABLE subscription_reason (
+    name VARCHAR PRIMARY KEY
+);
+
+INSERT INTO subscription_reason (name) VALUES
+    ('created'),
+    ('trial'),
+    ('renewed'),
+    ('upgraded'),
+    ('downgraded'),
+    ('payment_failed'), -- a grace period: same plan, nothing charged, ends at grace expiry
+    ('reactivated'),    -- payment landed during grace; carries that period's grants forward
+    ('demoted');        -- grace ran out; free plan, runs to 'infinity'
+
+-- How a period ended, and set only when one is cut short. A row whose period_end has simply
+-- passed with ended_as still NULL is expired by definition of its own range, so nothing has
+-- to stamp it and there is no window in which the marker and the dates disagree.
+CREATE TABLE subscription_end (
+    name VARCHAR PRIMARY KEY
+);
+
+INSERT INTO subscription_end (name) VALUES
+    ('superseded'), -- cut short by a plan change, or by payment landing during grace
+    ('cancelled');  -- ended immediately at the account's request. Cancelling at period end
+                    -- instead is cancel_at_period_end, which lets the row run out
+
 CREATE TABLE subscription (
-    account_id BIGINT REFERENCES account(id),
-    plan_id BIGINT REFERENCES plan(id),
-    period_start TIMESTAMPTZ NOT NULL default NOW(),
-    period_end TIMESTAMPTZ NOT NULL default NOW() + INTERVAL '1 year',
-    active BOOLEAN default true
+    id BIGINT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
+    account_id BIGINT NOT NULL REFERENCES account(id),
+    plan_id BIGINT NOT NULL REFERENCES plan(id),
+    recurrence VARCHAR NOT NULL REFERENCES recurrence(name),
+    reason VARCHAR NOT NULL REFERENCES subscription_reason(name),
+    ended_as VARCHAR REFERENCES subscription_end(name),  -- NULL while the row still stands
+    period_start TIMESTAMPTZ NOT NULL,
+    period_end TIMESTAMPTZ NOT NULL,  -- 'infinity' for the free plans, which never lapse
+    amount_cents INT,                 -- charged for this period; NULL when nothing was
+    currency CHAR(3),
+    cancel_at_period_end BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT subscription_period_sane CHECK (period_end > period_start),
+    -- Nothing is charged for a grace period; that is what makes it one.
+    CONSTRAINT subscription_grace_unpaid
+        CHECK (reason <> 'payment_failed' OR amount_cents IS NULL),
+    -- No two of an account's periods may cover the same instant.
+    CONSTRAINT subscription_no_overlap EXCLUDE USING gist (
+        account_id WITH =,
+        tstzrange(period_start, period_end, '[)') WITH &&
+    )
 );
 
--- some of the addons are one-off things (re-verification),
--- others are ongoing, or valid for a certain number of events (vendor promos, newsletter etc.)
--- todo: this will certainly need review once we start testing the add-on flow
-CREATE TABLE subscription_addon (
-    account_id BIGINT REFERENCES account(id),
-    plan_addon_id BIGINT REFERENCES plan_addon(id),
-    added TIMESTAMPTZ NOT NULL default NOW(),
-    active BOOLEAN default true
+CREATE INDEX subscription_account_history_idx ON subscription (account_id, period_start);
+
+CREATE TABLE account_addon (
+    id BIGINT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
+    account_id BIGINT NOT NULL REFERENCES account(id),
+    addon_id BIGINT NOT NULL REFERENCES addon(id),
+    purchased_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    starts_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ends_at TIMESTAMPTZ,        -- NULL = until consumed, or indefinitely
+    cancelled_at TIMESTAMPTZ,   -- stopped at the account's request
+    superseded_at TIMESTAMPTZ   -- the plan now includes it: stop renewing. A billing concern
+                                -- only, and it does not touch entitlement: whatever the
+                                -- purchase already granted stands on its own feature_grant rows
 );
+
+CREATE INDEX account_addon_live_idx ON account_addon (account_id)
+    WHERE cancelled_at IS NULL;
+
+-- Every numeric entitlement an account holds, as a row. Boolean features are not granted
+-- here: nothing consumes them, so they are read straight off the covering subscription row's
+-- plan and off live add-ons rather than being minted ~34 rows at a time every period.
+--
+-- expires_at is a lifetime and is mutable; subscription_id and account_addon_id are
+-- provenance and are not. Keeping the two apart is what lets a payment arriving during a
+-- grace period move the deadline without minting a fresh allowance on top of it.
+CREATE TABLE feature_grant (
+    id BIGINT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
+    account_id BIGINT NOT NULL REFERENCES account(id),
+    feature_code VARCHAR NOT NULL REFERENCES feature(code),
+    amount INT NOT NULL,       -- as minted
+    remaining INT NOT NULL,    -- decremented as spent
+    expires_at TIMESTAMPTZ,    -- NULL = never expires, which is what makes a consumable one
+    granted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    subscription_id BIGINT REFERENCES subscription(id),    -- the period that minted it
+    account_addon_id BIGINT REFERENCES account_addon(id),  -- the purchase that minted it
+
+    CONSTRAINT feature_grant_amount_positive CHECK (amount > 0),
+    CONSTRAINT feature_grant_remaining_in_range CHECK (remaining >= 0 AND remaining <= amount),
+    CONSTRAINT feature_grant_has_source
+        CHECK (subscription_id IS NOT NULL OR account_addon_id IS NOT NULL)
+);
+
+-- Ordered by expires_at because spending goes soonest-expiring first, which leaves the
+-- non-expiring grants banked for as long as possible.
+CREATE INDEX feature_grant_spendable_idx
+    ON feature_grant (account_id, feature_code, expires_at)
+    WHERE remaining > 0;
+
+CREATE INDEX feature_grant_subscription_idx ON feature_grant (subscription_id);
+
+-- ---------------------------------------------------------------------------
+-- The checks every entitlement question goes through. Neither filters on a status:
+-- a period entitles for exactly as long as its own range says it does, grace included.
+--
+--   -- a numeric feature's balance, in full
+--   SELECT COALESCE(SUM(remaining), 0)
+--   FROM feature_grant
+--   WHERE account_id = :account_id AND feature_code = :feature_code
+--     AND remaining > 0
+--     AND (expires_at IS NULL OR expires_at > NOW());
+--
+--   -- a boolean feature: the covering period's plan, or a live add-on
+--   SELECT EXISTS (
+--       SELECT 1 FROM subscription s
+--       JOIN plan_feature pf ON pf.plan_id = s.plan_id
+--       WHERE s.account_id = :account_id AND pf.feature_code = :feature_code
+--         AND tstzrange(s.period_start, s.period_end, '[)') @> NOW()
+--   ) OR EXISTS (
+--       SELECT 1 FROM account_addon aa
+--       JOIN addon_feature af ON af.addon_id = aa.addon_id
+--       WHERE aa.account_id = :account_id AND af.feature_code = :feature_code
+--         AND aa.cancelled_at IS NULL AND aa.starts_at <= NOW()
+--         AND (aa.ends_at IS NULL OR aa.ends_at > NOW())
+--   );
+--
+-- Every period begins the same way, grace included: insert the row, then mint a grant for
+-- each of the plan's 'quota' features with expires_at set to the period's end. A failed
+-- renewal opens a period on the same plan running to NOW() + plan.grace_days, so the
+-- allowance refreshes and lapses with the grace window.
+--
+-- Payment arriving during grace is the one place that does not mint. It truncates the grace
+-- row and carries its grants over to the paid period instead, which is what stops an account
+-- from spending a grace allowance and then buying a second one for the same month:
+--
+--   UPDATE subscription SET period_end = NOW(), ended_as = 'superseded' WHERE id = :grace_id;
+--   INSERT INTO subscription (account_id, plan_id, recurrence, reason, period_start, period_end,
+--                             amount_cents, currency)
+--   VALUES (:account_id, :plan_id, :recurrence, 'reactivated', NOW(), :regular_period_end,
+--           :amount_cents, :currency)
+--   RETURNING id;
+--   UPDATE feature_grant SET subscription_id = :new_id, expires_at = :regular_period_end
+--    WHERE subscription_id = :grace_id AND expires_at IS NOT NULL;
+--
+-- Demoting when grace runs out needs no truncation, the grace row having ended on its own:
+--
+--   INSERT INTO subscription (account_id, plan_id, recurrence, reason, period_start, period_end)
+--   VALUES (:account_id, :free_plan_id, 'yearly', 'demoted', :grace_period_end, 'infinity');
+-- ---------------------------------------------------------------------------
 
 CREATE TABLE company_information (
     account_id BIGINT REFERENCES account(id),

@@ -4,6 +4,13 @@
 
 == TODO
 
+=== dunning: drive the subscription lifecycle from a real payment provider
+Quota usage is settled - feature_grant holds one row per numeric entitlement, and
+SubscriptionService composes every lifecycle event out of openPeriod/closePeriod. What is missing
+is the scheduler that decides when to call them: there is no payment, invoice or provider
+integration yet, so renew/beginGrace/recoverFromGrace have nothing to charge against and are
+currently only reachable by hand.
+
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
 
 === [FE] when onboarding, if user attempts to advance to next step but cannot because of validation errors, those errors need to be displayed (currently not the case for at least CompanyInformationStep)
