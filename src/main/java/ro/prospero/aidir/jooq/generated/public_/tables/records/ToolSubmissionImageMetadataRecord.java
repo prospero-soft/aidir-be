@@ -47,6 +47,36 @@ public class ToolSubmissionImageMetadataRecord extends TableRecordImpl<ToolSubmi
         return (String) get(1);
     }
 
+    /**
+     * Setter for <code>public.tool_submission_image_metadata.kind</code>.
+     */
+    public void setKind(String value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission_image_metadata.kind</code>.
+     */
+    public String getKind() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for
+     * <code>public.tool_submission_image_metadata.display_order</code>.
+     */
+    public void setDisplayOrder(Integer value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for
+     * <code>public.tool_submission_image_metadata.display_order</code>.
+     */
+    public Integer getDisplayOrder() {
+        return (Integer) get(3);
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
@@ -61,11 +91,13 @@ public class ToolSubmissionImageMetadataRecord extends TableRecordImpl<ToolSubmi
     /**
      * Create a detached, initialised ToolSubmissionImageMetadataRecord
      */
-    public ToolSubmissionImageMetadataRecord(Long toolSubmissionId, String imagePath) {
+    public ToolSubmissionImageMetadataRecord(Long toolSubmissionId, String imagePath, String kind, Integer displayOrder) {
         super(ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA);
 
         setToolSubmissionId(toolSubmissionId);
         setImagePath(imagePath);
+        setKind(kind);
+        setDisplayOrder(displayOrder);
         resetChangedOnNotNull();
     }
 }

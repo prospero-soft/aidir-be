@@ -40,6 +40,7 @@ import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant.FeatureGrant
 import ro.prospero.aidir.jooq.generated.public_.tables.Role.RolePath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Subscription.SubscriptionPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.TalentProfile.TalentProfilePath;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
 
 
@@ -269,6 +270,19 @@ public class Account extends TableImpl<AccountRecord> {
             _talentProfile = new TalentProfilePath(this, null, Keys.TALENT_PROFILE__TALENT_PROFILE_ACCOUNT_ID_FKEY.getInverseKey());
 
         return _talentProfile;
+    }
+
+    private transient ToolSubmissionPath _toolSubmission;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tool_submission</code> table
+     */
+    public ToolSubmissionPath toolSubmission() {
+        if (_toolSubmission == null)
+            _toolSubmission = new ToolSubmissionPath(this, null, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _toolSubmission;
     }
 
     @Override

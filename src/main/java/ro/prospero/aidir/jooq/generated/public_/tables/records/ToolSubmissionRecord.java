@@ -36,255 +36,269 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     }
 
     /**
+     * Setter for <code>public.tool_submission.account_id</code>.
+     */
+    public void setAccountId(Long value) {
+        set(1, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.account_id</code>.
+     */
+    public Long getAccountId() {
+        return (Long) get(1);
+    }
+
+    /**
      * Setter for <code>public.tool_submission.name</code>.
      */
     public void setName(String value) {
-        set(1, value);
+        set(2, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.name</code>.
      */
     public String getName() {
-        return (String) get(1);
+        return (String) get(2);
     }
 
     /**
      * Setter for <code>public.tool_submission.url</code>.
      */
     public void setUrl(String value) {
-        set(2, value);
+        set(3, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.url</code>.
      */
     public String getUrl() {
-        return (String) get(2);
+        return (String) get(3);
     }
 
     /**
      * Setter for <code>public.tool_submission.pricing</code>.
      */
     public void setPricing(String value) {
-        set(3, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.pricing</code>.
      */
     public String getPricing() {
-        return (String) get(3);
+        return (String) get(4);
     }
 
     /**
      * Setter for <code>public.tool_submission.short_description</code>.
      */
     public void setShortDescription(String value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.short_description</code>.
      */
     public String getShortDescription() {
-        return (String) get(4);
+        return (String) get(5);
     }
 
     /**
      * Setter for <code>public.tool_submission.long_description</code>.
      */
     public void setLongDescription(String value) {
-        set(5, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.long_description</code>.
      */
     public String getLongDescription() {
-        return (String) get(5);
+        return (String) get(6);
     }
 
     /**
      * Setter for <code>public.tool_submission.tags</code>.
      */
     public void setTags(JSONB value) {
-        set(6, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.tags</code>.
      */
     public JSONB getTags() {
-        return (JSONB) get(6);
+        return (JSONB) get(7);
     }
 
     /**
      * Setter for <code>public.tool_submission.categories</code>.
      */
     public void setCategories(JSONB value) {
-        set(7, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.categories</code>.
      */
     public JSONB getCategories() {
-        return (JSONB) get(7);
+        return (JSONB) get(8);
     }
 
     /**
      * Setter for <code>public.tool_submission.features</code>.
      */
     public void setFeatures(JSONB value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.features</code>.
      */
     public JSONB getFeatures() {
-        return (JSONB) get(8);
+        return (JSONB) get(9);
     }
 
     /**
      * Setter for <code>public.tool_submission.plans</code>.
      */
     public void setPlans(JSONB value) {
-        set(9, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.plans</code>.
      */
     public JSONB getPlans() {
-        return (JSONB) get(9);
+        return (JSONB) get(10);
     }
 
     /**
      * Setter for <code>public.tool_submission.free_tier_plan_id</code>.
      */
     public void setFreeTierPlanId(String value) {
-        set(10, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.free_tier_plan_id</code>.
      */
     public String getFreeTierPlanId() {
-        return (String) get(10);
+        return (String) get(11);
     }
 
     /**
      * Setter for <code>public.tool_submission.highlight_plan_id</code>.
      */
     public void setHighlightPlanId(String value) {
-        set(11, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.highlight_plan_id</code>.
      */
     public String getHighlightPlanId() {
-        return (String) get(11);
+        return (String) get(12);
     }
 
     /**
      * Setter for <code>public.tool_submission.integrations</code>.
      */
     public void setIntegrations(JSONB value) {
-        set(12, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.integrations</code>.
      */
     public JSONB getIntegrations() {
-        return (JSONB) get(12);
+        return (JSONB) get(13);
     }
 
     /**
      * Setter for <code>public.tool_submission.demo_video_url</code>.
      */
     public void setDemoVideoUrl(String value) {
-        set(13, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.demo_video_url</code>.
      */
     public String getDemoVideoUrl() {
-        return (String) get(13);
+        return (String) get(14);
     }
 
     /**
      * Setter for <code>public.tool_submission.submitted_by</code>.
      */
     public void setSubmittedBy(String value) {
-        set(14, value);
+        set(15, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.submitted_by</code>.
      */
     public String getSubmittedBy() {
-        return (String) get(14);
+        return (String) get(15);
     }
 
     /**
      * Setter for <code>public.tool_submission.submitted_at</code>.
      */
     public void setSubmittedAt(OffsetDateTime value) {
-        set(15, value);
+        set(16, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.submitted_at</code>.
      */
     public OffsetDateTime getSubmittedAt() {
-        return (OffsetDateTime) get(15);
+        return (OffsetDateTime) get(16);
     }
 
     /**
      * Setter for <code>public.tool_submission.approved_at</code>.
      */
     public void setApprovedAt(OffsetDateTime value) {
-        set(16, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.approved_at</code>.
      */
     public OffsetDateTime getApprovedAt() {
-        return (OffsetDateTime) get(16);
+        return (OffsetDateTime) get(17);
     }
 
     /**
      * Setter for <code>public.tool_submission.approved</code>.
      */
     public void setApproved(Boolean value) {
-        set(17, value);
+        set(18, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.approved</code>.
      */
     public Boolean getApproved() {
-        return (Boolean) get(17);
+        return (Boolean) get(18);
     }
 
     /**
      * Setter for <code>public.tool_submission.uploaded_to_cms</code>.
      */
     public void setUploadedToCms(Boolean value) {
-        set(18, value);
+        set(19, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.uploaded_to_cms</code>.
      */
     public Boolean getUploadedToCms() {
-        return (Boolean) get(18);
+        return (Boolean) get(19);
     }
 
     // -------------------------------------------------------------------------
@@ -310,10 +324,11 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     /**
      * Create a detached, initialised ToolSubmissionRecord
      */
-    public ToolSubmissionRecord(Long id, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean uploadedToCms) {
+    public ToolSubmissionRecord(Long id, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean uploadedToCms) {
         super(ToolSubmission.TOOL_SUBMISSION);
 
         setId(id);
+        setAccountId(accountId);
         setName(name);
         setUrl(url);
         setPricing(pricing);

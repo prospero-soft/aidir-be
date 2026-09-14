@@ -34,6 +34,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.Account.AccountPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Category.CategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Pricing.PricingPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionCategory.ToolSubmissionCategoryPath;
@@ -68,9 +69,14 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
     public final TableField<ToolSubmissionRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
+     * The column <code>public.tool_submission.account_id</code>.
+     */
+    public final TableField<ToolSubmissionRecord, Long> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.BIGINT, this, "");
+
+    /**
      * The column <code>public.tool_submission.name</code>.
      */
-    public final TableField<ToolSubmissionRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(50).nullable(false), this, "");
+    public final TableField<ToolSubmissionRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(200).nullable(false), this, "");
 
     /**
      * The column <code>public.tool_submission.url</code>.
@@ -236,7 +242,19 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
 
     @Override
     public List<ForeignKey<ToolSubmissionRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY);
+        return Arrays.asList(Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY);
+    }
+
+    private transient AccountPath _account;
+
+    /**
+     * Get the implicit join path to the <code>public.account</code> table.
+     */
+    public AccountPath account() {
+        if (_account == null)
+            _account = new AccountPath(this, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY, null);
+
+        return _account;
     }
 
     private transient PricingPath _pricing;

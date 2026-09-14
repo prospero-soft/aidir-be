@@ -24,6 +24,7 @@ import ro.prospero.aidir.jooq.generated.public_.tables.DataPermission;
 import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureKind;
+import ro.prospero.aidir.jooq.generated.public_.tables.ImageKind;
 import ro.prospero.aidir.jooq.generated.public_.tables.Language;
 import ro.prospero.aidir.jooq.generated.public_.tables.Location;
 import ro.prospero.aidir.jooq.generated.public_.tables.Permission;
@@ -124,6 +125,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.feature_kind</code>.
      */
     public final FeatureKind FEATURE_KIND = FeatureKind.FEATURE_KIND;
+
+    /**
+     * The table <code>public.image_kind</code>.
+     */
+    public final ImageKind IMAGE_KIND = ImageKind.IMAGE_KIND;
 
     /**
      * The table <code>public.language</code>.
@@ -283,6 +289,7 @@ public class Public extends SchemaImpl {
             Feature.FEATURE,
             FeatureGrant.FEATURE_GRANT,
             FeatureKind.FEATURE_KIND,
+            ImageKind.IMAGE_KIND,
             Language.LANGUAGE,
             Location.LOCATION,
             Permission.PERMISSION,

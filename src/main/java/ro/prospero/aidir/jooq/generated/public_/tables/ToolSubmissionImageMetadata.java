@@ -31,6 +31,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.ImageKind.ImageKindPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionImageMetadataRecord;
 
@@ -66,7 +67,18 @@ public class ToolSubmissionImageMetadata extends TableImpl<ToolSubmissionImageMe
     /**
      * The column <code>public.tool_submission_image_metadata.image_path</code>.
      */
-    public final TableField<ToolSubmissionImageMetadataRecord, String> IMAGE_PATH = createField(DSL.name("image_path"), SQLDataType.VARCHAR, this, "");
+    public final TableField<ToolSubmissionImageMetadataRecord, String> IMAGE_PATH = createField(DSL.name("image_path"), SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.tool_submission_image_metadata.kind</code>.
+     */
+    public final TableField<ToolSubmissionImageMetadataRecord, String> KIND = createField(DSL.name("kind"), SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column
+     * <code>public.tool_submission_image_metadata.display_order</code>.
+     */
+    public final TableField<ToolSubmissionImageMetadataRecord, Integer> DISPLAY_ORDER = createField(DSL.name("display_order"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field(DSL.raw("0"), SQLDataType.INTEGER)), this, "");
 
     private ToolSubmissionImageMetadata(Name alias, Table<ToolSubmissionImageMetadataRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -145,7 +157,19 @@ public class ToolSubmissionImageMetadata extends TableImpl<ToolSubmissionImageMe
 
     @Override
     public List<ForeignKey<ToolSubmissionImageMetadataRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_TOOL_SUBMISSION_ID_FKEY);
+        return Arrays.asList(Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_KIND_FKEY, Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_TOOL_SUBMISSION_ID_FKEY);
+    }
+
+    private transient ImageKindPath _imageKind;
+
+    /**
+     * Get the implicit join path to the <code>public.image_kind</code> table.
+     */
+    public ImageKindPath imageKind() {
+        if (_imageKind == null)
+            _imageKind = new ImageKindPath(this, Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_KIND_FKEY, null);
+
+        return _imageKind;
     }
 
     private transient ToolSubmissionPath _toolSubmission;

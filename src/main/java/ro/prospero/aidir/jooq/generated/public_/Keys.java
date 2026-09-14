@@ -22,6 +22,7 @@ import ro.prospero.aidir.jooq.generated.public_.tables.DataPermission;
 import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureKind;
+import ro.prospero.aidir.jooq.generated.public_.tables.ImageKind;
 import ro.prospero.aidir.jooq.generated.public_.tables.Language;
 import ro.prospero.aidir.jooq.generated.public_.tables.Location;
 import ro.prospero.aidir.jooq.generated.public_.tables.Permission;
@@ -60,6 +61,7 @@ import ro.prospero.aidir.jooq.generated.public_.tables.records.DataPermissionRec
 import ro.prospero.aidir.jooq.generated.public_.tables.records.FeatureGrantRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.FeatureKindRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.FeatureRecord;
+import ro.prospero.aidir.jooq.generated.public_.tables.records.ImageKindRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.LanguageRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.LocationRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.PermissionRecord;
@@ -109,11 +111,13 @@ public class Keys {
     public static final UniqueKey<AddonBillingRecord> ADDON_BILLING_PKEY = Internal.createUniqueKey(AddonBilling.ADDON_BILLING, DSL.name("addon_billing_pkey"), new TableField[] { AddonBilling.ADDON_BILLING.NAME }, true);
     public static final UniqueKey<AddonFeatureRecord> ADDON_FEATURE_PKEY = Internal.createUniqueKey(AddonFeature.ADDON_FEATURE, DSL.name("addon_feature_pkey"), new TableField[] { AddonFeature.ADDON_FEATURE.ADDON_ID, AddonFeature.ADDON_FEATURE.FEATURE_CODE }, true);
     public static final UniqueKey<CategoryRecord> CATEGORY_PKEY = Internal.createUniqueKey(Category.CATEGORY, DSL.name("category_pkey"), new TableField[] { Category.CATEGORY.NAME }, true);
+    public static final UniqueKey<CompanyInformationRecord> COMPANY_INFORMATION_PKEY = Internal.createUniqueKey(CompanyInformation.COMPANY_INFORMATION, DSL.name("company_information_pkey"), new TableField[] { CompanyInformation.COMPANY_INFORMATION.ACCOUNT_ID }, true);
     public static final UniqueKey<DataPermissionRecord> DATA_PERMISSION_UNIQUE = Internal.createUniqueKey(DataPermission.DATA_PERMISSION, DSL.name("data_permission_unique"), new TableField[] { DataPermission.DATA_PERMISSION.PERMISSION_NAME, DataPermission.DATA_PERMISSION.DATA_KEY }, true);
     public static final UniqueKey<FeatureRecord> FEATURE_CODE_ACCOUNT_TYPE = Internal.createUniqueKey(Feature.FEATURE, DSL.name("feature_code_account_type"), new TableField[] { Feature.FEATURE.CODE, Feature.FEATURE.ACCOUNT_TYPE }, true);
     public static final UniqueKey<FeatureRecord> FEATURE_PKEY = Internal.createUniqueKey(Feature.FEATURE, DSL.name("feature_pkey"), new TableField[] { Feature.FEATURE.CODE }, true);
     public static final UniqueKey<FeatureGrantRecord> FEATURE_GRANT_PKEY = Internal.createUniqueKey(FeatureGrant.FEATURE_GRANT, DSL.name("feature_grant_pkey"), new TableField[] { FeatureGrant.FEATURE_GRANT.ID }, true);
     public static final UniqueKey<FeatureKindRecord> FEATURE_KIND_PKEY = Internal.createUniqueKey(FeatureKind.FEATURE_KIND, DSL.name("feature_kind_pkey"), new TableField[] { FeatureKind.FEATURE_KIND.NAME }, true);
+    public static final UniqueKey<ImageKindRecord> IMAGE_KIND_PKEY = Internal.createUniqueKey(ImageKind.IMAGE_KIND, DSL.name("image_kind_pkey"), new TableField[] { ImageKind.IMAGE_KIND.NAME }, true);
     public static final UniqueKey<LanguageRecord> LANGUAGE_PKEY = Internal.createUniqueKey(Language.LANGUAGE, DSL.name("language_pkey"), new TableField[] { Language.LANGUAGE.NAME }, true);
     public static final UniqueKey<LocationRecord> LOCATION_PKEY = Internal.createUniqueKey(Location.LOCATION, DSL.name("location_pkey"), new TableField[] { Location.LOCATION.NAME }, true);
     public static final UniqueKey<PermissionRecord> PERMISSION_NAME_KEY = Internal.createUniqueKey(Permission.PERMISSION, DSL.name("permission_name_key"), new TableField[] { Permission.PERMISSION.NAME }, true);
@@ -194,8 +198,10 @@ public class Keys {
     public static final ForeignKey<TalentProjectRecord, TalentProfileRecord> TALENT_PROJECT__TALENT_PROJECT_ACCOUNT_ID_FKEY = Internal.createForeignKey(TalentProject.TALENT_PROJECT, DSL.name("talent_project_account_id_fkey"), new TableField[] { TalentProject.TALENT_PROJECT.ACCOUNT_ID }, Keys.TALENT_PROFILE_PKEY, new TableField[] { TalentProfile.TALENT_PROFILE.ACCOUNT_ID }, true);
     public static final ForeignKey<TalentSkillRecord, TalentProfileRecord> TALENT_SKILL__TALENT_SKILL_ACCOUNT_ID_FKEY = Internal.createForeignKey(TalentSkill.TALENT_SKILL, DSL.name("talent_skill_account_id_fkey"), new TableField[] { TalentSkill.TALENT_SKILL.ACCOUNT_ID }, Keys.TALENT_PROFILE_PKEY, new TableField[] { TalentProfile.TALENT_PROFILE.ACCOUNT_ID }, true);
     public static final ForeignKey<TalentSkillRecord, SkillRecord> TALENT_SKILL__TALENT_SKILL_SKILL_FKEY = Internal.createForeignKey(TalentSkill.TALENT_SKILL, DSL.name("talent_skill_skill_fkey"), new TableField[] { TalentSkill.TALENT_SKILL.SKILL }, Keys.SKILL_PKEY, new TableField[] { Skill.SKILL.NAME }, true);
+    public static final ForeignKey<ToolSubmissionRecord, AccountRecord> TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY = Internal.createForeignKey(ToolSubmission.TOOL_SUBMISSION, DSL.name("tool_submission_account_id_fkey"), new TableField[] { ToolSubmission.TOOL_SUBMISSION.ACCOUNT_ID }, Keys.ACCOUNT_PKEY, new TableField[] { Account.ACCOUNT.ID }, true);
     public static final ForeignKey<ToolSubmissionRecord, PricingRecord> TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY = Internal.createForeignKey(ToolSubmission.TOOL_SUBMISSION, DSL.name("tool_submission_pricing_fkey"), new TableField[] { ToolSubmission.TOOL_SUBMISSION.PRICING }, Keys.PRICING_TYPE_KEY, new TableField[] { Pricing.PRICING.TYPE }, true);
     public static final ForeignKey<ToolSubmissionCategoryRecord, CategoryRecord> TOOL_SUBMISSION_CATEGORY__TOOL_SUBMISSION_CATEGORY_CATEGORY_FKEY = Internal.createForeignKey(ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY, DSL.name("tool_submission_category_category_fkey"), new TableField[] { ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY.CATEGORY }, Keys.CATEGORY_PKEY, new TableField[] { Category.CATEGORY.NAME }, true);
     public static final ForeignKey<ToolSubmissionCategoryRecord, ToolSubmissionRecord> TOOL_SUBMISSION_CATEGORY__TOOL_SUBMISSION_CATEGORY_TOOL_SUBMISSION_ID_FKEY = Internal.createForeignKey(ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY, DSL.name("tool_submission_category_tool_submission_id_fkey"), new TableField[] { ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY.TOOL_SUBMISSION_ID }, Keys.TOOL_SUBMISSION_PKEY, new TableField[] { ToolSubmission.TOOL_SUBMISSION.ID }, true);
+    public static final ForeignKey<ToolSubmissionImageMetadataRecord, ImageKindRecord> TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_KIND_FKEY = Internal.createForeignKey(ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA, DSL.name("tool_submission_image_metadata_kind_fkey"), new TableField[] { ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA.KIND }, Keys.IMAGE_KIND_PKEY, new TableField[] { ImageKind.IMAGE_KIND.NAME }, true);
     public static final ForeignKey<ToolSubmissionImageMetadataRecord, ToolSubmissionRecord> TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_TOOL_SUBMISSION_ID_FKEY = Internal.createForeignKey(ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA, DSL.name("tool_submission_image_metadata_tool_submission_id_fkey"), new TableField[] { ToolSubmissionImageMetadata.TOOL_SUBMISSION_IMAGE_METADATA.TOOL_SUBMISSION_ID }, Keys.TOOL_SUBMISSION_PKEY, new TableField[] { ToolSubmission.TOOL_SUBMISSION.ID }, true);
 }

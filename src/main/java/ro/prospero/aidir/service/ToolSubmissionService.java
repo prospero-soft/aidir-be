@@ -1,17 +1,12 @@
 package ro.prospero.aidir.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.DSLContext;
-import org.jooq.JSONB;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ro.prospero.aidir.config.Jank;
 import ro.prospero.aidir.data.ToolDTO;
-import ro.prospero.aidir.data.VendorSubmissionPayload;
 import ro.prospero.aidir.event.ToolUploadEventPublisher;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
 
@@ -38,26 +33,11 @@ public class ToolSubmissionService {
         this.toolUploadEventPublisher = toolUploadEventPublisher;
     }
 
-    public void saveSubmission(VendorSubmissionPayload vendorSubmissionPayload) {
-//        ToolSubmissionRecord toolSubmissionRecord = beanMapper.map(vendorSubmissionPayload, ToolSubmissionRecord.class);
-//        toolSubmissionRecord.setSubmittedBy(Jank.SUBMITTED_BY);
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        try {
-//            String jsonTagList = objectMapper.writeValueAsString(vendorSubmissionPayload.getTags());
-//            toolSubmissionRecord.setTags(JSONB.valueOf(jsonTagList)); // fixme: this back and forth is stupid, try taking a serialized String in the DTO
-//            dslContext.insertInto(TOOL_SUBMISSION).set(toolSubmissionRecord).execute();
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-    }
-
     public List<ToolDTO> getQueue() {
         List<ToolSubmissionRecord> queue = dslContext.selectFrom(TOOL_SUBMISSION)
                                                      .where(TOOL_SUBMISSION.APPROVED.isNull())
                                                      .orderBy(TOOL_SUBMISSION.SUBMITTED_AT.asc())
                                                      .fetch();
-        ToolSubmissionRecord record = queue.getFirst();
 
         List<ToolDTO> mapped = queue.stream().map(r -> beanMapper.map(r, ToolDTO.class)).toList();
 

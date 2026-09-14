@@ -24,6 +24,7 @@ import org.jooq.Stringly;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
@@ -58,7 +59,7 @@ public class CompanyInformation extends TableImpl<CompanyInformationRecord> {
     /**
      * The column <code>public.company_information.account_id</code>.
      */
-    public final TableField<CompanyInformationRecord, Long> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<CompanyInformationRecord, Long> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.company_information.official_name</code>.
@@ -140,6 +141,11 @@ public class CompanyInformation extends TableImpl<CompanyInformationRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public UniqueKey<CompanyInformationRecord> getPrimaryKey() {
+        return Keys.COMPANY_INFORMATION_PKEY;
     }
 
     @Override
