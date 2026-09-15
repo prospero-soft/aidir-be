@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import ro.prospero.aidir.data.ToolDTO;
+import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
 
 import java.util.List;
@@ -66,6 +67,10 @@ public class MapperConfig {
         modelMapper.typeMap(ToolSubmissionRecord.class, ToolDTO.class)
                    .addMappings(m -> m.using(jsonbToList)
                                       .map(ToolSubmissionRecord::getTags, ToolDTO::setTags));
+
+        modelMapper.typeMap(ToolRecord.class, ToolDTO.class)
+                   .addMappings(m -> m.using(jsonbToList)
+                                      .map(ToolRecord::getTags, ToolDTO::setTags));
 
         return modelMapper;
     }

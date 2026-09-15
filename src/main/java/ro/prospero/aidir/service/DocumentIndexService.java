@@ -20,14 +20,17 @@ import java.util.List;
 public class DocumentIndexService {
     private final LuceneDocumentMapper mapper;
     private final LuceneIndexManager manager;
-    private final DirectusService directusService;
+    private final ToolService toolService;
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentIndexService.class);
 
     public void rebuildAll() {
         try {
             IndexWriter indexWriter = manager.getIndexWriter();
-            List<ToolDTO> tools = directusService.getAllTools();
+            List<ToolDTO> tools = toolService.getAll();
 
+            // Cleared first: without this every rebuild adds a second copy of every document, and now that
+            // the catalogue is a table away rather than a CMS away, rebuilding is cheap enough to be routine.
+            indexWriter.deleteAll();
             List<Document> luceneDocuments = tools.stream().map(mapper::toLuceneDocument).toList();
             indexWriter.addDocuments(luceneDocuments);
             indexWriter.commit();

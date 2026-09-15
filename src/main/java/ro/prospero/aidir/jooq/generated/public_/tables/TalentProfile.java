@@ -98,11 +98,6 @@ public class TalentProfile extends TableImpl<TalentProfileRecord> {
     public final TableField<TalentProfileRecord, String> SUMMARY = createField(DSL.name("summary"), SQLDataType.VARCHAR(1000).nullable(false), this, "");
 
     /**
-     * The column <code>public.talent_profile.resume_file_name</code>.
-     */
-    public final TableField<TalentProfileRecord, String> RESUME_FILE_NAME = createField(DSL.name("resume_file_name"), SQLDataType.VARCHAR, this, "");
-
-    /**
      * The column <code>public.talent_profile.work_location</code>.
      */
     public final TableField<TalentProfileRecord, String> WORK_LOCATION = createField(DSL.name("work_location"), SQLDataType.VARCHAR.nullable(false), this, "");

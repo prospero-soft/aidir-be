@@ -40,6 +40,8 @@ import ro.prospero.aidir.jooq.generated.public_.tables.TalentLanguage;
 import ro.prospero.aidir.jooq.generated.public_.tables.TalentProfile;
 import ro.prospero.aidir.jooq.generated.public_.tables.TalentProject;
 import ro.prospero.aidir.jooq.generated.public_.tables.TalentSkill;
+import ro.prospero.aidir.jooq.generated.public_.tables.Tool;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolImageMetadata;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmission;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionCategory;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionImageMetadata;
@@ -230,6 +232,16 @@ public class Tables {
      * The table <code>public.talent_skill</code>.
      */
     public static final TalentSkill TALENT_SKILL = TalentSkill.TALENT_SKILL;
+
+    /**
+     * The table <code>public.tool</code>.
+     */
+    public static final Tool TOOL = Tool.TOOL;
+
+    /**
+     * The table <code>public.tool_image_metadata</code>.
+     */
+    public static final ToolImageMetadata TOOL_IMAGE_METADATA = ToolImageMetadata.TOOL_IMAGE_METADATA;
 
     /**
      * The table <code>public.tool_submission</code>.

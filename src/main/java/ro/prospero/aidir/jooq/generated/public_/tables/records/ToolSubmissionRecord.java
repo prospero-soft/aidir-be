@@ -288,16 +288,16 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     }
 
     /**
-     * Setter for <code>public.tool_submission.uploaded_to_cms</code>.
+     * Setter for <code>public.tool_submission.published</code>.
      */
-    public void setUploadedToCms(Boolean value) {
+    public void setPublished(Boolean value) {
         set(19, value);
     }
 
     /**
-     * Getter for <code>public.tool_submission.uploaded_to_cms</code>.
+     * Getter for <code>public.tool_submission.published</code>.
      */
-    public Boolean getUploadedToCms() {
+    public Boolean getPublished() {
         return (Boolean) get(19);
     }
 
@@ -324,7 +324,7 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     /**
      * Create a detached, initialised ToolSubmissionRecord
      */
-    public ToolSubmissionRecord(Long id, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean uploadedToCms) {
+    public ToolSubmissionRecord(Long id, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean published) {
         super(ToolSubmission.TOOL_SUBMISSION);
 
         setId(id);
@@ -346,7 +346,7 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
         setSubmittedAt(submittedAt);
         setApprovedAt(approvedAt);
         setApproved(approved);
-        setUploadedToCms(uploadedToCms);
+        setPublished(published);
         resetChangedOnNotNull();
     }
 }

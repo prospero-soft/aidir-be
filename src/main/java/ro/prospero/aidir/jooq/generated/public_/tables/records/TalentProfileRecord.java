@@ -105,143 +105,129 @@ public class TalentProfileRecord extends UpdatableRecordImpl<TalentProfileRecord
     }
 
     /**
-     * Setter for <code>public.talent_profile.resume_file_name</code>.
-     */
-    public void setResumeFileName(String value) {
-        set(6, value);
-    }
-
-    /**
-     * Getter for <code>public.talent_profile.resume_file_name</code>.
-     */
-    public String getResumeFileName() {
-        return (String) get(6);
-    }
-
-    /**
      * Setter for <code>public.talent_profile.work_location</code>.
      */
     public void setWorkLocation(String value) {
-        set(7, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.work_location</code>.
      */
     public String getWorkLocation() {
-        return (String) get(7);
+        return (String) get(6);
     }
 
     /**
      * Setter for <code>public.talent_profile.work_relocation</code>.
      */
     public void setWorkRelocation(String value) {
-        set(8, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.work_relocation</code>.
      */
     public String getWorkRelocation() {
-        return (String) get(8);
+        return (String) get(7);
     }
 
     /**
      * Setter for <code>public.talent_profile.work_workplace</code>.
      */
     public void setWorkWorkplace(String value) {
-        set(9, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.work_workplace</code>.
      */
     public String getWorkWorkplace() {
-        return (String) get(9);
+        return (String) get(8);
     }
 
     /**
      * Setter for <code>public.talent_profile.work_employment_type</code>.
      */
     public void setWorkEmploymentType(String value) {
-        set(10, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.work_employment_type</code>.
      */
     public String getWorkEmploymentType() {
-        return (String) get(10);
+        return (String) get(9);
     }
 
     /**
      * Setter for <code>public.talent_profile.link_linkedin</code>.
      */
     public void setLinkLinkedin(String value) {
-        set(11, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.link_linkedin</code>.
      */
     public String getLinkLinkedin() {
-        return (String) get(11);
+        return (String) get(10);
     }
 
     /**
      * Setter for <code>public.talent_profile.link_github</code>.
      */
     public void setLinkGithub(String value) {
-        set(12, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.link_github</code>.
      */
     public String getLinkGithub() {
-        return (String) get(12);
+        return (String) get(11);
     }
 
     /**
      * Setter for <code>public.talent_profile.link_portfolio</code>.
      */
     public void setLinkPortfolio(String value) {
-        set(13, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.link_portfolio</code>.
      */
     public String getLinkPortfolio() {
-        return (String) get(13);
+        return (String) get(12);
     }
 
     /**
      * Setter for <code>public.talent_profile.link_other</code>.
      */
     public void setLinkOther(String value) {
-        set(14, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.link_other</code>.
      */
     public String getLinkOther() {
-        return (String) get(14);
+        return (String) get(13);
     }
 
     /**
      * Setter for <code>public.talent_profile.created_at</code>.
      */
     public void setCreatedAt(OffsetDateTime value) {
-        set(15, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.talent_profile.created_at</code>.
      */
     public OffsetDateTime getCreatedAt() {
-        return (OffsetDateTime) get(15);
+        return (OffsetDateTime) get(14);
     }
 
     // -------------------------------------------------------------------------
@@ -267,7 +253,7 @@ public class TalentProfileRecord extends UpdatableRecordImpl<TalentProfileRecord
     /**
      * Create a detached, initialised TalentProfileRecord
      */
-    public TalentProfileRecord(Long accountId, String fullName, String country, String title, String shortDescription, String summary, String resumeFileName, String workLocation, String workRelocation, String workWorkplace, String workEmploymentType, String linkLinkedin, String linkGithub, String linkPortfolio, String linkOther, OffsetDateTime createdAt) {
+    public TalentProfileRecord(Long accountId, String fullName, String country, String title, String shortDescription, String summary, String workLocation, String workRelocation, String workWorkplace, String workEmploymentType, String linkLinkedin, String linkGithub, String linkPortfolio, String linkOther, OffsetDateTime createdAt) {
         super(TalentProfile.TALENT_PROFILE);
 
         setAccountId(accountId);
@@ -276,7 +262,6 @@ public class TalentProfileRecord extends UpdatableRecordImpl<TalentProfileRecord
         setTitle(title);
         setShortDescription(shortDescription);
         setSummary(summary);
-        setResumeFileName(resumeFileName);
         setWorkLocation(workLocation);
         setWorkRelocation(workRelocation);
         setWorkWorkplace(workWorkplace);

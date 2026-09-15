@@ -29,6 +29,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.ToolImageMetadata.ToolImageMetadataPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionImageMetadata.ToolSubmissionImageMetadataPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ImageKindRecord;
 
@@ -129,6 +130,19 @@ public class ImageKind extends TableImpl<ImageKindRecord> {
     @Override
     public UniqueKey<ImageKindRecord> getPrimaryKey() {
         return Keys.IMAGE_KIND_PKEY;
+    }
+
+    private transient ToolImageMetadataPath _toolImageMetadata;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tool_image_metadata</code> table
+     */
+    public ToolImageMetadataPath toolImageMetadata() {
+        if (_toolImageMetadata == null)
+            _toolImageMetadata = new ToolImageMetadataPath(this, null, Keys.TOOL_IMAGE_METADATA__TOOL_IMAGE_METADATA_KIND_FKEY.getInverseKey());
+
+        return _toolImageMetadata;
     }
 
     private transient ToolSubmissionImageMetadataPath _toolSubmissionImageMetadata;

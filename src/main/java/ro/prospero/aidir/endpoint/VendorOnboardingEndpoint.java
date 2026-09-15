@@ -20,14 +20,7 @@ import ro.prospero.aidir.service.VendorOnboardingService;
 import java.util.List;
 import java.util.Set;
 
-/**
- * The vendor wizard's single submit, at the end of the form rather than in the middle of it: the account
- * password is only collected on the last step, and the account and its submission are created together.
- * <p>
- * Multipart rather than JSON because the logo and screenshots come with it. The payload part is parsed and
- * validated by hand for the same reason {@code UserOnboardingEndpoint} does: a {@code @Valid @RequestPart}
- * reports through a different exception than the rest of the API answers with.
- */
+
 @RestController
 @RequestMapping("api/vendor-onboarding")
 public class VendorOnboardingEndpoint {

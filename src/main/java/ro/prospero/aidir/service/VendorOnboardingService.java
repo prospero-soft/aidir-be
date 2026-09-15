@@ -81,11 +81,12 @@ public class VendorOnboardingService {
                 storeImages(tx, submissionId, logo, screenshots, storedPaths);
                 return new VendorOnboardingResult(accountId, submissionId);
             });
-        } catch (RuntimeException failure) {
+        } catch (RuntimeException exception) {
             storedPaths.forEach(fileStorageService::delete);
-            throw failure;
+            throw exception;
         }
 
+        //fixme: this should not have to live outside of the transaction just because the logic exists in a different class
         openSubscription(result.accountId(), payload);
         return result;
     }

@@ -31,6 +31,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
+import ro.prospero.aidir.jooq.generated.public_.tables.Tool.ToolPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.PricingRecord;
 
@@ -131,6 +132,18 @@ public class Pricing extends TableImpl<PricingRecord> {
     @Override
     public List<UniqueKey<PricingRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.PRICING_TYPE_KEY);
+    }
+
+    private transient ToolPath _tool;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.tool</code> table
+     */
+    public ToolPath tool() {
+        if (_tool == null)
+            _tool = new ToolPath(this, null, Keys.TOOL__TOOL_PRICING_FKEY.getInverseKey());
+
+        return _tool;
     }
 
     private transient ToolSubmissionPath _toolSubmission;

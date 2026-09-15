@@ -37,6 +37,7 @@ import ro.prospero.aidir.jooq.generated.public_.Public;
 import ro.prospero.aidir.jooq.generated.public_.tables.Account.AccountPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Category.CategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Pricing.PricingPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.Tool.ToolPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionCategory.ToolSubmissionCategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.ToolSubmissionImageMetadata.ToolSubmissionImageMetadataPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
@@ -159,9 +160,9 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
     public final TableField<ToolSubmissionRecord, Boolean> APPROVED = createField(DSL.name("approved"), SQLDataType.BOOLEAN, this, "");
 
     /**
-     * The column <code>public.tool_submission.uploaded_to_cms</code>.
+     * The column <code>public.tool_submission.published</code>.
      */
-    public final TableField<ToolSubmissionRecord, Boolean> UPLOADED_TO_CMS = createField(DSL.name("uploaded_to_cms"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+    public final TableField<ToolSubmissionRecord, Boolean> PUBLISHED = createField(DSL.name("published"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
     private ToolSubmission(Name alias, Table<ToolSubmissionRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -293,6 +294,18 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
             _toolSubmissionImageMetadata = new ToolSubmissionImageMetadataPath(this, null, Keys.TOOL_SUBMISSION_IMAGE_METADATA__TOOL_SUBMISSION_IMAGE_METADATA_TOOL_SUBMISSION_ID_FKEY.getInverseKey());
 
         return _toolSubmissionImageMetadata;
+    }
+
+    private transient ToolPath _tool;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.tool</code> table
+     */
+    public ToolPath tool() {
+        if (_tool == null)
+            _tool = new ToolPath(this, null, Keys.TOOL__TOOL_TOOL_SUBMISSION_ID_FKEY.getInverseKey());
+
+        return _tool;
     }
 
     /**
