@@ -32,29 +32,38 @@ public class LuceneDocumentMapper {
         document.add(new LongField(LuceneToolFields.ID, safeId, Field.Store.YES));
         document.add(new TextField(LuceneToolFields.NAME, name, Field.Store.YES));
         document.add(new TextField(LuceneToolFields.NAME_AUTOCOMPLETE, name, Field.Store.NO));
-        document.add(new StringField(LuceneToolFields.CATEGORY_EXACT, safe(toolDTO.getCategory()), Field.Store.YES));
+        // One field per category, not one joined value: a multi-valued StringField is what lets a term
+        // query on any single category match a tool listed under several.
+        for (String category : normalizeTerms(toolDTO.getCategories())) {
+            document.add(new StringField(LuceneToolFields.CATEGORY_EXACT, category, Field.Store.YES));
+        }
+
         document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION, shortDescription, Field.Store.YES));
         document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION_AUTOCOMPLETE, shortDescription, Field.Store.NO));
         document.add(new TextField(LuceneToolFields.LONG_DESCRIPTION, safe(toolDTO.getLongDescription()), Field.Store.NO));
 
-        for (String tag : normalizeTags(toolDTO.getTags())) {
+        for (String tag : normalizeTerms(toolDTO.getTags())) {
             document.add(new StringField(LuceneToolFields.TAGS_EXACT, tag, Field.Store.YES));
         }
 
         return document;
     }
 
-    public List<String> normalizeTags(List<String> tags) {
-        if (tags == null || tags.isEmpty()) {
+    /**
+     * Tags and categories are both indexed as exact terms, so both go through here: trimmed, lower-cased
+     * and de-duplicated, because a term query only ever matches what was written verbatim.
+     */
+    public List<String> normalizeTerms(List<String> terms) {
+        if (terms == null || terms.isEmpty()) {
             return List.of();
         }
 
         Set<String> normalized = new LinkedHashSet<>();
-        for (String tag : tags) {
-            if (tag == null) {
+        for (String term : terms) {
+            if (term == null) {
                 continue;
             }
-            String value = tag.trim().toLowerCase(Locale.ROOT);
+            String value = normalizeTerm(term);
             if (!value.isEmpty()) {
                 normalized.add(value);
             }
@@ -62,11 +71,11 @@ public class LuceneDocumentMapper {
         return new ArrayList<>(normalized);
     }
 
-    public String normalizeTag(String tag) {
-        if (tag == null) {
+    public String normalizeTerm(String term) {
+        if (term == null) {
             return "";
         }
-        return tag.trim().toLowerCase(Locale.ROOT);
+        return term.trim().toLowerCase(Locale.ROOT);
     }
 
     private String safe(String value) {

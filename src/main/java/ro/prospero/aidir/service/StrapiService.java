@@ -80,7 +80,10 @@ public class StrapiService {
 
             data.put("shortDescription", tool.getShortDescription());
             data.put("longDescription", tool.getLongDescription());
-            data.put("category", tool.getCategory());
+            // The Strapi model has one category; the DTO carries every one the tool was listed under.
+            if (tool.getCategories() != null && !tool.getCategories().isEmpty()) {
+                data.put("category", tool.getCategories().getFirst());
+            }
 
             // tags is JSON in Strapi, List<String> in the DTO
             if (tool.getTags() != null) {

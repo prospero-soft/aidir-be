@@ -522,9 +522,27 @@ CREATE TABLE pricing (
 INSERT INTO pricing (type) VALUES
     ('free'),('freemium'),('paid');
 
+-- The browse page's category facet and the vendor onboarding picker read the same vocabulary from here.
+-- Seeded from CATEGORIES in src/components/vendor-onboarding/constants.ts, which is what submissions
+-- already write into tool.categories - the directory sidebar used to carry a second, different list, and
+-- filtering on it never matched anything that had been submitted.
 CREATE TABLE category (
     name VARCHAR PRIMARY KEY
 );
+
+INSERT INTO category (name) VALUES
+    ('Chatbots'),
+    ('Content Creation'),
+    ('Image Generation'),
+    ('Video Creation'),
+    ('Code Assistant'),
+    ('Analytics'),
+    ('Marketing'),
+    ('Sales'),
+    ('Customer Support'),
+    ('Productivity'),
+    ('Design'),
+    ('Audio Processing');
 
 -- Reference vocabularies. These are seeded from what the front end currently hardcodes, and are meant to
 -- become the source for those pickers rather than the other way round: SKILL_OPTIONS and LANGUAGE_OPTIONS

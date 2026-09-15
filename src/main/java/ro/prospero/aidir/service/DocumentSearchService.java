@@ -295,7 +295,7 @@ public class DocumentSearchService {
         }
 
         for (String rawTag : exactTags) {
-            String tag = mapper.normalizeTag(rawTag);
+            String tag = mapper.normalizeTerm(rawTag);
             if (tag.isEmpty()) {
                 continue;
             }
@@ -312,7 +312,7 @@ public class DocumentSearchService {
             return;
         }
 
-            String prefix = mapper.normalizeTag(tagPrefix);
+            String prefix = mapper.normalizeTerm(tagPrefix);
             if (prefix.isEmpty()) {
                 return;
             }

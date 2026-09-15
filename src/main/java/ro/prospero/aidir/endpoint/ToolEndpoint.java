@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import ro.prospero.aidir.data.ToolBrowseQuery;
 import ro.prospero.aidir.data.ToolDTO;
+import ro.prospero.aidir.data.ToolPage;
+import ro.prospero.aidir.data.ToolSort;
+import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolService;
 
 import java.util.List;
@@ -20,14 +24,24 @@ import java.util.List;
 @RequestMapping("api/tool")
 public class ToolEndpoint {
     private ToolService toolService;
+    private ToolBrowseService toolBrowseService;
 
-    @GetMapping("all")
+    /**
+     * The directory. Every parameter is optional, and with none of them this is the front page of the
+     * catalogue: browsing is the default, searching and filtering are what narrow it.
+     *
+     * <p>{@code category} and {@code pricing} repeat rather than taking a delimited list, so a value is
+     * free to contain whatever punctuation a category name happens to have.
+     */
+    @GetMapping("browse")
     @ResponseBody
-    public List<ToolDTO> getAll(@RequestParam List<String> categories) {
-        List<ToolDTO> tools = toolService.getAll();
-
-        return tools;
-
+    public ToolPage browse(@RequestParam(required = false) String query,
+                           @RequestParam(required = false) List<String> category,
+                           @RequestParam(required = false) List<String> pricing,
+                           @RequestParam(required = false) ToolSort sort,
+                           @RequestParam(required = false) Integer page,
+                           @RequestParam(required = false) Integer size) {
+        return toolBrowseService.browse(ToolBrowseQuery.of(query, category, pricing, sort, page, size));
     }
 
     @GetMapping("details/{id}")

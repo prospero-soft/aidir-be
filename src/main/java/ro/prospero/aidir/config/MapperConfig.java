@@ -65,12 +65,16 @@ public class MapperConfig {
         ModelMapper modelMapper = new ModelMapper();
 
         modelMapper.typeMap(ToolSubmissionRecord.class, ToolDTO.class)
-                   .addMappings(m -> m.using(jsonbToList)
-                                      .map(ToolSubmissionRecord::getTags, ToolDTO::setTags));
+                   .addMappings(m -> {
+                       m.using(jsonbToList).map(ToolSubmissionRecord::getTags, ToolDTO::setTags);
+                       m.using(jsonbToList).map(ToolSubmissionRecord::getCategories, ToolDTO::setCategories);
+                   });
 
         modelMapper.typeMap(ToolRecord.class, ToolDTO.class)
-                   .addMappings(m -> m.using(jsonbToList)
-                                      .map(ToolRecord::getTags, ToolDTO::setTags));
+                   .addMappings(m -> {
+                       m.using(jsonbToList).map(ToolRecord::getTags, ToolDTO::setTags);
+                       m.using(jsonbToList).map(ToolRecord::getCategories, ToolDTO::setCategories);
+                   });
 
         return modelMapper;
     }

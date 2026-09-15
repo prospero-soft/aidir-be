@@ -80,7 +80,10 @@ public class DrupalService {
         // title is required
         attrs.put("title", tool.getName());
         attrs.put("field_name", tool.getName());
-        attrs.put("field_category", tool.getCategory());
+        // field_category is a single value in Drupal; the DTO carries every category the tool is under.
+        if (tool.getCategories() != null && !tool.getCategories().isEmpty()) {
+            attrs.put("field_category", tool.getCategories().getFirst());
+        }
         attrs.put("field_id", tool.getId());
         attrs.put("field_long_description", tool.getLongDescription());
         attrs.put("field_short_description", tool.getShortDescription());

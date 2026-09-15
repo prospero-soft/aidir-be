@@ -39,16 +39,56 @@ list of string pairs (q, a)
 ==== get pricing information from somewhere?
 
 === sorting for search results
-what dimensions even make sense for sorting?
-
-
+Answered for now by `/api/tool/browse`, which sorts by relevance, newest or price. Rating is the obvious
+missing dimension and waits on the entry below; "popular" waits on the view/click counters under
+featured and trending signals.
 
 === store rating information
 ==== rating per user per tool
 ==== compute average rating for tools
+Nothing in the schema holds a rating. Until it does, the directory cards draw their stars from
+`src/components/search/placeholders.ts` on the front end and the rating rows in the filter sidebar render
+inert - the sort dropdown deliberately does not offer Rating, because ordering the catalogue by a
+stand-in value looks like a bug rather than a placeholder. That file and the sidebar's Rating group are
+the two call sites to remove when this lands.
 
 === store search/query metrics
 === paginated search results
+Done for the directory: `/api/tool/browse` takes page and size, and answers with a total count and the
+category and pricing facet counts for the filters. `/api/search` is still the capped, unpaged endpoint
+behind the autocomplete, which is all it is used for now.
+
+=== featured and trending signals
+The directory has Featured and Trending tabs, and the navigation has a Verified entry, with no data
+behind any of them: there is no featured flag on a tool, no view or click counters, and no verified
+column. Both tabs currently fall through to the newest listings and the Verified link opens the
+unfiltered directory. Needs the counters (which pairs with "store search/query metrics"), a curation flag
+for featured, and verification wired to the vendor tier that sells it.
+
+=== apply vendor entitlements to ranking
+`vendor_search_boost`, `vendor_priority_listing`, `vendor_top_3_ranking` and `vendor_category_featured`
+exist as features with grants behind them, but no code consults `feature_grant` when searching or
+listing: the paid placement is sold and recorded and then not applied. Both `DocumentSearchService` and
+the ordering in `ToolBrowseService` would have to read it.
+
+=== persist the lucene index
+`LuceneIndexManager` builds a `ByteBuffersDirectory`, so the index lives in the heap, dies with the JVM
+and cannot be shared between nodes - every restart serves nothing until `SearchIndexBootstrap` has
+rebuilt it. `/api/tool/browse` was written not to depend on it for filtering, counting or paging for that
+reason, but the text query still does.
+
+=== filters written into the search input
+The original todo in `DocumentSearchService.search(SearchRequest)`: let the query itself carry filters,
+`#cat:coding` and the like. `addExactTagFilters` and `buildCategoryQuery` are already written there and
+already unreachable - no endpoint calls the overloads that use them. The front page search bar already
+parses `#cat:` client-side and turns it into a category parameter, so the two need to agree on the syntax.
+
+=== validate submitted categories against the category table
+`VendorOnboardingService` writes whatever categories the payload carries straight into
+`tool_submission.categories` as free text. The `category` table is now seeded and is what the directory
+filters on, so a typo or a stale front-end list silently produces a tool nobody can filter to - which is
+exactly how the front end ended up with two disagreeing category lists. `tool_submission_category` is
+the join table for this and is still never written to.
 
 === auth
 ==== Add Spring security
