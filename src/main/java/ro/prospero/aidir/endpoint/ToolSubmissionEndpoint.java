@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import ro.prospero.aidir.data.ToolDTO;
+import ro.prospero.aidir.data.ToolSubmissionDTO;
 import ro.prospero.aidir.service.ToolSubmissionService;
 
 import java.util.List;
@@ -28,25 +28,25 @@ public class ToolSubmissionEndpoint {
     @GetMapping(value = "queue",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ToolDTO> getQueue() {
+    public List<ToolSubmissionDTO> getQueue() {
         return toolSubmissionService.getQueue();
     }
 
     @PostMapping("/approve")
-    public void approve(@RequestBody ToolDTO toolDTO) { // todo: should probably only take the id
-        toolSubmissionService.approve(toolDTO);
+    public void approve(@RequestBody ToolSubmissionDTO submissionDTO) { // todo: should probably only take the id
+        toolSubmissionService.approve(submissionDTO);
     }
 
     @PostMapping("/reject")
-    public void reject(@RequestBody ToolDTO toolDTO) {
-        toolSubmissionService.reject(toolDTO);
+    public void reject(@RequestBody ToolSubmissionDTO submissionDTO) {
+        toolSubmissionService.reject(submissionDTO);
     }
 
     //fixme: should stay dev only
     @GetMapping(value = "/devApproveAll")
     @ResponseBody
     public String approveAllInQueue() {
-        List<ToolDTO> queue = toolSubmissionService.getQueue();
+        List<ToolSubmissionDTO> queue = toolSubmissionService.getQueue();
         queue.forEach(toolSubmissionService::approve);
         return "OK";
     }

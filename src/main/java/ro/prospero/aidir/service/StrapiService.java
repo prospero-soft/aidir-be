@@ -67,34 +67,32 @@ public class StrapiService {
             ObjectNode root = objectMapper.createObjectNode();
             ObjectNode data = root.putObject("data");
 
-            if (tool.getId() != null) {
-                data.put("tool_id", tool.getId());
+            if (tool.id() != null) {
+                data.put("tool_id", tool.id());
             }
-            data.put("name", tool.getName());
-            data.put("url", tool.getUrl());
+            data.put("name", tool.name());
+            data.put("url", tool.url());
 
             // pricing is JSON in Strapi, supplied as a String in the DTO
-            if (tool.getPricing() != null) {
-                data.put("pricing", tool.getPricing());
+            if (tool.pricing() != null) {
+                data.put("pricing", tool.pricing());
             }
 
-            data.put("shortDescription", tool.getShortDescription());
-            data.put("longDescription", tool.getLongDescription());
+            data.put("shortDescription", tool.shortDescription());
+            data.put("longDescription", tool.longDescription());
             // The Strapi model has one category; the DTO carries every one the tool was listed under.
-            if (tool.getCategories() != null && !tool.getCategories().isEmpty()) {
-                data.put("category", tool.getCategories().getFirst());
+            if (tool.categories() != null && !tool.categories().isEmpty()) {
+                data.put("category", tool.categories().getFirst());
             }
 
             // tags is JSON in Strapi, List<String> in the DTO
-            if (tool.getTags() != null) {
-                data.set("tags", objectMapper.valueToTree(tool.getTags()));
+            if (tool.tags() != null) {
+                data.set("tags", objectMapper.valueToTree(tool.tags()));
             }
 
-            if (tool.getApproved() != null) {
-                data.put("approved", tool.getApproved());
-            }
-            if (tool.getSubmittedAt() != null) {
-                data.put("submittedAt", tool.getSubmittedAt().toString());
+            data.put("approved", tool.approvedAt() != null);
+            if (tool.submittedAt() != null) {
+                data.put("submittedAt", tool.submittedAt().toString());
             }
 
             return objectMapper.writeValueAsString(root);

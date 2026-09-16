@@ -1,10 +1,9 @@
 package ro.prospero.aidir.service;
 
 import org.jooq.DSLContext;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.config.UploadsConfig;
+import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolDTO;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
 
@@ -27,14 +26,10 @@ public class ToolService {
     private static final String LOGO = "logo";
 
     private final DSLContext dslContext;
-    private final ModelMapper beanMapper;
     private final UploadsConfig uploadsConfig;
 
-    public ToolService(DSLContext dslContext,
-                       @Qualifier("beanMapper") ModelMapper beanMapper,
-                       UploadsConfig uploadsConfig) {
+    public ToolService(DSLContext dslContext, UploadsConfig uploadsConfig) {
         this.dslContext = dslContext;
-        this.beanMapper = beanMapper;
         this.uploadsConfig = uploadsConfig;
     }
 
@@ -43,7 +38,7 @@ public class ToolService {
                          .where(TOOL.ID.eq(id))
                          .and(TOOL.PUBLISHED.isTrue())
                          .fetchOptional()
-                         .map(this::toDto);
+                         .map(ToolService::toDto);
     }
 
     public List<ToolDTO> getAll() {
@@ -52,7 +47,7 @@ public class ToolService {
                          .orderBy(TOOL.APPROVED_AT.desc())
                          .fetch()
                          .stream()
-                         .map(this::toDto)
+                         .map(ToolService::toDto)
                          .toList();
     }
 
@@ -92,7 +87,16 @@ public class ToolService {
         return base + "/" + path;
     }
 
-    private ToolDTO toDto(ToolRecord record) {
-        return beanMapper.map(record, ToolDTO.class);
+    static ToolDTO toDto(ToolRecord record) {
+        return new ToolDTO(record.getId(),
+                           record.getName(),
+                           record.getUrl(),
+                           record.getPricing(),
+                           record.getShortDescription(),
+                           record.getLongDescription(),
+                           JsonbArrays.readStringArray(record.getCategories()),
+                           JsonbArrays.readStringArray(record.getTags()),
+                           record.getSubmittedAt(),
+                           record.getApprovedAt());
     }
 }

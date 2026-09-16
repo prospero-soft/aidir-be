@@ -23,10 +23,10 @@ public class LuceneDocumentMapper {
     public Document toLuceneDocument(ToolDTO toolDTO) {
         Document document = new Document();
 
-        Long safeId = required(toolDTO.getId());
+        Long safeId = required(toolDTO.id());
         String docKey = docKey(toolDTO);
-        String name = safe(toolDTO.getName());
-        String shortDescription = safe(toolDTO.getShortDescription());
+        String name = safe(toolDTO.name());
+        String shortDescription = safe(toolDTO.shortDescription());
 
         document.add(new StringField(LuceneToolFields.DOC_KEY, docKey, Field.Store.YES));
         document.add(new LongField(LuceneToolFields.ID, safeId, Field.Store.YES));
@@ -34,15 +34,15 @@ public class LuceneDocumentMapper {
         document.add(new TextField(LuceneToolFields.NAME_AUTOCOMPLETE, name, Field.Store.NO));
         // One field per category, not one joined value: a multi-valued StringField is what lets a term
         // query on any single category match a tool listed under several.
-        for (String category : normalizeTerms(toolDTO.getCategories())) {
+        for (String category : normalizeTerms(toolDTO.categories())) {
             document.add(new StringField(LuceneToolFields.CATEGORY_EXACT, category, Field.Store.YES));
         }
 
         document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION, shortDescription, Field.Store.YES));
         document.add(new TextField(LuceneToolFields.SHORT_DESCRIPTION_AUTOCOMPLETE, shortDescription, Field.Store.NO));
-        document.add(new TextField(LuceneToolFields.LONG_DESCRIPTION, safe(toolDTO.getLongDescription()), Field.Store.NO));
+        document.add(new TextField(LuceneToolFields.LONG_DESCRIPTION, safe(toolDTO.longDescription()), Field.Store.NO));
 
-        for (String tag : normalizeTerms(toolDTO.getTags())) {
+        for (String tag : normalizeTerms(toolDTO.tags())) {
             document.add(new StringField(LuceneToolFields.TAGS_EXACT, tag, Field.Store.YES));
         }
 
@@ -99,7 +99,7 @@ public class LuceneDocumentMapper {
     }
 
     public String docKey(ToolDTO toolDTO) {
-        Long safeId = required(toolDTO.getId());
+        Long safeId = required(toolDTO.id());
         String docKey = LuceneToolFields.DOC_TYPE + ":" + safeId;
         return docKey;
     }

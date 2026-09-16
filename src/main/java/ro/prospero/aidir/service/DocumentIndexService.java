@@ -54,7 +54,7 @@ public class DocumentIndexService {
 
         } catch (IOException e) {
             LOGGER.error("Error when creating document:", e);
-            throw new IllegalStateException("Failed to index document " + toolDTO.getId(), e);
+            throw new IllegalStateException("Failed to index document " + toolDTO.id(), e);
         }
     }
 
@@ -64,7 +64,7 @@ public class DocumentIndexService {
                                                     mapper.toLuceneDocument(toolDTO));
         } catch (IOException e) {
             LOGGER.error("Error when updating document:", e);
-            throw new IllegalStateException("Failed to update document " + toolDTO.getId(), e);
+            throw new IllegalStateException("Failed to update document " + toolDTO.id(), e);
         }
     }
 
@@ -73,7 +73,7 @@ public class DocumentIndexService {
             manager.getIndexWriter().deleteDocuments(new Term(LuceneToolFields.DOC_KEY, mapper.docKey(toolDTO)));
         } catch (IOException e) {
             LOGGER.error("Error when deleting document:", e);
-            throw new IllegalStateException("Failed to delete document " + toolDTO.getId(), e);
+            throw new IllegalStateException("Failed to delete document " + toolDTO.id(), e);
         }
     }
 

@@ -1,7 +1,6 @@
 package ro.prospero.aidir.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -13,13 +12,13 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.FacetCount;
+import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolBrowseQuery;
 import ro.prospero.aidir.data.ToolCardDTO;
 import ro.prospero.aidir.data.ToolPage;
 import ro.prospero.aidir.data.ToolSearchHit;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -215,8 +214,8 @@ public class ToolBrowseService {
                                                row.getShortDescription(),
                                                row.getUrl(),
                                                row.getPricing(),
-                                               readStringArray(row.getCategories()),
-                                               readStringArray(row.getTags()),
+                                               JsonbArrays.readStringArray(row.getCategories()),
+                                               JsonbArrays.readStringArray(row.getTags()),
                                                logoUrls.get(row.getId()),
                                                row.getApprovedAt()))
                    .toList();
@@ -230,15 +229,4 @@ public class ToolBrowseService {
         }
     }
 
-    private List<String> readStringArray(JSONB jsonb) {
-        if (jsonb == null) {
-            return List.of();
-        }
-        try {
-            return objectMapper.readValue(jsonb.data(), new TypeReference<ArrayList<String>>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Malformed JSON array in the tool table: " + jsonb.data(), e);
-        }
-    }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.ToolDTO;
+import ro.prospero.aidir.data.ToolSubmissionDTO;
 import ro.prospero.aidir.event.ToolUploadEventPublisher;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
 
@@ -39,15 +40,13 @@ public class ToolSubmissionService {
         this.toolUploadEventPublisher = toolUploadEventPublisher;
     }
 
-    public List<ToolDTO> getQueue() {
+    public List<ToolSubmissionDTO> getQueue() {
         List<ToolSubmissionRecord> queue = dslContext.selectFrom(TOOL_SUBMISSION)
                                                      .where(TOOL_SUBMISSION.APPROVED.isNull())
                                                      .orderBy(TOOL_SUBMISSION.SUBMITTED_AT.asc())
                                                      .fetch();
 
-        List<ToolDTO> mapped = queue.stream().map(r -> beanMapper.map(r, ToolDTO.class)).toList();
-
-        return mapped;
+        return queue.stream().map(r -> beanMapper.map(r, ToolSubmissionDTO.class)).toList();
     }
 
     /**
@@ -62,11 +61,11 @@ public class ToolSubmissionService {
      * {@link VendorOnboardingService}: JooqConfig builds its DSLContext over the raw DataSource, so
      * Spring's transaction manager would not enrol these statements.
      */
-    public void approve(ToolDTO toolDTO) {
-        if (toolDTO.getId() == null) {
+    public void approve(ToolSubmissionDTO submissionDTO) {
+        if (submissionDTO.getId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot approve a submission with no id");
         }
-        long submissionId = toolDTO.getId();
+        long submissionId = submissionDTO.getId();
 
         Long toolId = dslContext.transactionResult(cfg -> {
             DSLContext tx = DSL.using(cfg);
@@ -120,8 +119,8 @@ public class ToolSubmissionService {
     }
 
     // todo: should support some rejection message probably
-    public void reject(ToolDTO toolDTO) {
-        Long id = toolDTO.getId();
+    public void reject(ToolSubmissionDTO submissionDTO) {
+        Long id = submissionDTO.getId();
         dslContext.update(TOOL_SUBMISSION)
                   .set(TOOL_SUBMISSION.APPROVED, false)
                   .where(TOOL_SUBMISSION.ID.eq(id))

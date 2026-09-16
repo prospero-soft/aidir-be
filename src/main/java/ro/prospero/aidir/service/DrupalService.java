@@ -78,30 +78,30 @@ public class DrupalService {
 
         ObjectNode attrs = data.putObject("attributes");
         // title is required
-        attrs.put("title", tool.getName());
-        attrs.put("field_name", tool.getName());
+        attrs.put("title", tool.name());
+        attrs.put("field_name", tool.name());
         // field_category is a single value in Drupal; the DTO carries every category the tool is under.
-        if (tool.getCategories() != null && !tool.getCategories().isEmpty()) {
-            attrs.put("field_category", tool.getCategories().getFirst());
+        if (tool.categories() != null && !tool.categories().isEmpty()) {
+            attrs.put("field_category", tool.categories().getFirst());
         }
-        attrs.put("field_id", tool.getId());
-        attrs.put("field_long_description", tool.getLongDescription());
-        attrs.put("field_short_description", tool.getShortDescription());
-        if (tool.getTags() != null) {
+        attrs.put("field_id", tool.id());
+        attrs.put("field_long_description", tool.longDescription());
+        attrs.put("field_short_description", tool.shortDescription());
+        if (tool.tags() != null) {
             ArrayNode tagArray = attrs.putArray("field_hashtags");
-            tool.getTags().forEach(tagArray::add);
+            tool.tags().forEach(tagArray::add);
         }
 
         //todo: pricing is a list(text) apparently, I'll have to figure out support for this in the UI/backend
-        if (tool.getPricing() != null) {
+        if (tool.pricing() != null) {
             ArrayNode pricingArray = attrs.putArray("field_pricing");
-            pricingArray.add(tool.getPricing());
+            pricingArray.add(tool.pricing());
         }
 
         // Link field
-        if (tool.getUrl() != null) {
+        if (tool.url() != null) {
             ObjectNode urlNode = attrs.putObject("field_url");
-            urlNode.put("uri", tool.getUrl());
+            urlNode.put("uri", tool.url());
 //            if (tool.getUrlTitle() != null) {
 //                urlNode.put("title", tool.getUrlTitle());
 //            }
