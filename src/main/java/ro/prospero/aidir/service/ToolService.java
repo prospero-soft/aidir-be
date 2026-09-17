@@ -24,6 +24,8 @@ import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_IMAGE_METADAT
 @Service
 public class ToolService {
     private static final String LOGO = "logo";
+    /** The {@code kind} the onboarding upload writes for the gallery images, as opposed to the logo. */
+    public static final String SCREENSHOT = "screenshot";
 
     private final DSLContext dslContext;
     private final UploadsConfig uploadsConfig;
@@ -76,6 +78,21 @@ public class ToolService {
                          .collect(Collectors.toMap(r -> r.get(TOOL_IMAGE_METADATA.TOOL_ID),
                                                    r -> publicUrl(r.get(TOOL_IMAGE_METADATA.IMAGE_PATH)),
                                                    (first, second) -> first));
+    }
+
+    /**
+     * The URLs of one tool's images of a kind, in the order the vendor uploaded them - the screenshots a
+     * details page shows, as opposed to the one logo a card needs.
+     *
+     * @param kind {@code "logo"} or {@code "screenshot"}, as written by the onboarding upload
+     */
+    public List<String> findImageUrls(long toolId, String kind) {
+        return dslContext.select(TOOL_IMAGE_METADATA.IMAGE_PATH)
+                         .from(TOOL_IMAGE_METADATA)
+                         .where(TOOL_IMAGE_METADATA.TOOL_ID.eq(toolId))
+                         .and(TOOL_IMAGE_METADATA.KIND.eq(kind))
+                         .orderBy(TOOL_IMAGE_METADATA.DISPLAY_ORDER.asc())
+                         .fetch(r -> publicUrl(r.value1()));
     }
 
     private String publicUrl(String relativePath) {

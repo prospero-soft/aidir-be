@@ -1,16 +1,21 @@
 package ro.prospero.aidir.endpoint;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.TalentBrowseQuery;
+import ro.prospero.aidir.data.TalentDetailsDTO;
 import ro.prospero.aidir.data.TalentLocationScope;
 import ro.prospero.aidir.data.TalentPage;
 import ro.prospero.aidir.data.TalentSort;
 import ro.prospero.aidir.service.TalentBrowseService;
+import ro.prospero.aidir.service.TalentProfileService;
 
 import java.util.List;
 
@@ -19,6 +24,7 @@ import java.util.List;
 @RequestMapping("api/talent")
 public class TalentEndpoint {
     private TalentBrowseService talentBrowseService;
+    private TalentProfileService talentProfileService;
 
     /**
      * The talent directory. Every parameter is optional, and with none of them this is the whole directory,
@@ -57,5 +63,13 @@ public class TalentEndpoint {
                                                               sort,
                                                               page,
                                                               size));
+    }
+
+    @GetMapping("details/{id}")
+    @ResponseBody
+    public TalentDetailsDTO details(@PathVariable Long id) {
+        return talentProfileService.find(id)
+                                   .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                  "No talent profile with id " + id));
     }
 }

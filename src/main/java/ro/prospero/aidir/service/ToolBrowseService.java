@@ -1,20 +1,15 @@
 package ro.prospero.aidir.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.JSONB;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.FacetCount;
-import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolBrowseQuery;
-import ro.prospero.aidir.data.ToolCardDTO;
 import ro.prospero.aidir.data.ToolPage;
 import ro.prospero.aidir.data.ToolSearchHit;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
@@ -51,17 +46,14 @@ public class ToolBrowseService {
 
     private final DSLContext dslContext;
     private final DocumentSearchService documentSearchService;
-    private final ToolService toolService;
-    private final ObjectMapper objectMapper;
+    private final ToolCards toolCards;
 
     public ToolBrowseService(DSLContext dslContext,
                              DocumentSearchService documentSearchService,
-                             ToolService toolService,
-                             ObjectMapper objectMapper) {
+                             ToolCards toolCards) {
         this.dslContext = dslContext;
         this.documentSearchService = documentSearchService;
-        this.toolService = toolService;
-        this.objectMapper = objectMapper;
+        this.toolCards = toolCards;
     }
 
     public ToolPage browse(ToolBrowseQuery query) {
@@ -74,7 +66,7 @@ public class ToolBrowseService {
         }
 
         Condition base = baseCondition(rankedIds, query.hasQuery());
-        Condition categories = categoryCondition(query.categories());
+        Condition categories = ToolConditions.inCategories(query.categories());
         Condition pricing = pricingCondition(query.pricing());
         Condition all = base.and(categories).and(pricing);
 
@@ -90,7 +82,7 @@ public class ToolBrowseService {
                                           .offset(query.offset())
                                           .fetch();
 
-        return new ToolPage(toCards(rows),
+        return new ToolPage(toolCards.toCards(rows),
                             total,
                             query.page(),
                             query.size(),
@@ -126,23 +118,6 @@ public class ToolBrowseService {
     private Condition baseCondition(List<Long> rankedIds, boolean hasQuery) {
         Condition published = TOOL.PUBLISHED.isTrue();
         return hasQuery ? published.and(TOOL.ID.in(rankedIds)) : published;
-    }
-
-    /**
-     * Selected categories are OR-ed: picking Design and Marketing asks for tools in either, which is what
-     * ticking two boxes in a sidebar is universally taken to mean.
-     */
-    private Condition categoryCondition(List<String> categories) {
-        if (categories.isEmpty()) {
-            return DSL.noCondition();
-        }
-
-        List<Condition> each = categories.stream()
-                                         .map(c -> DSL.condition("{0} @> {1}",
-                                                                 TOOL.CATEGORIES,
-                                                                 DSL.val(jsonArrayOf(c))))
-                                         .toList();
-        return DSL.or(each);
     }
 
     private Condition pricingCondition(List<String> pricing) {
@@ -202,31 +177,6 @@ public class ToolBrowseService {
                          .groupBy(TOOL.PRICING)
                          .orderBy(priceOrder().asc())
                          .fetch(r -> new FacetCount(r.value1(), r.value2()));
-    }
-
-    private List<ToolCardDTO> toCards(List<ToolRecord> rows) {
-        List<Long> ids = rows.stream().map(ToolRecord::getId).toList();
-        Map<Long, String> logoUrls = toolService.findLogoUrls(ids);
-
-        return rows.stream()
-                   .map(row -> new ToolCardDTO(row.getId(),
-                                               row.getName(),
-                                               row.getShortDescription(),
-                                               row.getUrl(),
-                                               row.getPricing(),
-                                               JsonbArrays.readStringArray(row.getCategories()),
-                                               JsonbArrays.readStringArray(row.getTags()),
-                                               logoUrls.get(row.getId()),
-                                               row.getApprovedAt()))
-                   .toList();
-    }
-
-    private JSONB jsonArrayOf(String value) {
-        try {
-            return JSONB.valueOf(objectMapper.writeValueAsString(List.of(value)));
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Could not build a JSON array out of " + value, e);
-        }
     }
 
 }

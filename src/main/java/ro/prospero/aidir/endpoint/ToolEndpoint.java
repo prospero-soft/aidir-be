@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.ToolBrowseQuery;
-import ro.prospero.aidir.data.ToolDTO;
+import ro.prospero.aidir.data.ToolDetailsDTO;
 import ro.prospero.aidir.data.ToolPage;
 import ro.prospero.aidir.data.ToolSort;
 import ro.prospero.aidir.service.ToolBrowseService;
-import ro.prospero.aidir.service.ToolService;
+import ro.prospero.aidir.service.ToolDetailsService;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("api/tool")
 public class ToolEndpoint {
-    private ToolService toolService;
+    private ToolDetailsService toolDetailsService;
     private ToolBrowseService toolBrowseService;
 
     /**
@@ -44,12 +44,13 @@ public class ToolEndpoint {
         return toolBrowseService.browse(ToolBrowseQuery.of(query, category, pricing, sort, page, size));
     }
 
+    /** One listing, whole: the card the directory showed plus the features, plans, media and alternatives. */
     @GetMapping("details/{id}")
     @ResponseBody
-    public ToolDTO getOne(@PathVariable Long id) {
-        return toolService.find(id)
-                          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                                         "No tool with id " + id));
+    public ToolDetailsDTO getOne(@PathVariable Long id) {
+        return toolDetailsService.find(id)
+                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                "No tool with id " + id));
     }
 
 }

@@ -65,10 +65,12 @@ column. Both tabs currently fall through to the newest listings and the Verified
 unfiltered directory. Needs the counters (which pairs with "store search/query metrics"), a curation flag
 for featured, and verification wired to the vendor tier that sells it.
 
-=== talent directory signals the schema has nowhere to put
+=== talent signals the schema has nowhere to put
 `/api/talent/browse` serves the half of the directory's sidebar that has columns behind it - skills,
 languages, workplace, employment type, location, relocation and text. The other half is rendered disabled
-on the front end, with its stand-in values quarantined in `src/components/talent/placeholders.ts`:
+on the front end, with its stand-in values quarantined in `src/components/talent/placeholders.ts`. The
+same file now also feeds the public profile page, which draws the badges, the availability dot, the years
+of experience, the industries row and a last-updated date whether or not anything backs them:
 
 * open-to-work, and the response-rate signal behind "More likely to respond" - no flags, nothing recording
   outreach replies
@@ -80,6 +82,10 @@ on the front end, with its stand-in values quarantined in `src/components/talent
 * seniority, and match score for the "AI Match" badge and its default sort - nothing computes either
 * profile photos - there is no talent image table; only tools have `tool_image_metadata`, and onboarding
   never accepts a photo
+* last updated - `talent_profile` records `created_at` only, so the profile page's "Updated" line is
+  derived from the creation date rather than from anything that tracks edits
+* daily rates - the rate insights section on the profile page is entirely front-end mock; nothing collects
+  rates and nothing aggregates comparable ones
 
 Also: `work_employment_type` is a single VARCHAR while the directory's design treats engagement types as a
 set a person accepts. And a talent directory is personal data served with no auth gate, which mattered

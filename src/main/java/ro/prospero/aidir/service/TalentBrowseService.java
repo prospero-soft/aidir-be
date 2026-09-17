@@ -9,15 +9,11 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.FacetCount;
 import ro.prospero.aidir.data.TalentBrowseQuery;
-import ro.prospero.aidir.data.TalentCardDTO;
 import ro.prospero.aidir.data.TalentLocationScope;
 import ro.prospero.aidir.data.TalentPage;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.TalentProfileRecord;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
 import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
@@ -45,9 +41,11 @@ public class TalentBrowseService {
     private static final int FACET_LIMIT = 50;
 
     private final DSLContext dslContext;
+    private final TalentCards talentCards;
 
-    public TalentBrowseService(DSLContext dslContext) {
+    public TalentBrowseService(DSLContext dslContext, TalentCards talentCards) {
         this.dslContext = dslContext;
+        this.talentCards = talentCards;
     }
 
     public TalentPage browse(TalentBrowseQuery query) {
@@ -81,7 +79,7 @@ public class TalentBrowseService {
         Condition withoutLanguages = text.and(locations).and(workplace).and(employment).and(skills);
         Condition withoutLocations = text.and(workplace).and(employment).and(skills).and(languages);
 
-        return new TalentPage(toCards(rows),
+        return new TalentPage(talentCards.toCards(rows),
                               total,
                               query.page(),
                               query.size(),
@@ -204,52 +202,6 @@ public class TalentBrowseService {
                          .orderBy(DSL.count().desc(), value.asc())
                          .limit(FACET_LIMIT)
                          .fetch(r -> new FacetCount(r.value1(), r.value2()));
-    }
-
-    /** Skills and languages are read for the whole page in one query each, not one per row. */
-    private List<TalentCardDTO> toCards(List<TalentProfileRecord> rows) {
-        List<Long> ids = rows.stream().map(TalentProfileRecord::getAccountId).toList();
-        Map<Long, List<String>> skills = groupedValues(TALENT_SKILL,
-                                                       TALENT_SKILL.ACCOUNT_ID,
-                                                       TALENT_SKILL.SKILL,
-                                                       ids);
-        Map<Long, List<String>> languages = groupedValues(TALENT_LANGUAGE,
-                                                          TALENT_LANGUAGE.ACCOUNT_ID,
-                                                          TALENT_LANGUAGE.LANGUAGE,
-                                                          ids);
-
-        return rows.stream()
-                   .map(row -> new TalentCardDTO(row.getAccountId(),
-                                                 row.getFullName(),
-                                                 row.getTitle(),
-                                                 row.getShortDescription(),
-                                                 row.getSummary(),
-                                                 row.getCountry(),
-                                                 row.getWorkLocation(),
-                                                 row.getWorkRelocation(),
-                                                 row.getWorkWorkplace(),
-                                                 row.getWorkEmploymentType(),
-                                                 skills.getOrDefault(row.getAccountId(), List.of()),
-                                                 languages.getOrDefault(row.getAccountId(), List.of()),
-                                                 row.getCreatedAt()))
-                   .toList();
-    }
-
-    private Map<Long, List<String>> groupedValues(Table<?> table,
-                                                  Field<Long> accountId,
-                                                  Field<String> value,
-                                                  List<Long> ids) {
-        if (ids.isEmpty()) {
-            return Map.of();
-        }
-
-        Map<Long, List<String>> grouped = new HashMap<>();
-        dslContext.select(accountId, value)
-                  .from(table)
-                  .where(accountId.in(ids))
-                  .orderBy(accountId.asc(), value.asc())
-                  .forEach(r -> grouped.computeIfAbsent(r.value1(), k -> new ArrayList<>()).add(r.value2()));
-        return grouped;
     }
 
     private Condition eq(Field<String> column, String value) {

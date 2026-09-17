@@ -21,7 +21,8 @@ import java.util.List;
 public class ToolSubmissionEndpoint {
     private final ToolSubmissionService toolSubmissionService;
 
-    public ToolSubmissionEndpoint(ToolSubmissionService toolSubmissionService) {
+    public ToolSubmissionEndpoint(ToolSubmissionService
+                                          toolSubmissionService) {
         this.toolSubmissionService = toolSubmissionService;
     }
 
