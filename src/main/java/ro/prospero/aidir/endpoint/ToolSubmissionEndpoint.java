@@ -43,8 +43,7 @@ public class ToolSubmissionEndpoint {
         toolSubmissionService.reject(submissionDTO);
     }
 
-    //fixme: should stay dev only
-    @GetMapping(value = "/devApproveAll")
+    @PostMapping("/devApproveAll")
     @ResponseBody
     public String approveAllInQueue() {
         List<ToolSubmissionDTO> queue = toolSubmissionService.getQueue();

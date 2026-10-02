@@ -77,31 +77,45 @@ public class AccountRecord extends UpdatableRecordImpl<AccountRecord> {
     }
 
     /**
+     * Setter for <code>public.account.display_name</code>.
+     */
+    public void setDisplayName(String value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.account.display_name</code>.
+     */
+    public String getDisplayName() {
+        return (String) get(4);
+    }
+
+    /**
      * Setter for <code>public.account.role</code>.
      */
     public void setRole(Long value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.account.role</code>.
      */
     public Long getRole() {
-        return (Long) get(4);
+        return (Long) get(5);
     }
 
     /**
      * Setter for <code>public.account.terms_accepted_at</code>.
      */
     public void setTermsAcceptedAt(OffsetDateTime value) {
-        set(5, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.account.terms_accepted_at</code>.
      */
     public OffsetDateTime getTermsAcceptedAt() {
-        return (OffsetDateTime) get(5);
+        return (OffsetDateTime) get(6);
     }
 
     // -------------------------------------------------------------------------
@@ -127,13 +141,14 @@ public class AccountRecord extends UpdatableRecordImpl<AccountRecord> {
     /**
      * Create a detached, initialised AccountRecord
      */
-    public AccountRecord(Long id, String email, String password, String accountType, Long role, OffsetDateTime termsAcceptedAt) {
+    public AccountRecord(Long id, String email, String password, String accountType, String displayName, Long role, OffsetDateTime termsAcceptedAt) {
         super(Account.ACCOUNT);
 
         setId(id);
         setEmail(email);
         setPassword(password);
         setAccountType(accountType);
+        setDisplayName(displayName);
         setRole(role);
         setTermsAcceptedAt(termsAcceptedAt);
         resetChangedOnNotNull();

@@ -87,6 +87,11 @@ public class Account extends TableImpl<AccountRecord> {
     public final TableField<AccountRecord, String> ACCOUNT_TYPE = createField(DSL.name("account_type"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
+     * The column <code>public.account.display_name</code>.
+     */
+    public final TableField<AccountRecord, String> DISPLAY_NAME = createField(DSL.name("display_name"), SQLDataType.VARCHAR(200).nullable(false), this, "");
+
+    /**
      * The column <code>public.account.role</code>.
      */
     public final TableField<AccountRecord, Long> ROLE = createField(DSL.name("role"), SQLDataType.BIGINT, this, "");

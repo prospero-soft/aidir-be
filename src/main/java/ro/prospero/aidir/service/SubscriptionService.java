@@ -1,5 +1,6 @@
 package ro.prospero.aidir.service;
 
+import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -65,12 +66,24 @@ public class SubscriptionService {
     }
 
     private static Optional<SubscriptionRecord> current(DSLContext tx, long accountId) {
-        OffsetDateTime now = OffsetDateTime.now();
         return tx.selectFrom(SUBSCRIPTION)
                  .where(SUBSCRIPTION.ACCOUNT_ID.eq(accountId))
-                 .and(SUBSCRIPTION.PERIOD_START.le(now))
-                 .and(SUBSCRIPTION.PERIOD_END.gt(now))
+                 .and(covers(OffsetDateTime.now()))
                  .fetchOptional();
+    }
+
+    /** The name of the plan the period covering now is on. Empty for an account with no period. */
+    public Optional<String> currentPlanName(long accountId) {
+        return dslContext.select(PLAN.NAME)
+                         .from(SUBSCRIPTION)
+                         .join(PLAN).on(PLAN.ID.eq(SUBSCRIPTION.PLAN_ID))
+                         .where(SUBSCRIPTION.ACCOUNT_ID.eq(accountId))
+                         .and(covers(OffsetDateTime.now()))
+                         .fetchOptional(PLAN.NAME);
+    }
+
+    private static Condition covers(OffsetDateTime instant) {
+        return SUBSCRIPTION.PERIOD_START.le(instant).and(SUBSCRIPTION.PERIOD_END.gt(instant));
     }
 
     /** Whether the account is currently inside a grace period. */

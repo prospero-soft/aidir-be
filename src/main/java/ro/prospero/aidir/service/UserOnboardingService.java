@@ -80,9 +80,10 @@ public class UserOnboardingService {
 
     private long insertAccount(DSLContext tx, UserBasic basic) {
         Long accountId = tx.insertInto(ACCOUNT)
-                           .set(ACCOUNT.EMAIL, basic.email())
+                           .set(ACCOUNT.EMAIL, AccountService.normalizeEmail(basic.email()))
                            .set(ACCOUNT.PASSWORD, passwordEncoder.encode(basic.password()))
                            .set(ACCOUNT.ACCOUNT_TYPE, TALENT)
+                           .set(ACCOUNT.DISPLAY_NAME, basic.fullName())
                            .set(ACCOUNT.TERMS_ACCEPTED_AT, OffsetDateTime.now())
                            .returningResult(ACCOUNT.ID)
                            .fetchOne(ACCOUNT.ID);

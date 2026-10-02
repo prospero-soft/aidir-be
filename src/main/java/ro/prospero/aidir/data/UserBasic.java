@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record UserBasic(
-        @NotBlank String fullName,
+        @NotBlank @Size(max = FULL_NAME_MAX_LENGTH) String fullName,
         @NotBlank @Email String email,
         @NotBlank String country,
         @NotBlank @Size(min = PASSWORD_MIN_LENGTH) String password,
@@ -15,6 +15,7 @@ public record UserBasic(
         @AssertTrue(message = "basic.agreed must be accepted") boolean agreed
 ) {
     public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int FULL_NAME_MAX_LENGTH = 200;
 
     @JsonIgnore
     @AssertTrue(message = "basic.password and basic.confirmPassword must match")

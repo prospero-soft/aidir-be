@@ -93,9 +93,11 @@ public class VendorOnboardingService {
 
     private long insertAccount(DSLContext tx, VendorSubmissionPayload payload) {
         Long accountId = tx.insertInto(ACCOUNT)
-                           .set(ACCOUNT.EMAIL, payload.company().workEmail())
+                           .set(ACCOUNT.EMAIL, AccountService.normalizeEmail(payload.company().workEmail()))
                            .set(ACCOUNT.PASSWORD, passwordEncoder.encode(payload.account().password()))
                            .set(ACCOUNT.ACCOUNT_TYPE, VENDOR)
+                           // Vendor onboarding collects no personal name, so the company's stands in.
+                           .set(ACCOUNT.DISPLAY_NAME, payload.company().officialName())
                            .set(ACCOUNT.TERMS_ACCEPTED_AT, OffsetDateTime.now())
                            .returningResult(ACCOUNT.ID)
                            .fetchOne(ACCOUNT.ID);
@@ -137,7 +139,7 @@ public class VendorOnboardingService {
                 .set(TOOL_SUBMISSION.HIGHLIGHT_PLAN_ID, product.highlightPlanId())
                 .set(TOOL_SUBMISSION.INTEGRATIONS, toJsonb(product.integrations()))
                 .set(TOOL_SUBMISSION.DEMO_VIDEO_URL, product.demoVideoUrl())
-                .set(TOOL_SUBMISSION.SUBMITTED_BY, payload.company().workEmail())
+                .set(TOOL_SUBMISSION.SUBMITTED_BY, AccountService.normalizeEmail(payload.company().workEmail()))
                 .returningResult(TOOL_SUBMISSION.ID)
                 .fetchOne(TOOL_SUBMISSION.ID);
         if (submissionId == null) {

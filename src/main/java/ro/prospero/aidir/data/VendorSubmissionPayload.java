@@ -31,7 +31,7 @@ public record VendorSubmissionPayload(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Company(
-            @NotBlank String officialName,
+            @NotBlank @Size(max = NAME_MAX_LENGTH) String officialName,
             @NotBlank String websiteUrl,
             @NotBlank @Email String workEmail,
             @NotBlank String description,

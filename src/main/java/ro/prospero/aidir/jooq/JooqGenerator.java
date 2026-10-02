@@ -22,6 +22,8 @@ public class JooqGenerator {
                                       PG_.*
                                       | DATABASECHANGELOG
                                       | DATABASECHANGELOGLOCK
+                                      | SPRING_SESSION
+                                      | SPRING_SESSION_ATTRIBUTES
                                       """);
         Target target = new Target()
                 .withDirectory("/src/main/java")

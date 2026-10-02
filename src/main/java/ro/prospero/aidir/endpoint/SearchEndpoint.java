@@ -2,6 +2,7 @@ package ro.prospero.aidir.endpoint;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,8 +34,7 @@ public class SearchEndpoint {
 
     //todo: add support for more complex search/filtering
 
-    //fixme: should be auth-gated and admin-restricted once security is in
-    @GetMapping("reindex")
+    @PostMapping("reindex")
     @ResponseBody
     public String reindex() {
         documentIndexService.rebuildAll();
