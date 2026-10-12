@@ -27,6 +27,7 @@ import ro.prospero.aidir.security.AccountUserDetailsService;
 import ro.prospero.aidir.service.AccountService;
 import ro.prospero.aidir.service.DocumentIndexService;
 import ro.prospero.aidir.service.DocumentSearchService;
+import ro.prospero.aidir.service.TalentProfileEditService;
 import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolSubmissionService;
 
@@ -37,11 +38,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * The web layer with the real security configuration and no database: the services are mocks, and
- * three accounts exist only as far as {@link AccountService} says they do.
+ * the accounts exist only as far as {@link AccountService} says they do.
  *
  * <p>Sessions go through Spring Session, as they do in the running application, but into a map rather
  * than Postgres. That is what lets these tests look at the session cookie the browser would be sent -
@@ -49,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * auto-configuration as in production, from the same properties.
  */
 @WebMvcTest(controllers = {AuthEndpoint.class, ToolSubmissionEndpoint.class, SearchEndpoint.class,
-                           CategoryEndpoint.class},
+                           CategoryEndpoint.class, TalentProfileEditEndpoint.class},
             properties = "aidir.uploads.root=target/test-uploads")
 @Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class,
          EndpointSecurityTestBase.InMemorySessions.class})
@@ -63,6 +65,8 @@ abstract class EndpointSecurityTestBase {
     static final String PASSWORD = "password";
     static final String VENDOR = "vendor@aidir.test";
     static final String ADMIN = "admin@aidir.test";
+    static final String TALENT = "talent@aidir.test";
+    static final long TALENT_ID = 3L;
 
     // The lowest cost bcrypt allows: these tests sign in many times and are not testing the hash.
     private static final String PASSWORD_HASH = new BCryptPasswordEncoder(4).encode(PASSWORD);
@@ -84,6 +88,8 @@ abstract class EndpointSecurityTestBase {
     DocumentIndexService documentIndexService;
     @MockitoBean
     MetricEventPublisher metricEventPublisher;
+    @MockitoBean
+    TalentProfileEditService talentProfileEditService;
 
     @TestConfiguration(proxyBeanMethods = false)
     @EnableSpringHttpSession
@@ -98,6 +104,7 @@ abstract class EndpointSecurityTestBase {
     void accounts() {
         account(1L, VENDOR, "vendor", "Acme Tools", "premium");
         account(2L, ADMIN, "admin", "Administrator", null);
+        account(TALENT_ID, TALENT, "talent", "Alex Morgan", "pro");
     }
 
     private void account(long id, String email, String accountType, String name, String planKey) {
@@ -115,6 +122,10 @@ abstract class EndpointSecurityTestBase {
     /** A POST the way the front end sends one: the token from the cookie, repeated in the header. */
     static MockHttpServletRequestBuilder postWithCsrf(String url) {
         return post(url).cookie(new Cookie(CSRF_COOKIE, CSRF_TOKEN)).header(CSRF_HEADER, CSRF_TOKEN);
+    }
+
+    static MockHttpServletRequestBuilder putWithCsrf(String url) {
+        return put(url).cookie(new Cookie(CSRF_COOKIE, CSRF_TOKEN)).header(CSRF_HEADER, CSRF_TOKEN);
     }
 
     static MockHttpServletRequestBuilder login(MockHttpServletRequestBuilder request, String email,

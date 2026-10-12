@@ -14,19 +14,11 @@ import ro.prospero.aidir.data.UserOnboardingResult;
 import ro.prospero.aidir.data.UserPlanKey;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
 import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN;
 import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN_PRICE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_CERTIFICATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_COURSE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EDUCATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EXPERIENCE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
 import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROJECT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_SKILL;
 
 /**
  * The talent wizard's one write, in two shapes: a free signup is an account and the subscription that
@@ -49,13 +41,16 @@ public class UserOnboardingService {
     private final DSLContext dslContext;
     private final SubscriptionService subscriptionService;
     private final PasswordEncoder passwordEncoder;
+    private final TalentProfileSections sections;
 
     public UserOnboardingService(DSLContext dslContext,
                                  SubscriptionService subscriptionService,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder,
+                                 TalentProfileSections sections) {
         this.dslContext = dslContext;
         this.subscriptionService = subscriptionService;
         this.passwordEncoder = passwordEncoder;
+        this.sections = sections;
     }
 
     public UserOnboardingResult onboardFree(FreeUserOnboardingPayload payload) {
@@ -119,112 +114,13 @@ public class UserOnboardingService {
           .set(TALENT_PROFILE.LINK_OTHER, links == null ? null : links.other())
           .execute();
 
-        insertSkills(tx, accountId, profile.skills());
-        insertLanguages(tx, accountId, profile.languages());
-        insertExperience(tx, accountId, profile.experience());
-        insertEducation(tx, accountId, profile.education());
-        insertCertifications(tx, accountId, profile.certifications());
-        insertCourses(tx, accountId, profile.courses());
-        insertProjects(tx, accountId, profile.projects());
-    }
-
-    private void insertSkills(DSLContext tx, long accountId, List<String> skills) {
-        for (String skill : skills) {
-            tx.insertInto(TALENT_SKILL)
-              .set(TALENT_SKILL.ACCOUNT_ID, accountId)
-              .set(TALENT_SKILL.SKILL, skill)
-              .execute();
-        }
-    }
-
-    private void insertLanguages(DSLContext tx, long accountId,
-                                 List<UserOnboardingPayload.LanguageEntry> languages) {
-        for (int order = 0; order < size(languages); order++) {
-            UserOnboardingPayload.LanguageEntry language = languages.get(order);
-            tx.insertInto(TALENT_LANGUAGE)
-              .set(TALENT_LANGUAGE.ACCOUNT_ID, accountId)
-              .set(TALENT_LANGUAGE.LANGUAGE, language.language())
-              .set(TALENT_LANGUAGE.PROFICIENCY, language.proficiency())
-              .set(TALENT_LANGUAGE.DISPLAY_ORDER, order)
-              .execute();
-        }
-    }
-
-    private void insertExperience(DSLContext tx, long accountId,
-                                  List<UserOnboardingPayload.Experience> experience) {
-        for (int order = 0; order < size(experience); order++) {
-            UserOnboardingPayload.Experience entry = experience.get(order);
-            tx.insertInto(TALENT_EXPERIENCE)
-              .set(TALENT_EXPERIENCE.ACCOUNT_ID, accountId)
-              .set(TALENT_EXPERIENCE.DISPLAY_ORDER, order)
-              .set(TALENT_EXPERIENCE.COMPANY, entry.company())
-              .set(TALENT_EXPERIENCE.POSITION, entry.position())
-              .set(TALENT_EXPERIENCE.LOCATION, blankToNull(entry.location()))
-              .set(TALENT_EXPERIENCE.WORKPLACE, entry.workplace())
-              .set(TALENT_EXPERIENCE.PERIOD, entry.period())
-              .set(TALENT_EXPERIENCE.DESCRIPTION, entry.description())
-              .execute();
-        }
-    }
-
-    private void insertEducation(DSLContext tx, long accountId,
-                                 List<UserOnboardingPayload.Education> education) {
-        for (int order = 0; order < size(education); order++) {
-            UserOnboardingPayload.Education entry = education.get(order);
-            tx.insertInto(TALENT_EDUCATION)
-              .set(TALENT_EDUCATION.ACCOUNT_ID, accountId)
-              .set(TALENT_EDUCATION.DISPLAY_ORDER, order)
-              .set(TALENT_EDUCATION.INSTITUTION, entry.institution())
-              .set(TALENT_EDUCATION.DEGREE, entry.degree())
-              .set(TALENT_EDUCATION.FIELD, entry.field())
-              .set(TALENT_EDUCATION.GRADUATION_YEAR, entry.graduationYear())
-              .set(TALENT_EDUCATION.LOCATION, entry.location())
-              .execute();
-        }
-    }
-
-    private void insertCertifications(DSLContext tx, long accountId,
-                                      List<UserOnboardingPayload.Certification> certifications) {
-        for (int order = 0; order < size(certifications); order++) {
-            UserOnboardingPayload.Certification entry = certifications.get(order);
-            tx.insertInto(TALENT_CERTIFICATION)
-              .set(TALENT_CERTIFICATION.ACCOUNT_ID, accountId)
-              .set(TALENT_CERTIFICATION.DISPLAY_ORDER, order)
-              .set(TALENT_CERTIFICATION.NAME, entry.name())
-              .set(TALENT_CERTIFICATION.ORGANIZATION, entry.organization())
-              .set(TALENT_CERTIFICATION.YEAR, entry.year())
-              .execute();
-        }
-    }
-
-    private void insertCourses(DSLContext tx, long accountId,
-                               List<UserOnboardingPayload.Course> courses) {
-        for (int order = 0; order < size(courses); order++) {
-            UserOnboardingPayload.Course entry = courses.get(order);
-            tx.insertInto(TALENT_COURSE)
-              .set(TALENT_COURSE.ACCOUNT_ID, accountId)
-              .set(TALENT_COURSE.DISPLAY_ORDER, order)
-              .set(TALENT_COURSE.NAME, entry.name())
-              .set(TALENT_COURSE.PROVIDER, entry.provider())
-              .set(TALENT_COURSE.FOCUS, entry.focus())
-              .set(TALENT_COURSE.COMPLETION_YEAR, entry.completionYear())
-              .execute();
-        }
-    }
-
-    private void insertProjects(DSLContext tx, long accountId,
-                                List<UserOnboardingPayload.Project> projects) {
-        for (int order = 0; order < size(projects); order++) {
-            UserOnboardingPayload.Project entry = projects.get(order);
-            tx.insertInto(TALENT_PROJECT)
-              .set(TALENT_PROJECT.ACCOUNT_ID, accountId)
-              .set(TALENT_PROJECT.DISPLAY_ORDER, order)
-              .set(TALENT_PROJECT.TITLE, entry.title())
-              .set(TALENT_PROJECT.CATEGORY, entry.category())
-              .set(TALENT_PROJECT.YEAR, entry.year())
-              .set(TALENT_PROJECT.DESCRIPTION, entry.description())
-              .execute();
-        }
+        sections.insertSkills(tx, accountId, profile.skills());
+        sections.insertLanguages(tx, accountId, profile.languages());
+        sections.insertExperience(tx, accountId, profile.experience());
+        sections.insertEducation(tx, accountId, profile.education());
+        sections.insertCertifications(tx, accountId, profile.certifications());
+        sections.insertCourses(tx, accountId, profile.courses());
+        sections.insertProjects(tx, accountId, profile.projects());
     }
 
     /**
@@ -250,21 +146,5 @@ public class UserOnboardingService {
         subscriptionService.create(accountId, price.value1(), YEARLY, price.value2(), CURRENCY);
         LOGGER.info("Opened the first {} period for account {} on the talent '{}' plan, unpaid",
                     YEARLY, accountId, planName);
-    }
-
-    /**
-     * The optional sections arrive absent rather than empty when the wizard had nothing to send, since
-     * the front end strips the blank rows it seeds them with.
-     */
-    private static int size(List<?> entries) {
-        return entries == null ? 0 : entries.size();
-    }
-
-    /**
-     * An experience row's location is the one nullable reference into the location table, so an empty
-     * string has to become a NULL rather than a foreign key nothing matches.
-     */
-    private static String blankToNull(String value) {
-        return value == null || value.isBlank() ? null : value;
     }
 }

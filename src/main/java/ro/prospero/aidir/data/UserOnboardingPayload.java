@@ -67,8 +67,8 @@ public record UserOnboardingPayload(
     }
 
     public record Experience(
-            String company,
-            String position,
+            @NotBlank String company,
+            @NotBlank String position,
             String location,
             String workplace,
             String period,
@@ -85,15 +85,15 @@ public record UserOnboardingPayload(
     ) {
     }
 
-    public record Certification(String name, String organization, String year) {
+    public record Certification(@NotBlank String name, @NotBlank String organization, String year) {
     }
 
-    public record Course(String name, String provider, String focus, String completionYear) {
+    public record Course(@NotBlank String name, String provider, String focus, String completionYear) {
     }
 
-    public record Project(String title, String category, String year, String description) {
+    public record Project(@NotBlank String title, String category, String year, String description) {
     }
 
-    public record LanguageEntry(String language, String proficiency) {
+    public record LanguageEntry(@NotBlank String language, @NotBlank String proficiency) {
     }
 }

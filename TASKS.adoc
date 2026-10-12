@@ -91,6 +91,26 @@ Also: `work_employment_type` is a single VARCHAR while the directory's design tr
 set a person accepts. And a talent directory is personal data served with no auth gate, which mattered
 less when the only public listing was a catalogue of products.
 
+=== integration tests for the talent profile edit routes
+`PUT /api/talent/me/{section}` is covered only where no database is needed: the request records'
+validation (`TalentProfileEditValidationTest`) and the web layer - session, CSRF, the account id taken from
+the session, 400/404 mapping - with the service stood in (`TalentProfileEditEndpointTest`). What the writes
+do is untested, because the repo has no database test setup yet; a Postgres Testcontainer running the
+Liquibase changelog is the obvious one. Against a real database:
+
+* replacing a section deletes and re-inserts its rows: `display_order` is renumbered 0..n, the row ids
+  change, and other accounts' rows are untouched
+* `general` writes `talent_profile` and `account.display_name` together, so `/api/auth/me` reports the new
+  name
+* emptied link fields are stored as NULL and drop out of `TalentDetailsDTO.links`; an experience row's
+  blank location is stored as NULL
+* an account with no `talent_profile` row (free talent, vendor, admin) gets a 404 and nothing is written
+* an unknown skill, language or location is a 400 through `ApiExceptionHandler`'s foreign-key branch
+* a failure partway through a section - the second row's foreign key, say - leaves the section exactly
+  as it was
+* the response is the committed state: what a following `GET /api/talent/details/{id}` returns
+* onboarding still writes all seven sections now that the inserts live in `TalentProfileSections`
+
 === apply vendor entitlements to ranking
 `vendor_search_boost`, `vendor_priority_listing`, `vendor_top_3_ranking` and `vendor_category_featured`
 exist as features with grants behind them, but no code consults `feature_grant` when searching or
