@@ -10,6 +10,8 @@ import ro.prospero.aidir.data.SubscriptionReason;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.SubscriptionRecord;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
@@ -80,6 +82,22 @@ public class SubscriptionService {
                          .where(SUBSCRIPTION.ACCOUNT_ID.eq(accountId))
                          .and(covers(OffsetDateTime.now()))
                          .fetchOptional(PLAN.NAME);
+    }
+
+    /**
+     * {@link #currentPlanName} for many accounts in one query, for lists that show a badge per vendor.
+     * Accounts with no period covering now are absent from the map.
+     */
+    public Map<Long, String> currentPlanNames(Collection<Long> accountIds) {
+        if (accountIds.isEmpty()) {
+            return Map.of();
+        }
+        return dslContext.select(SUBSCRIPTION.ACCOUNT_ID, PLAN.NAME)
+                         .from(SUBSCRIPTION)
+                         .join(PLAN).on(PLAN.ID.eq(SUBSCRIPTION.PLAN_ID))
+                         .where(SUBSCRIPTION.ACCOUNT_ID.in(accountIds))
+                         .and(covers(OffsetDateTime.now()))
+                         .fetchMap(SUBSCRIPTION.ACCOUNT_ID, PLAN.NAME);
     }
 
     private static Condition covers(OffsetDateTime instant) {

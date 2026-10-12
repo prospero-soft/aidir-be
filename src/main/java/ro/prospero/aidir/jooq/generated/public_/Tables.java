@@ -13,6 +13,12 @@ import ro.prospero.aidir.jooq.generated.public_.tables.AddonFeature;
 import ro.prospero.aidir.jooq.generated.public_.tables.Category;
 import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation;
 import ro.prospero.aidir.jooq.generated.public_.tables.DataPermission;
+import ro.prospero.aidir.jooq.generated.public_.tables.Deal;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealCategory;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealOfferType;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacement;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacementKind;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealStatus;
 import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureKind;
@@ -97,6 +103,36 @@ public class Tables {
      * The table <code>public.data_permission</code>.
      */
     public static final DataPermission DATA_PERMISSION = DataPermission.DATA_PERMISSION;
+
+    /**
+     * The table <code>public.deal</code>.
+     */
+    public static final Deal DEAL = Deal.DEAL;
+
+    /**
+     * The table <code>public.deal_category</code>.
+     */
+    public static final DealCategory DEAL_CATEGORY = DealCategory.DEAL_CATEGORY;
+
+    /**
+     * The table <code>public.deal_offer_type</code>.
+     */
+    public static final DealOfferType DEAL_OFFER_TYPE = DealOfferType.DEAL_OFFER_TYPE;
+
+    /**
+     * The table <code>public.deal_placement</code>.
+     */
+    public static final DealPlacement DEAL_PLACEMENT = DealPlacement.DEAL_PLACEMENT;
+
+    /**
+     * The table <code>public.deal_placement_kind</code>.
+     */
+    public static final DealPlacementKind DEAL_PLACEMENT_KIND = DealPlacementKind.DEAL_PLACEMENT_KIND;
+
+    /**
+     * The table <code>public.deal_status</code>.
+     */
+    public static final DealStatus DEAL_STATUS = DealStatus.DEAL_STATUS;
 
     /**
      * The table <code>public.feature</code>.

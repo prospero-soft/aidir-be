@@ -69,6 +69,7 @@ public class SecurityConfig {
 
     private static final String LOGOUT_URL = "/api/auth/logout";
     private static final String ADMIN = "ADMIN";
+    private static final String VENDOR = "VENDOR";
 
     private final UploadsConfig uploadsConfig;
     private final ObjectMapper objectMapper;
@@ -138,7 +139,7 @@ public class SecurityConfig {
 
     /**
      * Anything not listed needs a session, so a new endpoint is closed until it is given a rule here.
-     * The moderation and maintenance endpoints are the admin's.
+     * The moderation and maintenance endpoints are the admin's, and {@code /api/vendor} is the vendor's.
      */
     @Bean
     @Profile("!dev")
@@ -155,7 +156,8 @@ public class SecurityConfig {
                                      "/api/talent/**",
                                      "/api/category",
                                      "/api/search",
-                                     "/api/search/preview").permitAll()
+                                     "/api/search/preview",
+                                     "/api/deals").permitAll()
                     .requestMatchers(HttpMethod.POST,
                                      "/api/user-onboarding/**",
                                      "/api/vendor-onboarding").permitAll()
@@ -163,9 +165,11 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/login", "/api/auth/me", LOGOUT_URL).permitAll()
                     .requestMatchers(mediaPattern(), "/error", "/actuator/health").permitAll()
                     .requestMatchers("/api/submission/**",
+                                     "/api/admin/**",
                                      "/api/search/reindex",
                                      "/api/directus/**",
                                      "/actuator/**").hasRole(ADMIN)
+                    .requestMatchers("/api/vendor/**").hasRole(VENDOR)
                     .anyRequest().authenticated());
 
         return http.build();

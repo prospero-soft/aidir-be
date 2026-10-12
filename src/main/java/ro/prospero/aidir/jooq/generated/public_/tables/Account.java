@@ -36,6 +36,7 @@ import ro.prospero.aidir.jooq.generated.public_.Public;
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon.AccountAddonPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountTypes.AccountTypesPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation.CompanyInformationPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant.FeatureGrantPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Role.RolePath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Subscription.SubscriptionPath;
@@ -237,6 +238,18 @@ public class Account extends TableImpl<AccountRecord> {
             _companyInformation = new CompanyInformationPath(this, null, Keys.COMPANY_INFORMATION__COMPANY_INFORMATION_ACCOUNT_ID_FKEY.getInverseKey());
 
         return _companyInformation;
+    }
+
+    private transient DealPath _deal;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.deal</code> table
+     */
+    public DealPath deal() {
+        if (_deal == null)
+            _deal = new DealPath(this, null, Keys.DEAL__DEAL_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _deal;
     }
 
     private transient FeatureGrantPath _featureGrant;

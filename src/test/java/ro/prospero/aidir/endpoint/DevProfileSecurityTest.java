@@ -51,6 +51,17 @@ class DevProfileSecurityTest extends EndpointSecurityTestBase {
         verifyNoInteractions(talentProfileEditService);
     }
 
+    /** The vendor routes check the account type themselves for the same reason. */
+    @Test
+    void vendorDealsStillNeedAVendor() throws Exception {
+        mockMvc.perform(get("/api/vendor/deals"))
+               .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/vendor/deals").cookie(signIn(TALENT)))
+               .andExpect(status().isForbidden());
+
+        verifyNoInteractions(dealService);
+    }
+
     @Test
     void signingInStillCreatesASessionAndItsCookieWorksOverPlainHttp() throws Exception {
         MvcResult result = mockMvc.perform(login(post("/api/auth/login"), VENDOR, PASSWORD, false))

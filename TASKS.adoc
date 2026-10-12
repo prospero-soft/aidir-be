@@ -4,6 +4,23 @@
 
 == TODO
 
+=== deal scheduling
+right now vendors can set up deals by selecting any future date in the calendar, but many deal slots are limited in number; I need to devise a mechanism  to signal campaign availability so we don't promise things we can't deliver.
+
+=== time zones in deal scheduling
+A deal's start date is a bare `DATE`, and "today" means a different day on each side. The front end
+takes it from the vendor's browser (`todayIso` in `scheduleDates.ts`) to grey out past days and to refuse
+a past start before saving. The backend takes it from the server's default zone, through `@FutureOrPresent`
+on `DealPayload.Schedule`, `DealSubmissionRules` on submit and `PublicDealService` when it decides which
+deals are running. Near midnight the two disagree: a vendor in UTC-5 choosing today's date late in the
+evening is refused by a server on UTC, which has already moved on to tomorrow. And a deal starts and ends
+on the server's midnight, not the vendor's or the visitor's.
+
+Decide which calendar a deal runs on - one platform zone, configured rather than the JVM default, or the
+vendor's zone stored on the deal - and use that zone for every "today" on both sides. Until then, accepting
+a start date one day behind the server's would at least stop vendors west of the server from being
+refused a date their own calendar offered.
+
 === dunning: drive the subscription lifecycle from a real payment provider
 Quota usage is settled - feature_grant holds one row per numeric entitlement, and
 SubscriptionService composes every lifecycle event out of openPeriod/closePeriod. What is missing

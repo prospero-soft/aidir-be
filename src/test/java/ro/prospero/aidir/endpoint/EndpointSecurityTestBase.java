@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.session.MapSession;
@@ -18,6 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import ro.prospero.aidir.config.SecurityConfig;
 import ro.prospero.aidir.config.StorageConfig;
 import ro.prospero.aidir.data.PrincipalDTO;
@@ -25,11 +27,15 @@ import ro.prospero.aidir.event.MetricEventPublisher;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
 import ro.prospero.aidir.security.AccountUserDetailsService;
 import ro.prospero.aidir.service.AccountService;
+import ro.prospero.aidir.service.DealReviewService;
+import ro.prospero.aidir.service.DealService;
 import ro.prospero.aidir.service.DocumentIndexService;
 import ro.prospero.aidir.service.DocumentSearchService;
+import ro.prospero.aidir.service.PublicDealService;
 import ro.prospero.aidir.service.TalentProfileEditService;
 import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolSubmissionService;
+import ro.prospero.aidir.service.VendorCompanyService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -37,6 +43,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,9 +58,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * auto-configuration as in production, from the same properties.
  */
 @WebMvcTest(controllers = {AuthEndpoint.class, ToolSubmissionEndpoint.class, SearchEndpoint.class,
-                           CategoryEndpoint.class, TalentProfileEditEndpoint.class},
+                           CategoryEndpoint.class, TalentProfileEditEndpoint.class, VendorDealEndpoint.class,
+                           VendorCompanyEndpoint.class, AdminDealEndpoint.class, DealEndpoint.class},
             properties = "aidir.uploads.root=target/test-uploads")
-@Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class,
+@Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class, DealRequestReader.class,
          EndpointSecurityTestBase.InMemorySessions.class})
 @ImportAutoConfiguration(SessionAutoConfiguration.class)
 abstract class EndpointSecurityTestBase {
@@ -90,6 +98,14 @@ abstract class EndpointSecurityTestBase {
     MetricEventPublisher metricEventPublisher;
     @MockitoBean
     TalentProfileEditService talentProfileEditService;
+    @MockitoBean
+    DealService dealService;
+    @MockitoBean
+    DealReviewService dealReviewService;
+    @MockitoBean
+    PublicDealService publicDealService;
+    @MockitoBean
+    VendorCompanyService vendorCompanyService;
 
     @TestConfiguration(proxyBeanMethods = false)
     @EnableSpringHttpSession
@@ -126,6 +142,13 @@ abstract class EndpointSecurityTestBase {
 
     static MockHttpServletRequestBuilder putWithCsrf(String url) {
         return put(url).cookie(new Cookie(CSRF_COOKIE, CSRF_TOKEN)).header(CSRF_HEADER, CSRF_TOKEN);
+    }
+
+    /** A multipart request, as the deal form sends one, carrying the CSRF token the same way. */
+    static MockMultipartHttpServletRequestBuilder multipartWithCsrf(HttpMethod method, String url) {
+        MockMultipartHttpServletRequestBuilder builder = multipart(method, url);
+        builder.cookie(new Cookie(CSRF_COOKIE, CSRF_TOKEN)).header(CSRF_HEADER, CSRF_TOKEN);
+        return builder;
     }
 
     static MockHttpServletRequestBuilder login(MockHttpServletRequestBuilder request, String email,

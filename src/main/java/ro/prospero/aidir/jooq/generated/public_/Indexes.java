@@ -10,6 +10,8 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon;
+import ro.prospero.aidir.jooq.generated.public_.tables.Deal;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
 import ro.prospero.aidir.jooq.generated.public_.tables.Subscription;
@@ -27,6 +29,9 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index ACCOUNT_ADDON_LIVE_IDX = Internal.createIndex(DSL.name("account_addon_live_idx"), AccountAddon.ACCOUNT_ADDON, new OrderField[] { AccountAddon.ACCOUNT_ADDON.ACCOUNT_ID }, false);
+    public static final Index DEAL_ACCOUNT_IDX = Internal.createIndex(DSL.name("deal_account_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.ACCOUNT_ID }, false);
+    public static final Index DEAL_PLACEMENT_RUNNING_IDX = Internal.createIndex(DSL.name("deal_placement_running_idx"), DealPlacement.DEAL_PLACEMENT, new OrderField[] { DealPlacement.DEAL_PLACEMENT.PLACEMENT, DealPlacement.DEAL_PLACEMENT.START_DATE, DealPlacement.DEAL_PLACEMENT.END_DATE }, false);
+    public static final Index DEAL_STATUS_IDX = Internal.createIndex(DSL.name("deal_status_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.STATUS }, false);
     public static final Index FEATURE_DISPLAY_IDX = Internal.createIndex(DSL.name("feature_display_idx"), Feature.FEATURE, new OrderField[] { Feature.FEATURE.ACCOUNT_TYPE, Feature.FEATURE.DISPLAY_SECTION, Feature.FEATURE.DISPLAY_ORDER }, false);
     public static final Index FEATURE_GRANT_SPENDABLE_IDX = Internal.createIndex(DSL.name("feature_grant_spendable_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.ACCOUNT_ID, FeatureGrant.FEATURE_GRANT.FEATURE_CODE, FeatureGrant.FEATURE_GRANT.EXPIRES_AT }, false);
     public static final Index FEATURE_GRANT_SUBSCRIPTION_IDX = Internal.createIndex(DSL.name("feature_grant_subscription_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.SUBSCRIPTION_ID }, false);

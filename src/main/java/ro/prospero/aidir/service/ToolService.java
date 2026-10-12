@@ -2,7 +2,6 @@ package ro.prospero.aidir.service;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
-import ro.prospero.aidir.config.UploadsConfig;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolDTO;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
@@ -28,11 +27,11 @@ public class ToolService {
     public static final String SCREENSHOT = "screenshot";
 
     private final DSLContext dslContext;
-    private final UploadsConfig uploadsConfig;
+    private final MediaUrls mediaUrls;
 
-    public ToolService(DSLContext dslContext, UploadsConfig uploadsConfig) {
+    public ToolService(DSLContext dslContext, MediaUrls mediaUrls) {
         this.dslContext = dslContext;
-        this.uploadsConfig = uploadsConfig;
+        this.mediaUrls = mediaUrls;
     }
 
     public Optional<ToolDTO> find(long id) {
@@ -76,7 +75,7 @@ public class ToolService {
                          // A tool should only ever have one logo; if a second slipped in, the first wins
                          // rather than the query blowing up on a duplicate key.
                          .collect(Collectors.toMap(r -> r.get(TOOL_IMAGE_METADATA.TOOL_ID),
-                                                   r -> publicUrl(r.get(TOOL_IMAGE_METADATA.IMAGE_PATH)),
+                                                   r -> mediaUrls.publicUrl(r.get(TOOL_IMAGE_METADATA.IMAGE_PATH)),
                                                    (first, second) -> first));
     }
 
@@ -92,16 +91,7 @@ public class ToolService {
                          .where(TOOL_IMAGE_METADATA.TOOL_ID.eq(toolId))
                          .and(TOOL_IMAGE_METADATA.KIND.eq(kind))
                          .orderBy(TOOL_IMAGE_METADATA.DISPLAY_ORDER.asc())
-                         .fetch(r -> publicUrl(r.value1()));
-    }
-
-    private String publicUrl(String relativePath) {
-        String base = uploadsConfig.getPublicBasePath();
-        String path = relativePath.replace('\\', '/');
-        if (base.endsWith("/") || path.startsWith("/")) {
-            return base + path;
-        }
-        return base + "/" + path;
+                         .fetch(r -> mediaUrls.publicUrl(r.value1()));
     }
 
     static ToolDTO toDto(ToolRecord record) {
