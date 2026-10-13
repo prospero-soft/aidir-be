@@ -109,11 +109,6 @@ public class DealPlacement extends TableImpl<DealPlacementRecord> {
     public final TableField<DealPlacementRecord, String> SHORT_DESCRIPTION = createField(DSL.name("short_description"), SQLDataType.VARCHAR(80), this, "");
 
     /**
-     * The column <code>public.deal_placement.long_description</code>.
-     */
-    public final TableField<DealPlacementRecord, String> LONG_DESCRIPTION = createField(DSL.name("long_description"), SQLDataType.VARCHAR(1000), this, "");
-
-    /**
      * The column <code>public.deal_placement.logo_path</code>.
      */
     public final TableField<DealPlacementRecord, String> LOGO_PATH = createField(DSL.name("logo_path"), SQLDataType.VARCHAR, this, "");

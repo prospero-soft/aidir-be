@@ -35,11 +35,14 @@ public class DealReviewService {
     private final DSLContext dslContext;
     private final DealRows dealRows;
     private final DealService dealService;
+    private final AccountService accountService;
 
-    public DealReviewService(DSLContext dslContext, DealRows dealRows, DealService dealService) {
+    public DealReviewService(DSLContext dslContext, DealRows dealRows, DealService dealService,
+                             AccountService accountService) {
         this.dslContext = dslContext;
         this.dealRows = dealRows;
         this.dealService = dealService;
+        this.accountService = accountService;
     }
 
     /** The deals waiting for a verdict, oldest submission first. */
@@ -138,7 +141,25 @@ public class DealReviewService {
                                               + "Push vendor onboarding test data first.");
         }
 
-        long accountId = vendors.get(Math.floorMod(vendorIndex, vendors.size()));
+        return createAndSubmit(vendors.get(Math.floorMod(vendorIndex, vendors.size())), payload, logos);
+    }
+
+    /**
+     * Like {@link #devSubmit}, but for one vendor named by email, so a developer can sign in as that vendor
+     * and find the deal under their own deals.
+     */
+    public DealDTO devSubmitAs(String vendorEmail, DealPayload payload, Map<String, MultipartFile> logos) {
+        long accountId = accountService.findByEmail(vendorEmail)
+                                       .filter(account -> VENDOR.equals(account.getAccountType()))
+                                       .orElseThrow(() -> new ResponseStatusException(
+                                               HttpStatus.BAD_REQUEST,
+                                               "No vendor account " + vendorEmail
+                                               + ". Create the test accounts first."))
+                                       .getId();
+        return createAndSubmit(accountId, payload, logos);
+    }
+
+    private DealDTO createAndSubmit(long accountId, DealPayload payload, Map<String, MultipartFile> logos) {
         DealDTO draft = dealService.create(accountId, payload, logos);
         return dealService.submit(accountId, draft.id());
     }

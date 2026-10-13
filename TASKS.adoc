@@ -21,6 +21,36 @@ vendor's zone stored on the deal - and use that zone for every "today" on both s
 a start date one day behind the server's would at least stop vendors west of the server from being
 refused a date their own calendar offered.
 
+=== deal details page for your own submitted deals
+
+a summary view should be available once a deal is approved, that you can get to from the "campaigns" dashboard section; it should not present any editable controls, the current version does
+
+=== campaigns
+
+the deal model currently has support for being included in a campaign, but there is no master campaign table that would hold related information (the `campaign` column in `deal` is the name, and the internal id is a varchar), depending on what else we decide to add to campaigns, a normalized table might make more sense
+
+=== deal edits
+
+handling deal edits for submitted deals:
+
+1. submitted but not yet approved, editing possible but need to guard against the case in which a reviewer accepts a deal while it is being edited:
+  - for the reviwer -> a `dirty` column that is set on edit, forcing the reviewer to re-approve; ideally with a delta--but the delta would add considerable complexity;
+  - for the editor -> check if approved before attempting to write edit, refuse edit if approved
+
+2. submitted and approved, unclear how to handle for now; whether this is a special case or not depends on how much we value the reviewing step (for deals, it's lighter work than for tool submissions and cvs, so I would err on the side of allowing it)
+
+3. running deals should not be editable, but should be cancellable (if they want to pull the campaign that's their business)
+
+=== deals: company panel client id
+
+what is this for? to be removed
+
+=== deals: clicking on the create a deal CTA when logged in as a non-vendor user redirects you to the dashboard, which is very confusing; for logged in users there should be some intermediate page or toast that notifies them that only vendors can access that functionality (and probably as a funnel for non-logged-in users as well)
+
+=== deals: long description should appear on a deal detail page, and should only have to be filled in once; right now it's attached to the deal position, so we need to extract it from there; also, the character limit should be lower (200-400)
+
+=== deals: there is currently no tab/design for standard listing deals or sidebar deals, no scheduling or anything
+
 === dunning: drive the subscription lifecycle from a real payment provider
 Quota usage is settled - feature_grant holds one row per numeric entitlement, and
 SubscriptionService composes every lifecycle event out of openPeriod/closePeriod. What is missing

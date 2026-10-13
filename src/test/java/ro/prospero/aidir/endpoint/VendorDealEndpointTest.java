@@ -73,7 +73,7 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
     }
 
     private static DealDTO deal(long id, DealStatus status) {
-        return new DealDTO(id, status, List.of(Placement.TOP_CATEGORY), false, null, null, null, Map.of(), null,
+        return new DealDTO(id, status, List.of(Placement.TOP_CATEGORY), false, null, null, null, null, Map.of(), null,
                            OffsetDateTime.parse("2026-10-01T10:00:00Z"), OffsetDateTime.parse("2026-10-01T10:00:00Z"),
                            null, null);
     }

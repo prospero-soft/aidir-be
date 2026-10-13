@@ -92,6 +92,7 @@ public class DealService {
                             .set(DEAL.SPONSORED_LABEL, payload.sponsoredLabel())
                             .set(DEAL.CAMPAIGN, payload.campaign())
                             .set(DEAL.INTERNAL_CAMPAIGN_ID, payload.internalCampaignId())
+                            .set(DEAL.LONG_DESCRIPTION, payload.longDescription())
                             .returningResult(DEAL.ID)
                             .fetchOne(DEAL.ID);
                 if (id == null) {
@@ -125,6 +126,7 @@ public class DealService {
                   .set(DEAL.SPONSORED_LABEL, payload.sponsoredLabel())
                   .set(DEAL.CAMPAIGN, payload.campaign())
                   .set(DEAL.INTERNAL_CAMPAIGN_ID, payload.internalCampaignId())
+                  .set(DEAL.LONG_DESCRIPTION, payload.longDescription())
                   .setNull(DEAL.REJECTION_REASON)
                   .set(DEAL.UPDATED_AT, OffsetDateTime.now())
                   .where(DEAL.ID.eq(dealId))
@@ -154,8 +156,8 @@ public class DealService {
             DealDTO deal = dealRows.readOne(tx, DEAL.ID.eq(dealId))
                                    .map(DealRows.StoredDeal::deal)
                                    .orElseThrow(() -> notFound(dealId));
-            List<String> violations = DealSubmissionRules.check(deal.placements(), deal.perPlacement(),
-                                                                LocalDate.now());
+            List<String> violations = DealSubmissionRules.check(deal.placements(), deal.longDescription(),
+                                                                deal.perPlacement(), LocalDate.now());
             if (!violations.isEmpty()) {
                 throw new ApiPayloadValidationException("This deal is not ready to submit yet.", violations);
             }

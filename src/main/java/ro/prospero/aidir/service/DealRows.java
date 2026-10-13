@@ -119,7 +119,6 @@ public class DealRows {
             row.setCategory(info.category());
             row.setBrand(info.brand());
             row.setShortDescription(info.description());
-            row.setLongDescription(info.longDescription());
             row.setLogoPath(logoPath);
             row.setLine1(info.line1());
             row.setLine2(info.line2());
@@ -161,6 +160,7 @@ public class DealRows {
                            deal.getSponsoredLabel(),
                            deal.getCampaign(),
                            deal.getInternalCampaignId(),
+                           deal.getLongDescription(),
                            perPlacement,
                            deal.getRejectionReason(),
                            deal.getCreatedAt(),
@@ -174,7 +174,6 @@ public class DealRows {
         return new PlacementContent(
                 new Schedule(row.getDurationDays(), row.getStartDate()),
                 new Info(row.getProductName(), row.getCategory(), row.getBrand(), row.getShortDescription(),
-                         row.getLongDescription(),
                          row.getLogoPath() == null ? null : mediaUrls.publicUrl(row.getLogoPath()),
                          row.getLine1(), row.getLine2()),
                 new Offer(row.getOfferType() == null ? null : OfferType.fromWire(row.getOfferType()),

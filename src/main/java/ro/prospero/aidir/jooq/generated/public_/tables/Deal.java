@@ -99,6 +99,11 @@ public class Deal extends TableImpl<DealRecord> {
     public final TableField<DealRecord, String> INTERNAL_CAMPAIGN_ID = createField(DSL.name("internal_campaign_id"), SQLDataType.VARCHAR(100), this, "");
 
     /**
+     * The column <code>public.deal.long_description</code>.
+     */
+    public final TableField<DealRecord, String> LONG_DESCRIPTION = createField(DSL.name("long_description"), SQLDataType.VARCHAR(1000), this, "");
+
+    /**
      * The column <code>public.deal.rejection_reason</code>.
      */
     public final TableField<DealRecord, String> REJECTION_REASON = createField(DSL.name("rejection_reason"), SQLDataType.VARCHAR(1000), this, "");

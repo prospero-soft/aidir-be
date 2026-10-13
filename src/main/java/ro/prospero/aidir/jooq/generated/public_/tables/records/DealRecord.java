@@ -119,73 +119,87 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
     }
 
     /**
+     * Setter for <code>public.deal.long_description</code>.
+     */
+    public void setLongDescription(String value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.long_description</code>.
+     */
+    public String getLongDescription() {
+        return (String) get(7);
+    }
+
+    /**
      * Setter for <code>public.deal.rejection_reason</code>.
      */
     public void setRejectionReason(String value) {
-        set(7, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.deal.rejection_reason</code>.
      */
     public String getRejectionReason() {
-        return (String) get(7);
+        return (String) get(8);
     }
 
     /**
      * Setter for <code>public.deal.created_at</code>.
      */
     public void setCreatedAt(OffsetDateTime value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.deal.created_at</code>.
      */
     public OffsetDateTime getCreatedAt() {
-        return (OffsetDateTime) get(8);
+        return (OffsetDateTime) get(9);
     }
 
     /**
      * Setter for <code>public.deal.updated_at</code>.
      */
     public void setUpdatedAt(OffsetDateTime value) {
-        set(9, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.deal.updated_at</code>.
      */
     public OffsetDateTime getUpdatedAt() {
-        return (OffsetDateTime) get(9);
+        return (OffsetDateTime) get(10);
     }
 
     /**
      * Setter for <code>public.deal.submitted_at</code>.
      */
     public void setSubmittedAt(OffsetDateTime value) {
-        set(10, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.deal.submitted_at</code>.
      */
     public OffsetDateTime getSubmittedAt() {
-        return (OffsetDateTime) get(10);
+        return (OffsetDateTime) get(11);
     }
 
     /**
      * Setter for <code>public.deal.reviewed_at</code>.
      */
     public void setReviewedAt(OffsetDateTime value) {
-        set(11, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.deal.reviewed_at</code>.
      */
     public OffsetDateTime getReviewedAt() {
-        return (OffsetDateTime) get(11);
+        return (OffsetDateTime) get(12);
     }
 
     // -------------------------------------------------------------------------
@@ -211,7 +225,7 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
     /**
      * Create a detached, initialised DealRecord
      */
-    public DealRecord(Long id, Long accountId, String status, Boolean sponsored, String sponsoredLabel, String campaign, String internalCampaignId, String rejectionReason, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime submittedAt, OffsetDateTime reviewedAt) {
+    public DealRecord(Long id, Long accountId, String status, Boolean sponsored, String sponsoredLabel, String campaign, String internalCampaignId, String longDescription, String rejectionReason, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime submittedAt, OffsetDateTime reviewedAt) {
         super(Deal.DEAL);
 
         setId(id);
@@ -221,6 +235,7 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
         setSponsoredLabel(sponsoredLabel);
         setCampaign(campaign);
         setInternalCampaignId(internalCampaignId);
+        setLongDescription(longDescription);
         setRejectionReason(rejectionReason);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);

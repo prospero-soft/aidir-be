@@ -78,4 +78,14 @@ public class AdminDealEndpoint {
         return dealReviewService.devSubmit(vendorIndex, requestReader.payload(payloadJson),
                                            requestReader.logos(request));
     }
+
+    /** A synthetic deal, created and submitted for the vendor account with {@code vendorEmail}. */
+    @PostMapping(path = "devSubmitAs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public DealDTO devSubmitAs(@RequestParam String vendorEmail,
+                               @RequestPart("payload") String payloadJson,
+                               MultipartRequest request) throws JsonProcessingException {
+        return dealReviewService.devSubmitAs(vendorEmail, requestReader.payload(payloadJson),
+                                             requestReader.logos(request));
+    }
 }

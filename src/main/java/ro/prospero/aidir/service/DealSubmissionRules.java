@@ -32,11 +32,15 @@ public final class DealSubmissionRules {
     }
 
     public static List<String> check(List<Placement> placements,
+                                     String longDescription,
                                      Map<String, PlacementContent> perPlacement,
                                      LocalDate today) {
         List<String> violations = new ArrayList<>();
         if (placements.isEmpty()) {
             violations.add("placements: Choose at least one placement");
+        }
+        if (longDescription == null || longDescription.isBlank()) {
+            violations.add("longDescription: Long Description is required");
         }
 
         for (Placement placement : placements) {
@@ -71,7 +75,6 @@ public final class DealSubmissionRules {
             fields.requireText(info.productName(), "productName", "Product Name is required");
             fields.require(info.category() != null, "category", "Choose a category");
             fields.requireText(info.description(), "description", "Short description is required");
-            fields.requireText(info.longDescription(), "longDescription", "Long Description is required");
             fields.require(info.logoUrl() != null, "logo", "Add a product logo or image");
         } else if (placement == Placement.SPOTLIGHTS) {
             fields.requireText(info.productName(), "productName", "Product Name is required");

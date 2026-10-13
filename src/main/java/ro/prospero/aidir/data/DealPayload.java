@@ -30,6 +30,7 @@ public record DealPayload(@NotNull List<Placement> placements,
                           @Size(max = 60) String sponsoredLabel,
                           @Size(max = 100) String campaign,
                           @Size(max = 100) String internalCampaignId,
+                          @Size(max = 1000) String longDescription,
                           @NotNull Map<String, @Valid PlacementContent> perPlacement) {
 
     public static final String CURRENCIES = "EUR|USD|GBP";
@@ -63,7 +64,6 @@ public record DealPayload(@NotNull List<Placement> placements,
                        String category,
                        @Size(max = 200) String brand,
                        @Size(max = 80) String description,
-                       @Size(max = 1000) String longDescription,
                        String logoUrl,
                        @Size(max = 45) String line1,
                        @Size(max = 80) String line2) {
