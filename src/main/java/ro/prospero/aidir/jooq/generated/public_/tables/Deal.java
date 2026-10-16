@@ -36,6 +36,7 @@ import ro.prospero.aidir.jooq.generated.public_.Indexes;
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
 import ro.prospero.aidir.jooq.generated.public_.tables.Account.AccountPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.DealCategory.DealCategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacement.DealPlacementPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacementKind.DealPlacementKindPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealStatus.DealStatusPath;
@@ -97,6 +98,31 @@ public class Deal extends TableImpl<DealRecord> {
      * The column <code>public.deal.internal_campaign_id</code>.
      */
     public final TableField<DealRecord, String> INTERNAL_CAMPAIGN_ID = createField(DSL.name("internal_campaign_id"), SQLDataType.VARCHAR(100), this, "");
+
+    /**
+     * The column <code>public.deal.product_name</code>.
+     */
+    public final TableField<DealRecord, String> PRODUCT_NAME = createField(DSL.name("product_name"), SQLDataType.VARCHAR(200), this, "");
+
+    /**
+     * The column <code>public.deal.category</code>.
+     */
+    public final TableField<DealRecord, String> CATEGORY = createField(DSL.name("category"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.deal.brand</code>.
+     */
+    public final TableField<DealRecord, String> BRAND = createField(DSL.name("brand"), SQLDataType.VARCHAR(200), this, "");
+
+    /**
+     * The column <code>public.deal.short_description</code>.
+     */
+    public final TableField<DealRecord, String> SHORT_DESCRIPTION = createField(DSL.name("short_description"), SQLDataType.VARCHAR(80), this, "");
+
+    /**
+     * The column <code>public.deal.logo_path</code>.
+     */
+    public final TableField<DealRecord, String> LOGO_PATH = createField(DSL.name("logo_path"), SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.deal.long_description</code>.
@@ -212,7 +238,7 @@ public class Deal extends TableImpl<DealRecord> {
 
     @Override
     public List<ForeignKey<DealRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.DEAL__DEAL_ACCOUNT_ID_FKEY, Keys.DEAL__DEAL_STATUS_FKEY);
+        return Arrays.asList(Keys.DEAL__DEAL_ACCOUNT_ID_FKEY, Keys.DEAL__DEAL_CATEGORY_FKEY, Keys.DEAL__DEAL_STATUS_FKEY);
     }
 
     private transient AccountPath _account;
@@ -225,6 +251,19 @@ public class Deal extends TableImpl<DealRecord> {
             _account = new AccountPath(this, Keys.DEAL__DEAL_ACCOUNT_ID_FKEY, null);
 
         return _account;
+    }
+
+    private transient DealCategoryPath _dealCategory;
+
+    /**
+     * Get the implicit join path to the <code>public.deal_category</code>
+     * table.
+     */
+    public DealCategoryPath dealCategory() {
+        if (_dealCategory == null)
+            _dealCategory = new DealCategoryPath(this, Keys.DEAL__DEAL_CATEGORY_FKEY, null);
+
+        return _dealCategory;
     }
 
     private transient DealStatusPath _dealStatus;

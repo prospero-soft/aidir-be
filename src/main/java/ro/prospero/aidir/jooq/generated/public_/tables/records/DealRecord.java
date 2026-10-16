@@ -119,87 +119,157 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
     }
 
     /**
+     * Setter for <code>public.deal.product_name</code>.
+     */
+    public void setProductName(String value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.product_name</code>.
+     */
+    public String getProductName() {
+        return (String) get(7);
+    }
+
+    /**
+     * Setter for <code>public.deal.category</code>.
+     */
+    public void setCategory(String value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.category</code>.
+     */
+    public String getCategory() {
+        return (String) get(8);
+    }
+
+    /**
+     * Setter for <code>public.deal.brand</code>.
+     */
+    public void setBrand(String value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.brand</code>.
+     */
+    public String getBrand() {
+        return (String) get(9);
+    }
+
+    /**
+     * Setter for <code>public.deal.short_description</code>.
+     */
+    public void setShortDescription(String value) {
+        set(10, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.short_description</code>.
+     */
+    public String getShortDescription() {
+        return (String) get(10);
+    }
+
+    /**
+     * Setter for <code>public.deal.logo_path</code>.
+     */
+    public void setLogoPath(String value) {
+        set(11, value);
+    }
+
+    /**
+     * Getter for <code>public.deal.logo_path</code>.
+     */
+    public String getLogoPath() {
+        return (String) get(11);
+    }
+
+    /**
      * Setter for <code>public.deal.long_description</code>.
      */
     public void setLongDescription(String value) {
-        set(7, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.deal.long_description</code>.
      */
     public String getLongDescription() {
-        return (String) get(7);
+        return (String) get(12);
     }
 
     /**
      * Setter for <code>public.deal.rejection_reason</code>.
      */
     public void setRejectionReason(String value) {
-        set(8, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.deal.rejection_reason</code>.
      */
     public String getRejectionReason() {
-        return (String) get(8);
+        return (String) get(13);
     }
 
     /**
      * Setter for <code>public.deal.created_at</code>.
      */
     public void setCreatedAt(OffsetDateTime value) {
-        set(9, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.deal.created_at</code>.
      */
     public OffsetDateTime getCreatedAt() {
-        return (OffsetDateTime) get(9);
+        return (OffsetDateTime) get(14);
     }
 
     /**
      * Setter for <code>public.deal.updated_at</code>.
      */
     public void setUpdatedAt(OffsetDateTime value) {
-        set(10, value);
+        set(15, value);
     }
 
     /**
      * Getter for <code>public.deal.updated_at</code>.
      */
     public OffsetDateTime getUpdatedAt() {
-        return (OffsetDateTime) get(10);
+        return (OffsetDateTime) get(15);
     }
 
     /**
      * Setter for <code>public.deal.submitted_at</code>.
      */
     public void setSubmittedAt(OffsetDateTime value) {
-        set(11, value);
+        set(16, value);
     }
 
     /**
      * Getter for <code>public.deal.submitted_at</code>.
      */
     public OffsetDateTime getSubmittedAt() {
-        return (OffsetDateTime) get(11);
+        return (OffsetDateTime) get(16);
     }
 
     /**
      * Setter for <code>public.deal.reviewed_at</code>.
      */
     public void setReviewedAt(OffsetDateTime value) {
-        set(12, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>public.deal.reviewed_at</code>.
      */
     public OffsetDateTime getReviewedAt() {
-        return (OffsetDateTime) get(12);
+        return (OffsetDateTime) get(17);
     }
 
     // -------------------------------------------------------------------------
@@ -225,7 +295,7 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
     /**
      * Create a detached, initialised DealRecord
      */
-    public DealRecord(Long id, Long accountId, String status, Boolean sponsored, String sponsoredLabel, String campaign, String internalCampaignId, String longDescription, String rejectionReason, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime submittedAt, OffsetDateTime reviewedAt) {
+    public DealRecord(Long id, Long accountId, String status, Boolean sponsored, String sponsoredLabel, String campaign, String internalCampaignId, String productName, String category, String brand, String shortDescription, String logoPath, String longDescription, String rejectionReason, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime submittedAt, OffsetDateTime reviewedAt) {
         super(Deal.DEAL);
 
         setId(id);
@@ -235,6 +305,11 @@ public class DealRecord extends UpdatableRecordImpl<DealRecord> {
         setSponsoredLabel(sponsoredLabel);
         setCampaign(campaign);
         setInternalCampaignId(internalCampaignId);
+        setProductName(productName);
+        setCategory(category);
+        setBrand(brand);
+        setShortDescription(shortDescription);
+        setLogoPath(logoPath);
         setLongDescription(longDescription);
         setRejectionReason(rejectionReason);
         setCreatedAt(createdAt);

@@ -3,8 +3,8 @@ package ro.prospero.aidir.data;
 import java.time.LocalDate;
 
 /**
- * One card in the public deals directory: an approved deal, with the content of the listing placement
- * that is running today. The card's offer strings are composed on the front end from {@code offer}, the
+ * One card in the public deals directory: an approved deal's product, with the schedule and offer of the
+ * listing placement that is running today. The card's offer strings are composed on the front end from {@code offer}, the
  * same way the creation form previews them. {@code verified} means the vendor is on a paid plan. Mirrors
  * PublicDealDTO in aidir-fe (src/types/deal.ts).
  */

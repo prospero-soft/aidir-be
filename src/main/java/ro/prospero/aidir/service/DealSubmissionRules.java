@@ -1,5 +1,6 @@
 package ro.prospero.aidir.service;
 
+import ro.prospero.aidir.data.DealDTO;
 import ro.prospero.aidir.data.DealPayload;
 import ro.prospero.aidir.data.DealPayload.Info;
 import ro.prospero.aidir.data.DealPayload.Offer;
@@ -31,17 +32,24 @@ public final class DealSubmissionRules {
     private DealSubmissionRules() {
     }
 
+    /** The deal's product content, which every placement shows. */
+    public record Basics(String productName, String category, String description, String logoUrl,
+                         String longDescription) {
+        public static Basics of(DealDTO deal) {
+            return new Basics(deal.productName(), deal.category(), deal.description(), deal.logoUrl(),
+                              deal.longDescription());
+        }
+    }
+
     public static List<String> check(List<Placement> placements,
-                                     String longDescription,
+                                     Basics basics,
                                      Map<String, PlacementContent> perPlacement,
                                      LocalDate today) {
         List<String> violations = new ArrayList<>();
         if (placements.isEmpty()) {
             violations.add("placements: Choose at least one placement");
         }
-        if (longDescription == null || longDescription.isBlank()) {
-            violations.add("longDescription: Long Description is required");
-        }
+        checkBasics(new Fields(null, violations), basics);
 
         for (Placement placement : placements) {
             if (!placement.hasContent()) {
@@ -70,16 +78,16 @@ public final class DealSubmissionRules {
         }
     }
 
+    private static void checkBasics(Fields fields, Basics basics) {
+        fields.requireText(basics.productName(), "productName", "Product Name is required");
+        fields.require(basics.category() != null, "category", "Choose a category");
+        fields.requireText(basics.description(), "description", "Short description is required");
+        fields.require(basics.logoUrl() != null, "logo", "Add a product logo or image");
+        fields.requireText(basics.longDescription(), "longDescription", "Long Description is required");
+    }
+
     private static void checkInfo(Fields fields, Placement placement, Info info) {
-        if (placement.isListing()) {
-            fields.requireText(info.productName(), "productName", "Product Name is required");
-            fields.require(info.category() != null, "category", "Choose a category");
-            fields.requireText(info.description(), "description", "Short description is required");
-            fields.require(info.logoUrl() != null, "logo", "Add a product logo or image");
-        } else if (placement == Placement.SPOTLIGHTS) {
-            fields.requireText(info.productName(), "productName", "Product Name is required");
-            fields.require(info.logoUrl() != null, "logo", "Add a product logo or image");
-        } else if (placement == Placement.BANNER) {
+        if (placement == Placement.BANNER) {
             fields.requireText(info.line1(), "line1", "Line 1 is required");
             fields.requireText(info.line2(), "line2", "Line 2 is required");
         }
@@ -142,9 +150,10 @@ public final class DealSubmissionRules {
         return value != null && value.signum() > 0;
     }
 
+    /** {@code placement} is null for the fields of the deal as a whole. */
     private record Fields(String placement, List<String> violations) {
         void violation(String field, String message) {
-            violations.add(placement + "." + field + ": " + message);
+            violations.add((placement == null ? "" : placement + ".") + field + ": " + message);
         }
 
         void require(boolean satisfied, String field, String message) {

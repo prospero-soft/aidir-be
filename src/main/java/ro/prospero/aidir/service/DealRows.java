@@ -93,18 +93,13 @@ public class DealRows {
         return read(ctx, condition).stream().findFirst();
     }
 
-    /** The stored logo of each placement that has one, keyed by {@link Placement#wire()}. */
-    public Map<String, String> logoPaths(DSLContext ctx, long dealId) {
-        return ctx.select(DEAL_PLACEMENT.PLACEMENT, DEAL_PLACEMENT.LOGO_PATH)
-                  .from(DEAL_PLACEMENT)
-                  .where(DEAL_PLACEMENT.DEAL_ID.eq(dealId))
-                  .and(DEAL_PLACEMENT.LOGO_PATH.isNotNull())
-                  .fetchMap(DEAL_PLACEMENT.PLACEMENT, DEAL_PLACEMENT.LOGO_PATH);
+    /** The deal's stored logo, or null when it has none. */
+    public String logoPath(DSLContext ctx, long dealId) {
+        return ctx.select(DEAL.LOGO_PATH).from(DEAL).where(DEAL.ID.eq(dealId)).fetchOne(DEAL.LOGO_PATH);
     }
 
     /** {@code content} is null for a placement without content of its own, which is then just its key. */
-    public void insertPlacement(DSLContext tx, long dealId, Placement placement,
-                                PlacementContent content, String logoPath) {
+    public void insertPlacement(DSLContext tx, long dealId, Placement placement, PlacementContent content) {
         DealPlacementRecord row = tx.newRecord(DEAL_PLACEMENT);
         row.setDealId(dealId);
         row.setPlacement(placement.wire());
@@ -115,11 +110,6 @@ public class DealRows {
             row.setDurationDays(schedule.durationDays());
 
             Info info = content.info();
-            row.setProductName(info.productName());
-            row.setCategory(info.category());
-            row.setBrand(info.brand());
-            row.setShortDescription(info.description());
-            row.setLogoPath(logoPath);
             row.setLine1(info.line1());
             row.setLine2(info.line2());
 
@@ -160,6 +150,11 @@ public class DealRows {
                            deal.getSponsoredLabel(),
                            deal.getCampaign(),
                            deal.getInternalCampaignId(),
+                           deal.getProductName(),
+                           deal.getCategory(),
+                           deal.getBrand(),
+                           deal.getShortDescription(),
+                           deal.getLogoPath() == null ? null : mediaUrls.publicUrl(deal.getLogoPath()),
                            deal.getLongDescription(),
                            perPlacement,
                            deal.getRejectionReason(),
@@ -173,9 +168,7 @@ public class DealRows {
         OfferTerms terms = readTerms(row.getOfferTerms());
         return new PlacementContent(
                 new Schedule(row.getDurationDays(), row.getStartDate()),
-                new Info(row.getProductName(), row.getCategory(), row.getBrand(), row.getShortDescription(),
-                         row.getLogoPath() == null ? null : mediaUrls.publicUrl(row.getLogoPath()),
-                         row.getLine1(), row.getLine2()),
+                new Info(row.getLine1(), row.getLine2()),
                 new Offer(row.getOfferType() == null ? null : OfferType.fromWire(row.getOfferType()),
                           terms.currency(), terms.originalPrice(), terms.dealPrice(), terms.discountMonths(),
                           terms.trialDays(), terms.billingPeriod(), terms.creditType(), terms.creditAmount(),

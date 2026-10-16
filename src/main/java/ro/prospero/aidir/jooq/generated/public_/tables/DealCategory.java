@@ -29,7 +29,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
-import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacement.DealPlacementPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.DealCategoryRecord;
 
 
@@ -131,17 +131,16 @@ public class DealCategory extends TableImpl<DealCategoryRecord> {
         return Keys.DEAL_CATEGORY_PKEY;
     }
 
-    private transient DealPlacementPath _dealPlacement;
+    private transient DealPath _deal;
 
     /**
-     * Get the implicit to-many join path to the
-     * <code>public.deal_placement</code> table
+     * Get the implicit to-many join path to the <code>public.deal</code> table
      */
-    public DealPlacementPath dealPlacement() {
-        if (_dealPlacement == null)
-            _dealPlacement = new DealPlacementPath(this, null, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_CATEGORY_FKEY.getInverseKey());
+    public DealPath deal() {
+        if (_deal == null)
+            _deal = new DealPath(this, null, Keys.DEAL__DEAL_CATEGORY_FKEY.getInverseKey());
 
-        return _dealPlacement;
+        return _deal;
     }
 
     @Override

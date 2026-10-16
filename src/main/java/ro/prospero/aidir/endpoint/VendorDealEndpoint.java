@@ -27,8 +27,8 @@ import static ro.prospero.aidir.endpoint.VendorPrincipals.vendorId;
  * The signed-in vendor's deals. The account is always the session's, so the ids in these routes only ever
  * reach that vendor's own deals.
  *
- * <p>Saving takes the form as multipart - a {@code payload} part and a {@code logo-<placement>} part per
- * new logo - because the logos are files. Submitting takes nothing: it checks the deal as last saved.
+ * <p>Saving takes the form as multipart - a {@code payload} part and a {@code logo} part for a new logo -
+ * because the logo is a file. Submitting takes nothing: it checks the deal as last saved.
  */
 @RestController
 @RequestMapping(path = "api/vendor/deals", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,7 +57,7 @@ public class VendorDealEndpoint {
                           @RequestPart("payload") String payloadJson,
                           MultipartRequest request) throws JsonProcessingException {
         long accountId = vendorId(principal);
-        return dealService.create(accountId, requestReader.payload(payloadJson), requestReader.logos(request));
+        return dealService.create(accountId, requestReader.payload(payloadJson), requestReader.logo(request));
     }
 
     @PutMapping(path = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -66,7 +66,7 @@ public class VendorDealEndpoint {
                           @RequestPart("payload") String payloadJson,
                           MultipartRequest request) throws JsonProcessingException {
         long accountId = vendorId(principal);
-        return dealService.update(accountId, id, requestReader.payload(payloadJson), requestReader.logos(request));
+        return dealService.update(accountId, id, requestReader.payload(payloadJson), requestReader.logo(request));
     }
 
     @PostMapping("{id}/submit")

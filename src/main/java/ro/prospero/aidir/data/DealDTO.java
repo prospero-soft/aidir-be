@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * A whole deal, as the vendor edits it and the admin reviews it. The content is in the same shape the
- * form saves, so a draft round-trips; {@code info.logoUrl} is the public URL of the stored logo. Mirrors
+ * form saves, so a draft round-trips; {@code logoUrl} is the public URL of the stored logo. Mirrors
  * DealDTO in aidir-fe (src/types/deal.ts).
  */
 public record DealDTO(long id,
@@ -16,6 +16,11 @@ public record DealDTO(long id,
                       String sponsoredLabel,
                       String campaign,
                       String internalCampaignId,
+                      String productName,
+                      String category,
+                      String brand,
+                      String description,
+                      String logoUrl,
                       String longDescription,
                       Map<String, DealPayload.PlacementContent> perPlacement,
                       String rejectionReason,

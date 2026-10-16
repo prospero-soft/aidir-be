@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.DealDTO;
 import ro.prospero.aidir.data.DealPayload;
@@ -21,7 +22,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,9 +48,10 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
 
     private static final String PAYLOAD = """
             {"placements":["sidebar","top-category"],"sponsored":true,"sponsoredLabel":"Partner",
+             "productName":"Acme Writer","category":"Content Creation","logoUrl":null,
              "perPlacement":{"top-category":{
                "schedule":{"durationDays":7,"startDate":"%s"},
-               "info":{"productName":"Acme Writer","category":"Content Creation","logoUrl":null},
+               "info":{},
                "offer":{"offerType":"percentage","currency":"EUR","originalPrice":100,"dealPrice":60,
                         "discountMonths":12,"buttonText":"Get Started",
                         "destinationUrl":"https://acme.example/deal"}}}}
@@ -62,18 +63,19 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
         return part;
     }
 
-    private static MockMultipartFile logo(String placement) {
-        return new MockMultipartFile("logo-" + placement, "logo.png", MediaType.IMAGE_PNG_VALUE, new byte[]{1, 2, 3});
+    private static MockMultipartFile logo() {
+        return new MockMultipartFile("logo", "logo.png", MediaType.IMAGE_PNG_VALUE, new byte[]{1, 2, 3});
     }
 
     private ResultActions save(Cookie session, HttpMethod method, String url, String json) throws Exception {
         return mockMvc.perform(multipartWithCsrf(method, url).part(payloadPart(json))
-                                                             .file(logo("top-category"))
+                                                             .file(logo())
                                                              .cookie(session));
     }
 
     private static DealDTO deal(long id, DealStatus status) {
-        return new DealDTO(id, status, List.of(Placement.TOP_CATEGORY), false, null, null, null, null, Map.of(), null,
+        return new DealDTO(id, status, List.of(Placement.TOP_CATEGORY), false, null, null, null, null, null, null,
+                           null, null, null, Map.of(), null,
                            OffsetDateTime.parse("2026-10-01T10:00:00Z"), OffsetDateTime.parse("2026-10-01T10:00:00Z"),
                            null, null);
     }
@@ -128,10 +130,11 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
                     DealPayload.PlacementContent content = payload.perPlacement().get("top-category");
                     return payload.placements().equals(List.of(Placement.SIDEBAR, Placement.TOP_CATEGORY))
                            && payload.sponsored()
+                           && payload.productName().equals("Acme Writer")
                            && content.schedule().startDate().equals(START)
                            && content.offer().offerType() == OfferType.PERCENTAGE;
                 }),
-                argThat(logos -> logos.keySet().equals(Set.of("top-category"))));
+                argThat((MultipartFile logo) -> logo.getOriginalFilename().equals("logo.png")));
     }
 
     @Test
@@ -142,7 +145,7 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(7));
 
-        verify(dealService).update(eq(VENDOR_ID), eq(7L), any(), argThat(logos -> logos.containsKey("top-category")));
+        verify(dealService).update(eq(VENDOR_ID), eq(7L), any(), argThat((MultipartFile logo) -> logo != null));
     }
 
     @Test

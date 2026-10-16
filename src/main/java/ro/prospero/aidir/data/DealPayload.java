@@ -22,14 +22,23 @@ import java.util.Map;
  * the closed vocabularies, and a start date that is not in the past. Whether a deal is complete enough to review is decided on submit, by
  * {@link ro.prospero.aidir.service.DealSubmissionRules}.
  *
- * <p>{@code perPlacement} is keyed by {@link Placement#wire()} and only holds the placements with content.
- * Logos travel as multipart parts beside this payload, one {@code logo-<placement>} each.
+ * <p>The product fields describe the deal in every placement it runs in; {@code perPlacement} is keyed by
+ * {@link Placement#wire()} and only holds the placements with content of their own.
+ *
+ * <p>A new logo travels as a {@code logo} multipart part beside this payload. {@code logoUrl} is how a saved
+ * logo survives an edit: sent back as it was read, the stored logo is kept; sent as null, it is removed. A new
+ * {@code logo} part replaces it either way.
  */
 public record DealPayload(@NotNull List<Placement> placements,
                           boolean sponsored,
                           @Size(max = 60) String sponsoredLabel,
                           @Size(max = 100) String campaign,
                           @Size(max = 100) String internalCampaignId,
+                          @Size(max = 200) String productName,
+                          String category,
+                          @Size(max = 200) String brand,
+                          @Size(max = 80) String description,
+                          String logoUrl,
                           @Size(max = 1000) String longDescription,
                           @NotNull Map<String, @Valid PlacementContent> perPlacement) {
 
@@ -56,16 +65,8 @@ public record DealPayload(@NotNull List<Placement> placements,
                            @FutureOrPresent(message = PAST_START) LocalDate startDate) {
     }
 
-    /**
-     * {@code logoUrl} is how a saved logo survives an edit: sent back as it was read, the stored logo is
-     * kept; sent as null, it is removed. A new {@code logo-<placement>} part replaces it either way.
-     */
-    public record Info(@Size(max = 200) String productName,
-                       String category,
-                       @Size(max = 200) String brand,
-                       @Size(max = 80) String description,
-                       String logoUrl,
-                       @Size(max = 45) String line1,
+    /** The text only the banner has of its own. */
+    public record Info(@Size(max = 45) String line1,
                        @Size(max = 80) String line2) {
     }
 

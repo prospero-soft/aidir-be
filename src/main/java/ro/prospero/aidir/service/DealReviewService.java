@@ -119,20 +119,20 @@ public class DealReviewService {
      * Save and Submit make, for the vendor {@link DevVendorAccounts#at} picks. Meant for development: the
      * admin has no deals of its own.
      */
-    public DealDTO devSubmit(int vendorIndex, DealPayload payload, Map<String, MultipartFile> logos) {
-        return createAndSubmit(devVendors.at(vendorIndex), payload, logos);
+    public DealDTO devSubmit(int vendorIndex, DealPayload payload, MultipartFile logo) {
+        return createAndSubmit(devVendors.at(vendorIndex), payload, logo);
     }
 
     /**
      * Like {@link #devSubmit}, but for one vendor named by email, so a developer can sign in as that vendor
      * and find the deal under their own deals.
      */
-    public DealDTO devSubmitAs(String vendorEmail, DealPayload payload, Map<String, MultipartFile> logos) {
-        return createAndSubmit(devVendors.byEmail(vendorEmail), payload, logos);
+    public DealDTO devSubmitAs(String vendorEmail, DealPayload payload, MultipartFile logo) {
+        return createAndSubmit(devVendors.byEmail(vendorEmail), payload, logo);
     }
 
-    private DealDTO createAndSubmit(long accountId, DealPayload payload, Map<String, MultipartFile> logos) {
-        DealDTO draft = dealService.create(accountId, payload, logos);
+    private DealDTO createAndSubmit(long accountId, DealPayload payload, MultipartFile logo) {
+        DealDTO draft = dealService.create(accountId, payload, logo);
         return dealService.submit(accountId, draft.id());
     }
 

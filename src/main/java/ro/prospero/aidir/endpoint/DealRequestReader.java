@@ -8,21 +8,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import ro.prospero.aidir.data.DealPayload;
-import ro.prospero.aidir.data.Placement;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Reads the multipart request the deal form sends: a {@code payload} part holding the JSON, and a
- * {@code logo-<placement>} part per new logo. Shared by the vendor's own save and the dev console's push,
+ * {@code logo} part when a new logo was picked. Shared by the vendor's own save and the dev console's push,
  * so both are held to the same rules.
  */
 @Component
 public class DealRequestReader {
-    static final String LOGO_PART_PREFIX = "logo-";
+    static final String LOGO_PART = "logo";
 
     private final ObjectMapper objectMapper;
     private final Validator validator;
@@ -42,15 +39,9 @@ public class DealRequestReader {
         return payload;
     }
 
-    /** The logo parts present, keyed by {@link Placement#wire()}. */
-    public Map<String, MultipartFile> logos(MultipartRequest request) {
-        Map<String, MultipartFile> logos = new LinkedHashMap<>();
-        for (Placement placement : Placement.values()) {
-            MultipartFile file = request.getFile(LOGO_PART_PREFIX + placement.wire());
-            if (file != null && !file.isEmpty()) {
-                logos.put(placement.wire(), file);
-            }
-        }
-        return logos;
+    /** The new logo, or null when the request carries none. */
+    public MultipartFile logo(MultipartRequest request) {
+        MultipartFile file = request.getFile(LOGO_PART);
+        return file == null || file.isEmpty() ? null : file;
     }
 }

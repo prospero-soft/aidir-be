@@ -36,7 +36,6 @@ import ro.prospero.aidir.jooq.generated.public_.Indexes;
 import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
 import ro.prospero.aidir.jooq.generated.public_.tables.Deal.DealPath;
-import ro.prospero.aidir.jooq.generated.public_.tables.DealCategory.DealCategoryPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealOfferType.DealOfferTypePath;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacementKind.DealPlacementKindPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.DealPlacementRecord;
@@ -87,31 +86,6 @@ public class DealPlacement extends TableImpl<DealPlacementRecord> {
      * The column <code>public.deal_placement.end_date</code>.
      */
     public final TableField<DealPlacementRecord, LocalDate> END_DATE = createField(DSL.name("end_date"), SQLDataType.LOCALDATE, this, "");
-
-    /**
-     * The column <code>public.deal_placement.product_name</code>.
-     */
-    public final TableField<DealPlacementRecord, String> PRODUCT_NAME = createField(DSL.name("product_name"), SQLDataType.VARCHAR(200), this, "");
-
-    /**
-     * The column <code>public.deal_placement.category</code>.
-     */
-    public final TableField<DealPlacementRecord, String> CATEGORY = createField(DSL.name("category"), SQLDataType.VARCHAR, this, "");
-
-    /**
-     * The column <code>public.deal_placement.brand</code>.
-     */
-    public final TableField<DealPlacementRecord, String> BRAND = createField(DSL.name("brand"), SQLDataType.VARCHAR(200), this, "");
-
-    /**
-     * The column <code>public.deal_placement.short_description</code>.
-     */
-    public final TableField<DealPlacementRecord, String> SHORT_DESCRIPTION = createField(DSL.name("short_description"), SQLDataType.VARCHAR(80), this, "");
-
-    /**
-     * The column <code>public.deal_placement.logo_path</code>.
-     */
-    public final TableField<DealPlacementRecord, String> LOGO_PATH = createField(DSL.name("logo_path"), SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>public.deal_placement.line1</code>.
@@ -237,20 +211,7 @@ public class DealPlacement extends TableImpl<DealPlacementRecord> {
 
     @Override
     public List<ForeignKey<DealPlacementRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_CATEGORY_FKEY, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_DEAL_ID_FKEY, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_OFFER_TYPE_FKEY, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_PLACEMENT_FKEY);
-    }
-
-    private transient DealCategoryPath _dealCategory;
-
-    /**
-     * Get the implicit join path to the <code>public.deal_category</code>
-     * table.
-     */
-    public DealCategoryPath dealCategory() {
-        if (_dealCategory == null)
-            _dealCategory = new DealCategoryPath(this, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_CATEGORY_FKEY, null);
-
-        return _dealCategory;
+        return Arrays.asList(Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_DEAL_ID_FKEY, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_OFFER_TYPE_FKEY, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_PLACEMENT_FKEY);
     }
 
     private transient DealPath _deal;

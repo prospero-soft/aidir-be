@@ -2,6 +2,7 @@ package ro.prospero.aidir.service;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
+import ro.prospero.aidir.data.DealDTO;
 import ro.prospero.aidir.data.DealPayload.PlacementContent;
 import ro.prospero.aidir.data.DealStatus;
 import ro.prospero.aidir.data.Placement;
@@ -59,7 +60,7 @@ public class PublicDealService {
             String plan = plans.get(stored.accountId());
             boolean verified = plan != null && !FREE_PLAN.equals(plan);
             listedContent(stored.deal().perPlacement(), today)
-                    .ifPresent(listed -> cards.add(toCard(stored.deal().id(), listed, verified)));
+                    .ifPresent(listed -> cards.add(toCard(stored.deal(), listed, verified)));
         }
         return cards;
     }
@@ -81,16 +82,16 @@ public class PublicDealService {
         return start != null && days != null && !day.isBefore(start) && !day.isAfter(start.plusDays(days - 1));
     }
 
-    private static PublicDealDTO toCard(long dealId, Listed listed, boolean verified) {
+    private static PublicDealDTO toCard(DealDTO deal, Listed listed, boolean verified) {
         PlacementContent content = listed.content();
         LocalDate start = content.schedule().startDate();
-        return new PublicDealDTO(dealId,
+        return new PublicDealDTO(deal.id(),
                                  listed.placement(),
-                                 content.info().productName(),
-                                 content.info().brand(),
-                                 content.info().description(),
-                                 content.info().category(),
-                                 content.info().logoUrl(),
+                                 deal.productName(),
+                                 deal.brand(),
+                                 deal.description(),
+                                 deal.category(),
+                                 deal.logoUrl(),
                                  content.offer(),
                                  start,
                                  start.plusDays(content.schedule().durationDays() - 1),

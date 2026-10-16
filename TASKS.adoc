@@ -41,10 +41,6 @@ handling deal edits for submitted deals:
 
 3. running deals should not be editable, but should be cancellable (if they want to pull the campaign that's their business)
 
-=== deals: company panel client id
-
-what is this for? to be removed
-
 === deals: clicking on the create a deal CTA when logged in as a non-vendor user redirects you to the dashboard, which is very confusing; for logged in users there should be some intermediate page or toast that notifies them that only vendors can access that functionality (and probably as a funnel for non-logged-in users as well)
 
 === deals: there is currently no tab/design for standard listing deals or sidebar deals, no scheduling or anything

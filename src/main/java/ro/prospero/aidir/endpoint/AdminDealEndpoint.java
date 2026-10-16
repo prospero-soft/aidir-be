@@ -76,7 +76,7 @@ public class AdminDealEndpoint {
                              @RequestPart("payload") String payloadJson,
                              MultipartRequest request) throws JsonProcessingException {
         return dealReviewService.devSubmit(vendorIndex, requestReader.payload(payloadJson),
-                                           requestReader.logos(request));
+                                           requestReader.logo(request));
     }
 
     /** A synthetic deal, created and submitted for the vendor account with {@code vendorEmail}. */
@@ -86,6 +86,6 @@ public class AdminDealEndpoint {
                                @RequestPart("payload") String payloadJson,
                                MultipartRequest request) throws JsonProcessingException {
         return dealReviewService.devSubmitAs(vendorEmail, requestReader.payload(payloadJson),
-                                             requestReader.logos(request));
+                                             requestReader.logo(request));
     }
 }

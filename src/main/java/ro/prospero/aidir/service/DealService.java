@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -75,11 +74,9 @@ public class DealService {
                        .orElseThrow(() -> notFound(dealId));
     }
 
-    /**
-     * @param logos new logo files keyed by {@link Placement#wire()}; placements without one keep no logo
-     */
-    public DealDTO create(long accountId, DealPayload payload, Map<String, MultipartFile> logos) {
-        checkPayload(payload, logos);
+    /** @param logo the new logo file, or null for none */
+    public DealDTO create(long accountId, DealPayload payload, MultipartFile logo) {
+        checkPayload(payload, logo);
 
         List<String> storedPaths = new ArrayList<>();
         long dealId;
@@ -92,13 +89,21 @@ public class DealService {
                             .set(DEAL.SPONSORED_LABEL, payload.sponsoredLabel())
                             .set(DEAL.CAMPAIGN, payload.campaign())
                             .set(DEAL.INTERNAL_CAMPAIGN_ID, payload.internalCampaignId())
+                            .set(DEAL.PRODUCT_NAME, payload.productName())
+                            .set(DEAL.CATEGORY, payload.category())
+                            .set(DEAL.BRAND, payload.brand())
+                            .set(DEAL.SHORT_DESCRIPTION, payload.description())
                             .set(DEAL.LONG_DESCRIPTION, payload.longDescription())
                             .returningResult(DEAL.ID)
                             .fetchOne(DEAL.ID);
                 if (id == null) {
                     throw new IllegalStateException("Creating the deal returned no id");
                 }
-                writePlacements(tx, id, payload, Map.of(), logos, storedPaths);
+                if (logo != null) {
+                    String logoPath = storeLogo(id, logo, storedPaths);
+                    tx.update(DEAL).set(DEAL.LOGO_PATH, logoPath).where(DEAL.ID.eq(id)).execute();
+                }
+                writePlacements(tx, id, payload);
                 return id;
             });
         } catch (RuntimeException exception) {
@@ -108,39 +113,52 @@ public class DealService {
         return get(accountId, dealId);
     }
 
-    /** Replaces the deal's content with the payload's, and makes it a draft. */
-    public DealDTO update(long accountId, long dealId, DealPayload payload, Map<String, MultipartFile> logos) {
-        checkPayload(payload, logos);
+    /**
+     * Replaces the deal's content with the payload's, and makes it a draft. The logo is, in order: the new
+     * file, the one the deal already had if the payload still names it, or none.
+     */
+    public DealDTO update(long accountId, long dealId, DealPayload payload, MultipartFile logo) {
+        checkPayload(payload, logo);
 
         List<String> storedPaths = new ArrayList<>();
-        List<String> supersededPaths;
+        String supersededPath;
         try {
-            supersededPaths = dslContext.transactionResult(cfg -> {
+            supersededPath = dslContext.transactionResult(cfg -> {
                 DSLContext tx = DSL.using(cfg);
                 requireEditable(lockOwned(tx, accountId, dealId));
 
-                Map<String, String> previousLogos = dealRows.logoPaths(tx, dealId);
+                String previousLogo = dealRows.logoPath(tx, dealId);
+                String logoPath = logo != null
+                        ? storeLogo(dealId, logo, storedPaths)
+                        : payload.logoUrl() != null ? previousLogo : null;
                 tx.update(DEAL)
                   .set(DEAL.STATUS, DealStatus.DRAFT.wire())
                   .set(DEAL.SPONSORED, payload.sponsored())
                   .set(DEAL.SPONSORED_LABEL, payload.sponsoredLabel())
                   .set(DEAL.CAMPAIGN, payload.campaign())
                   .set(DEAL.INTERNAL_CAMPAIGN_ID, payload.internalCampaignId())
+                  .set(DEAL.PRODUCT_NAME, payload.productName())
+                  .set(DEAL.CATEGORY, payload.category())
+                  .set(DEAL.BRAND, payload.brand())
+                  .set(DEAL.SHORT_DESCRIPTION, payload.description())
+                  .set(DEAL.LOGO_PATH, logoPath)
                   .set(DEAL.LONG_DESCRIPTION, payload.longDescription())
                   .setNull(DEAL.REJECTION_REASON)
                   .set(DEAL.UPDATED_AT, OffsetDateTime.now())
                   .where(DEAL.ID.eq(dealId))
                   .execute();
                 tx.deleteFrom(DEAL_PLACEMENT).where(DEAL_PLACEMENT.DEAL_ID.eq(dealId)).execute();
+                writePlacements(tx, dealId, payload);
 
-                Set<String> keptPaths = writePlacements(tx, dealId, payload, previousLogos, logos, storedPaths);
-                return previousLogos.values().stream().filter(path -> !keptPaths.contains(path)).toList();
+                return Objects.equals(previousLogo, logoPath) ? null : previousLogo;
             });
         } catch (RuntimeException exception) {
             storedPaths.forEach(fileStorageService::delete);
             throw exception;
         }
-        supersededPaths.forEach(fileStorageService::delete);
+        if (supersededPath != null) {
+            fileStorageService.delete(supersededPath);
+        }
         return get(accountId, dealId);
     }
 
@@ -156,7 +174,8 @@ public class DealService {
             DealDTO deal = dealRows.readOne(tx, DEAL.ID.eq(dealId))
                                    .map(DealRows.StoredDeal::deal)
                                    .orElseThrow(() -> notFound(dealId));
-            List<String> violations = DealSubmissionRules.check(deal.placements(), deal.longDescription(),
+            List<String> violations = DealSubmissionRules.check(deal.placements(),
+                                                                DealSubmissionRules.Basics.of(deal),
                                                                 deal.perPlacement(), LocalDate.now());
             if (!violations.isEmpty()) {
                 throw new ApiPayloadValidationException("This deal is not ready to submit yet.", violations);
@@ -175,57 +194,40 @@ public class DealService {
     }
 
     public void delete(long accountId, long dealId) {
-        List<String> logoPaths = dslContext.transactionResult(cfg -> {
+        String logoPath = dslContext.transactionResult(cfg -> {
             DSLContext tx = DSL.using(cfg);
             requireEditable(lockOwned(tx, accountId, dealId));
-            List<String> paths = List.copyOf(dealRows.logoPaths(tx, dealId).values());
+            String path = dealRows.logoPath(tx, dealId);
             // The placements go with it: deal_placement cascades.
             tx.deleteFrom(DEAL).where(DEAL.ID.eq(dealId)).execute();
-            return paths;
+            return path;
         });
-        logoPaths.forEach(fileStorageService::delete);
+        if (logoPath != null) {
+            fileStorageService.delete(logoPath);
+        }
     }
 
-    /**
-     * Inserts a row per chosen placement. A placement's logo is, in order: the new file uploaded for it, the
-     * one it already had if the payload still names it, or none.
-     *
-     * @return the previous logo paths that are still in use
-     */
-    private Set<String> writePlacements(DSLContext tx, long dealId, DealPayload payload,
-                                        Map<String, String> previousLogos, Map<String, MultipartFile> logos,
-                                        List<String> storedPaths) {
-        Set<String> keptPaths = new HashSet<>();
+    /** Inserts a row per chosen placement. */
+    private void writePlacements(DSLContext tx, long dealId, DealPayload payload) {
         for (Placement placement : new LinkedHashSet<>(payload.placements())) {
             PlacementContent content = placement.hasContent() ? payload.perPlacement().get(placement.wire()) : null;
-            String logoPath = null;
-
-            if (content != null) {
-                MultipartFile logo = logos.get(placement.wire());
-                if (logo != null && !logo.isEmpty()) {
-                    logoPath = fileStorageService.storeImage(logo, DEAL_DIR + dealId, logoBaseName(placement));
-                    storedPaths.add(logoPath);
-                } else if (content.info().logoUrl() != null && previousLogos.containsKey(placement.wire())) {
-                    logoPath = previousLogos.get(placement.wire());
-                    keptPaths.add(logoPath);
-                }
-            }
-
-            dealRows.insertPlacement(tx, dealId, placement, content, logoPath);
+            dealRows.insertPlacement(tx, dealId, placement, content);
         }
-        return keptPaths;
     }
 
     /** A fresh name per upload, so a replaced logo is never served from a cache under the old one's URL. */
-    private static String logoBaseName(Placement placement) {
-        return placement.wire() + "-logo-" + UUID.randomUUID().toString().substring(0, 8);
+    private String storeLogo(long dealId, MultipartFile logo, List<String> storedPaths) {
+        String path = fileStorageService.storeImage(logo, DEAL_DIR + dealId,
+                                                    "logo-" + UUID.randomUUID().toString().substring(0, 8));
+        storedPaths.add(path);
+        return path;
     }
 
     /**
-     * What Bean Validation cannot say about the payload: that its content and logos belong to placements
-     * it chose, that the categories exist and that the logos are images we serve.
+     * What Bean Validation cannot say about the payload: that its content belongs to placements it chose,
+     * that the category exists and that the logo is an image we serve.
      */
-    private void checkPayload(DealPayload payload, Map<String, MultipartFile> logos) {
+    private void checkPayload(DealPayload payload, MultipartFile logo) {
         List<String> violations = new ArrayList<>();
         Set<String> chosen = new HashSet<>();
         payload.placements().forEach(placement -> chosen.add(placement.wire()));
@@ -239,21 +241,14 @@ public class DealService {
             }
         });
 
-        logos.forEach((key, file) -> {
-            if (!payload.perPlacement().containsKey(key)) {
-                violations.add("logo-" + key + ": there is no content for this placement");
-            } else if (file != null && !file.isEmpty() && !isLogoType(file)) {
-                violations.add("logo-" + key + ": the logo must be a PNG, JPEG or WebP image");
-            }
-        });
+        if (logo != null && !isLogoType(logo)) {
+            violations.add("logo: the logo must be a PNG, JPEG or WebP image");
+        }
 
-        Set<String> categories = new HashSet<>(dslContext.fetchValues(DEAL_CATEGORY.NAME));
-        payload.perPlacement().forEach((key, content) -> {
-            String category = content.info().category();
-            if (category != null && !categories.contains(category)) {
-                violations.add("perPlacement." + key + ".info.category: unknown category '" + category + "'");
-            }
-        });
+        String category = payload.category();
+        if (category != null && !dslContext.fetchExists(DEAL_CATEGORY, DEAL_CATEGORY.NAME.eq(category))) {
+            violations.add("category: unknown category '" + category + "'");
+        }
 
         if (!violations.isEmpty()) {
             throw new ApiPayloadValidationException("Validating the deal failed.", violations);
@@ -289,11 +284,8 @@ public class DealService {
     }
 
     private static DealSummaryDTO summaryOf(DealDTO deal) {
-        String title = deal.perPlacement().values().stream()
-                           .map(content -> firstNonBlank(content.info().productName(), content.info().line1()))
-                           .filter(Objects::nonNull)
-                           .findFirst()
-                           .orElse(null);
+        PlacementContent banner = deal.perPlacement().get(Placement.BANNER.wire());
+        String title = firstNonBlank(deal.productName(), banner == null ? null : banner.info().line1());
         return new DealSummaryDTO(deal.id(), deal.status(), title, deal.placements(), deal.rejectionReason(),
                                   deal.createdAt(), deal.updatedAt(), deal.submittedAt());
     }

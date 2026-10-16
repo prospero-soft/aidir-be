@@ -92,199 +92,129 @@ public class DealPlacementRecord extends UpdatableRecordImpl<DealPlacementRecord
     }
 
     /**
-     * Setter for <code>public.deal_placement.product_name</code>.
-     */
-    public void setProductName(String value) {
-        set(5, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement.product_name</code>.
-     */
-    public String getProductName() {
-        return (String) get(5);
-    }
-
-    /**
-     * Setter for <code>public.deal_placement.category</code>.
-     */
-    public void setCategory(String value) {
-        set(6, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement.category</code>.
-     */
-    public String getCategory() {
-        return (String) get(6);
-    }
-
-    /**
-     * Setter for <code>public.deal_placement.brand</code>.
-     */
-    public void setBrand(String value) {
-        set(7, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement.brand</code>.
-     */
-    public String getBrand() {
-        return (String) get(7);
-    }
-
-    /**
-     * Setter for <code>public.deal_placement.short_description</code>.
-     */
-    public void setShortDescription(String value) {
-        set(8, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement.short_description</code>.
-     */
-    public String getShortDescription() {
-        return (String) get(8);
-    }
-
-    /**
-     * Setter for <code>public.deal_placement.logo_path</code>.
-     */
-    public void setLogoPath(String value) {
-        set(9, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement.logo_path</code>.
-     */
-    public String getLogoPath() {
-        return (String) get(9);
-    }
-
-    /**
      * Setter for <code>public.deal_placement.line1</code>.
      */
     public void setLine1(String value) {
-        set(10, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.line1</code>.
      */
     public String getLine1() {
-        return (String) get(10);
+        return (String) get(5);
     }
 
     /**
      * Setter for <code>public.deal_placement.line2</code>.
      */
     public void setLine2(String value) {
-        set(11, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.line2</code>.
      */
     public String getLine2() {
-        return (String) get(11);
+        return (String) get(6);
     }
 
     /**
      * Setter for <code>public.deal_placement.offer_type</code>.
      */
     public void setOfferType(String value) {
-        set(12, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.offer_type</code>.
      */
     public String getOfferType() {
-        return (String) get(12);
+        return (String) get(7);
     }
 
     /**
      * Setter for <code>public.deal_placement.offer_terms</code>.
      */
     public void setOfferTerms(JSONB value) {
-        set(13, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.offer_terms</code>.
      */
     public JSONB getOfferTerms() {
-        return (JSONB) get(13);
+        return (JSONB) get(8);
     }
 
     /**
      * Setter for <code>public.deal_placement.deal_label</code>.
      */
     public void setDealLabel(String value) {
-        set(14, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.deal_label</code>.
      */
     public String getDealLabel() {
-        return (String) get(14);
+        return (String) get(9);
     }
 
     /**
      * Setter for <code>public.deal_placement.button_text</code>.
      */
     public void setButtonText(String value) {
-        set(15, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.button_text</code>.
      */
     public String getButtonText() {
-        return (String) get(15);
+        return (String) get(10);
     }
 
     /**
      * Setter for <code>public.deal_placement.destination_url</code>.
      */
     public void setDestinationUrl(String value) {
-        set(16, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.destination_url</code>.
      */
     public String getDestinationUrl() {
-        return (String) get(16);
+        return (String) get(11);
     }
 
     /**
      * Setter for <code>public.deal_placement.spotlight_text</code>.
      */
     public void setSpotlightText(String value) {
-        set(17, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.spotlight_text</code>.
      */
     public String getSpotlightText() {
-        return (String) get(17);
+        return (String) get(12);
     }
 
     /**
      * Setter for <code>public.deal_placement.banner_badge</code>.
      */
     public void setBannerBadge(String value) {
-        set(18, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.deal_placement.banner_badge</code>.
      */
     public String getBannerBadge() {
-        return (String) get(18);
+        return (String) get(13);
     }
 
     // -------------------------------------------------------------------------
@@ -310,7 +240,7 @@ public class DealPlacementRecord extends UpdatableRecordImpl<DealPlacementRecord
     /**
      * Create a detached, initialised DealPlacementRecord
      */
-    public DealPlacementRecord(Long dealId, String placement, LocalDate startDate, Integer durationDays, LocalDate endDate, String productName, String category, String brand, String shortDescription, String logoPath, String line1, String line2, String offerType, JSONB offerTerms, String dealLabel, String buttonText, String destinationUrl, String spotlightText, String bannerBadge) {
+    public DealPlacementRecord(Long dealId, String placement, LocalDate startDate, Integer durationDays, LocalDate endDate, String line1, String line2, String offerType, JSONB offerTerms, String dealLabel, String buttonText, String destinationUrl, String spotlightText, String bannerBadge) {
         super(DealPlacement.DEAL_PLACEMENT);
 
         setDealId(dealId);
@@ -318,11 +248,6 @@ public class DealPlacementRecord extends UpdatableRecordImpl<DealPlacementRecord
         setStartDate(startDate);
         setDurationDays(durationDays);
         setEndDate(endDate);
-        setProductName(productName);
-        setCategory(category);
-        setBrand(brand);
-        setShortDescription(shortDescription);
-        setLogoPath(logoPath);
         setLine1(line1);
         setLine2(line2);
         setOfferType(offerType);
