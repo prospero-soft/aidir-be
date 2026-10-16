@@ -18,8 +18,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.COMPANY_INFORMATION;
 import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
 
 /**
@@ -30,19 +28,20 @@ import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
 @Service
 public class DealReviewService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DealReviewService.class);
-    private static final String VENDOR = "vendor";
 
     private final DSLContext dslContext;
     private final DealRows dealRows;
     private final DealService dealService;
-    private final AccountService accountService;
+    private final DevVendorAccounts devVendors;
+    private final VendorContacts vendorContacts;
 
     public DealReviewService(DSLContext dslContext, DealRows dealRows, DealService dealService,
-                             AccountService accountService) {
+                             DevVendorAccounts devVendors, VendorContacts vendorContacts) {
         this.dslContext = dslContext;
         this.dealRows = dealRows;
         this.dealService = dealService;
-        this.accountService = accountService;
+        this.devVendors = devVendors;
+        this.vendorContacts = vendorContacts;
     }
 
     /** The deals waiting for a verdict, oldest submission first. */
@@ -54,22 +53,13 @@ public class DealReviewService {
             return List.of();
         }
 
-        // The company's official name where onboarding recorded one, the account's display name otherwise.
-        Map<Long, Vendor> vendors =
-                dslContext.select(ACCOUNT.ID, ACCOUNT.DISPLAY_NAME, COMPANY_INFORMATION.OFFICIAL_NAME, ACCOUNT.EMAIL)
-                          .from(ACCOUNT)
-                          .leftJoin(COMPANY_INFORMATION).on(COMPANY_INFORMATION.ACCOUNT_ID.eq(ACCOUNT.ID))
-                          .where(ACCOUNT.ID.in(pending.stream().map(DealRows.StoredDeal::accountId).toList()))
-                          .fetchMap(ACCOUNT.ID, r -> new Vendor(r.value3() != null ? r.value3() : r.value2(),
-                                                                r.value4()));
+        Map<Long, VendorContacts.Contact> vendors =
+                vendorContacts.of(pending.stream().map(DealRows.StoredDeal::accountId).toList());
 
         return pending.stream().map(stored -> {
-            Vendor vendor = vendors.getOrDefault(stored.accountId(), new Vendor(null, null));
+            VendorContacts.Contact vendor = VendorContacts.orUnknown(vendors, stored.accountId());
             return new DealReviewDTO(stored.deal(), stored.accountId(), vendor.name(), vendor.email());
         }).toList();
-    }
-
-    private record Vendor(String name, String email) {
     }
 
     /** Approving twice is the same as approving once; approving anything not pending is a conflict. */
@@ -126,22 +116,11 @@ public class DealReviewService {
 
     /**
      * Creates and submits a deal on behalf of a vendor account, through the same calls the vendor's own
-     * Save and Submit make. The vendor is picked by position, wrapping around, so a run of synthetic deals
-     * spreads over every vendor there is. Meant for development: the admin has no deals of its own.
+     * Save and Submit make, for the vendor {@link DevVendorAccounts#at} picks. Meant for development: the
+     * admin has no deals of its own.
      */
     public DealDTO devSubmit(int vendorIndex, DealPayload payload, Map<String, MultipartFile> logos) {
-        List<Long> vendors = dslContext.select(ACCOUNT.ID)
-                                       .from(ACCOUNT)
-                                       .where(ACCOUNT.ACCOUNT_TYPE.eq(VENDOR))
-                                       .orderBy(ACCOUNT.ID.asc())
-                                       .fetch(ACCOUNT.ID);
-        if (vendors.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                              "There are no vendor accounts to submit deals for. "
-                                              + "Push vendor onboarding test data first.");
-        }
-
-        return createAndSubmit(vendors.get(Math.floorMod(vendorIndex, vendors.size())), payload, logos);
+        return createAndSubmit(devVendors.at(vendorIndex), payload, logos);
     }
 
     /**
@@ -149,14 +128,7 @@ public class DealReviewService {
      * and find the deal under their own deals.
      */
     public DealDTO devSubmitAs(String vendorEmail, DealPayload payload, Map<String, MultipartFile> logos) {
-        long accountId = accountService.findByEmail(vendorEmail)
-                                       .filter(account -> VENDOR.equals(account.getAccountType()))
-                                       .orElseThrow(() -> new ResponseStatusException(
-                                               HttpStatus.BAD_REQUEST,
-                                               "No vendor account " + vendorEmail
-                                               + ". Create the test accounts first."))
-                                       .getId();
-        return createAndSubmit(accountId, payload, logos);
+        return createAndSubmit(devVendors.byEmail(vendorEmail), payload, logos);
     }
 
     private DealDTO createAndSubmit(long accountId, DealPayload payload, Map<String, MultipartFile> logos) {

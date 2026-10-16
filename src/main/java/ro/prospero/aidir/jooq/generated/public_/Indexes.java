@@ -10,6 +10,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrder;
 import ro.prospero.aidir.jooq.generated.public_.tables.Deal;
 import ro.prospero.aidir.jooq.generated.public_.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.public_.tables.Feature;
@@ -29,6 +30,8 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index ACCOUNT_ADDON_LIVE_IDX = Internal.createIndex(DSL.name("account_addon_live_idx"), AccountAddon.ACCOUNT_ADDON, new OrderField[] { AccountAddon.ACCOUNT_ADDON.ACCOUNT_ID }, false);
+    public static final Index ARTICLE_ORDER_ACCOUNT_IDX = Internal.createIndex(DSL.name("article_order_account_idx"), ArticleOrder.ARTICLE_ORDER, new OrderField[] { ArticleOrder.ARTICLE_ORDER.ACCOUNT_ID }, false);
+    public static final Index ARTICLE_ORDER_STATUS_IDX = Internal.createIndex(DSL.name("article_order_status_idx"), ArticleOrder.ARTICLE_ORDER, new OrderField[] { ArticleOrder.ARTICLE_ORDER.STATUS }, false);
     public static final Index DEAL_ACCOUNT_IDX = Internal.createIndex(DSL.name("deal_account_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.ACCOUNT_ID }, false);
     public static final Index DEAL_PLACEMENT_RUNNING_IDX = Internal.createIndex(DSL.name("deal_placement_running_idx"), DealPlacement.DEAL_PLACEMENT, new OrderField[] { DealPlacement.DEAL_PLACEMENT.PLACEMENT, DealPlacement.DEAL_PLACEMENT.START_DATE, DealPlacement.DEAL_PLACEMENT.END_DATE }, false);
     public static final Index DEAL_STATUS_IDX = Internal.createIndex(DSL.name("deal_status_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.STATUS }, false);

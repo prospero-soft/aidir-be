@@ -47,9 +47,9 @@ what is this for? to be removed
 
 === deals: clicking on the create a deal CTA when logged in as a non-vendor user redirects you to the dashboard, which is very confusing; for logged in users there should be some intermediate page or toast that notifies them that only vendors can access that functionality (and probably as a funnel for non-logged-in users as well)
 
-=== deals: long description should appear on a deal detail page, and should only have to be filled in once; right now it's attached to the deal position, so we need to extract it from there; also, the character limit should be lower (200-400)
-
 === deals: there is currently no tab/design for standard listing deals or sidebar deals, no scheduling or anything
+
+=== deals: deal page layout, central tile at the bottom of the page, text is crowded against the bottom margin on my screen
 
 === dunning: drive the subscription lifecycle from a real payment provider
 Quota usage is settled - feature_grant holds one row per numeric entitlement, and
@@ -57,6 +57,13 @@ SubscriptionService composes every lifecycle event out of openPeriod/closePeriod
 is the scheduler that decides when to call them: there is no payment, invoice or provider
 integration yet, so renew/beginGrace/recoverFromGrace have nothing to charge against and are
 currently only reachable by hand.
+
+=== articles: take payment for sponsored article orders
+Both article flows place an order priced by `ArticlePricing` and store it unpaid: `article_order.paid_at`
+stays null, because there is no payment provider to settle it. The front end's success page still opens
+with "Payment successful!" and promises a payment receipt by email, neither of which is true yet. Decide
+whether payment is taken when the order is placed or once the editors approve it (the pricing page's FAQ
+says the latter), then set `paid_at` from the provider.
 
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
 

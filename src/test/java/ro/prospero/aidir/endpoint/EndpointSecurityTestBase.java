@@ -27,6 +27,8 @@ import ro.prospero.aidir.event.MetricEventPublisher;
 import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
 import ro.prospero.aidir.security.AccountUserDetailsService;
 import ro.prospero.aidir.service.AccountService;
+import ro.prospero.aidir.service.ArticleOrderService;
+import ro.prospero.aidir.service.ArticleReviewService;
 import ro.prospero.aidir.service.DealReviewService;
 import ro.prospero.aidir.service.DealService;
 import ro.prospero.aidir.service.DocumentIndexService;
@@ -59,10 +61,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(controllers = {AuthEndpoint.class, ToolSubmissionEndpoint.class, SearchEndpoint.class,
                            CategoryEndpoint.class, TalentProfileEditEndpoint.class, VendorDealEndpoint.class,
-                           VendorCompanyEndpoint.class, AdminDealEndpoint.class, DealEndpoint.class},
+                           VendorCompanyEndpoint.class, AdminDealEndpoint.class, DealEndpoint.class,
+                           VendorArticleEndpoint.class, AdminArticleEndpoint.class},
             properties = "aidir.uploads.root=target/test-uploads")
 @Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class, DealRequestReader.class,
-         EndpointSecurityTestBase.InMemorySessions.class})
+         ArticleRequestReader.class, EndpointSecurityTestBase.InMemorySessions.class})
 @ImportAutoConfiguration(SessionAutoConfiguration.class)
 abstract class EndpointSecurityTestBase {
     static final String SESSION_COOKIE = "SESSION";
@@ -106,6 +109,10 @@ abstract class EndpointSecurityTestBase {
     PublicDealService publicDealService;
     @MockitoBean
     VendorCompanyService vendorCompanyService;
+    @MockitoBean
+    ArticleOrderService articleOrderService;
+    @MockitoBean
+    ArticleReviewService articleReviewService;
 
     @TestConfiguration(proxyBeanMethods = false)
     @EnableSpringHttpSession

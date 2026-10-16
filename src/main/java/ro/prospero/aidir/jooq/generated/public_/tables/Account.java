@@ -35,6 +35,7 @@ import ro.prospero.aidir.jooq.generated.public_.Keys;
 import ro.prospero.aidir.jooq.generated.public_.Public;
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountAddon.AccountAddonPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.AccountTypes.AccountTypesPath;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrder.ArticleOrderPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation.CompanyInformationPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant.FeatureGrantPath;
@@ -225,6 +226,19 @@ public class Account extends TableImpl<AccountRecord> {
             _accountAddon = new AccountAddonPath(this, null, Keys.ACCOUNT_ADDON__ACCOUNT_ADDON_ACCOUNT_ID_FKEY.getInverseKey());
 
         return _accountAddon;
+    }
+
+    private transient ArticleOrderPath _articleOrder;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.article_order</code> table
+     */
+    public ArticleOrderPath articleOrder() {
+        if (_articleOrder == null)
+            _articleOrder = new ArticleOrderPath(this, null, Keys.ARTICLE_ORDER__ARTICLE_ORDER_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _articleOrder;
     }
 
     private transient CompanyInformationPath _companyInformation;

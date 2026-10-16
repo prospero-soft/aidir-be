@@ -10,6 +10,12 @@ import ro.prospero.aidir.jooq.generated.public_.tables.AccountTypes;
 import ro.prospero.aidir.jooq.generated.public_.tables.Addon;
 import ro.prospero.aidir.jooq.generated.public_.tables.AddonBilling;
 import ro.prospero.aidir.jooq.generated.public_.tables.AddonFeature;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrder;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrderImage;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrderKind;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrderStatus;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleOrderTopic;
+import ro.prospero.aidir.jooq.generated.public_.tables.ArticleWritingTier;
 import ro.prospero.aidir.jooq.generated.public_.tables.Category;
 import ro.prospero.aidir.jooq.generated.public_.tables.CompanyInformation;
 import ro.prospero.aidir.jooq.generated.public_.tables.DataPermission;
@@ -25,6 +31,7 @@ import ro.prospero.aidir.jooq.generated.public_.tables.FeatureKind;
 import ro.prospero.aidir.jooq.generated.public_.tables.ImageKind;
 import ro.prospero.aidir.jooq.generated.public_.tables.Language;
 import ro.prospero.aidir.jooq.generated.public_.tables.Location;
+import ro.prospero.aidir.jooq.generated.public_.tables.NewsTopic;
 import ro.prospero.aidir.jooq.generated.public_.tables.Permission;
 import ro.prospero.aidir.jooq.generated.public_.tables.Plan;
 import ro.prospero.aidir.jooq.generated.public_.tables.PlanAddon;
@@ -88,6 +95,36 @@ public class Tables {
      * The table <code>public.addon_feature</code>.
      */
     public static final AddonFeature ADDON_FEATURE = AddonFeature.ADDON_FEATURE;
+
+    /**
+     * The table <code>public.article_order</code>.
+     */
+    public static final ArticleOrder ARTICLE_ORDER = ArticleOrder.ARTICLE_ORDER;
+
+    /**
+     * The table <code>public.article_order_image</code>.
+     */
+    public static final ArticleOrderImage ARTICLE_ORDER_IMAGE = ArticleOrderImage.ARTICLE_ORDER_IMAGE;
+
+    /**
+     * The table <code>public.article_order_kind</code>.
+     */
+    public static final ArticleOrderKind ARTICLE_ORDER_KIND = ArticleOrderKind.ARTICLE_ORDER_KIND;
+
+    /**
+     * The table <code>public.article_order_status</code>.
+     */
+    public static final ArticleOrderStatus ARTICLE_ORDER_STATUS = ArticleOrderStatus.ARTICLE_ORDER_STATUS;
+
+    /**
+     * The table <code>public.article_order_topic</code>.
+     */
+    public static final ArticleOrderTopic ARTICLE_ORDER_TOPIC = ArticleOrderTopic.ARTICLE_ORDER_TOPIC;
+
+    /**
+     * The table <code>public.article_writing_tier</code>.
+     */
+    public static final ArticleWritingTier ARTICLE_WRITING_TIER = ArticleWritingTier.ARTICLE_WRITING_TIER;
 
     /**
      * The table <code>public.category</code>.
@@ -163,6 +200,11 @@ public class Tables {
      * The table <code>public.location</code>.
      */
     public static final Location LOCATION = Location.LOCATION;
+
+    /**
+     * The table <code>public.news_topic</code>.
+     */
+    public static final NewsTopic NEWS_TOPIC = NewsTopic.NEWS_TOPIC;
 
     /**
      * The table <code>public.permission</code>.
