@@ -15,10 +15,10 @@ import ro.prospero.aidir.data.UserPlanKey;
 
 import java.time.OffsetDateTime;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN_PRICE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN_PRICE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROFILE;
 
 /**
  * The talent wizard's one write, in two shapes: a free signup is an account and the subscription that

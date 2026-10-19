@@ -12,7 +12,7 @@ import ro.prospero.aidir.data.ArticleQuoteDTO;
 import ro.prospero.aidir.data.ArticleRequestPayload;
 import ro.prospero.aidir.data.ArticleSubmissionPayload;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ArticleOrderRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ArticleOrderRecord;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -24,10 +24,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER_IMAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER_TOPIC;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.NEWS_TOPIC;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER_IMAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER_TOPIC;
+import static ro.prospero.aidir.jooq.generated.Tables.NEWS_TOPIC;
 
 /**
  * A vendor's sponsored article orders: placing one of either kind, and reading back their own.

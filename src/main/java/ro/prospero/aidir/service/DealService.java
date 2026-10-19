@@ -13,7 +13,7 @@ import ro.prospero.aidir.data.DealStatus;
 import ro.prospero.aidir.data.DealSummaryDTO;
 import ro.prospero.aidir.data.Placement;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.DealRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.DealRecord;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -26,9 +26,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL_CATEGORY;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL_PLACEMENT;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL_CATEGORY;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
 
 /**
  * A vendor's own deals: saving drafts, submitting them for review, and deleting the ones not yet approved.

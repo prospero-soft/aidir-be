@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
 
 /**
  * The vendor accounts the development helpers act for: the admin has no deals or articles of its own, so the

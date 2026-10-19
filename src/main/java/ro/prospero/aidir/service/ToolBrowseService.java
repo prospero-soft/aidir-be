@@ -12,14 +12,14 @@ import ro.prospero.aidir.data.FacetCount;
 import ro.prospero.aidir.data.ToolBrowseQuery;
 import ro.prospero.aidir.data.ToolPage;
 import ro.prospero.aidir.data.ToolSearchHit;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.CATEGORY;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL;
+import static ro.prospero.aidir.jooq.generated.Tables.CATEGORY;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
 
 /**
  * The directory browse query: filtering, counting, faceting and paging, in SQL.

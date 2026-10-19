@@ -47,6 +47,9 @@ handling deal edits for submitted deals:
 
 === deals: deal page layout, central tile at the bottom of the page, text is crowded against the bottom margin on my screen
 
+=== news: handle templates and editor
+the current input for submitted articles is a bare text-area, but we're going to have to offer some way of formatting the articles to the people who submit: either templates or a limited editor (TipTap is the react library that looks like the most promising editor candidate)
+
 === dunning: drive the subscription lifecycle from a real payment provider
 Quota usage is settled - feature_grant holds one row per numeric entitlement, and
 SubscriptionService composes every lifecycle event out of openPeriod/closePeriod. What is missing

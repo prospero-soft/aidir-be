@@ -4,7 +4,7 @@ import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.AccountRecord;
 
 import java.io.Serial;
 import java.util.Collection;

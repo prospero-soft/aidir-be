@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.VendorCompanyDTO;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.COMPANY_INFORMATION;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.COMPANY_INFORMATION;
 
 /** The company behind a vendor account, assembled from what onboarding recorded and the current plan. */
 @Service

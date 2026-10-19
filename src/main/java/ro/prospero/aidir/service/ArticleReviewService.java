@@ -15,13 +15,13 @@ import ro.prospero.aidir.data.ArticleOrderStatus;
 import ro.prospero.aidir.data.ArticleRequestPayload;
 import ro.prospero.aidir.data.ArticleReviewDTO;
 import ro.prospero.aidir.data.ArticleSubmissionPayload;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ArticleOrderRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ArticleOrderRecord;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER;
 
 /**
  * The editorial team's side of article orders: the queue of pending orders and the verdict on each.

@@ -14,6 +14,17 @@ grant all on schema public to aidir;
 ----
 
 
+=== jOOQ classes
+
+The classes under `ro.prospero.aidir.jooq.generated` are generated from the local `aidir` database and checked in.
+After a schema change:
+
+. Bring the local database up to the changelog: start the app, or run `mvn liquibase:update`.
+If a changeset was edited in place, drop and recreate the database first.
+. Run `mvn jooq-codegen:generate`. It does not compile the project, so it works even while other code is broken by the schema change.
+. Commit the regenerated sources.
+
+
 === wordpress local info
 
 ----

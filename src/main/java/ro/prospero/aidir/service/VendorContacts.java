@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Map;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.COMPANY_INFORMATION;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.COMPANY_INFORMATION;
 
 /** Who is behind the vendor accounts a review queue lists, so the reviewer knows whom they are judging. */
 @Component

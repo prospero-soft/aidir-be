@@ -3,12 +3,12 @@ package ro.prospero.aidir.service;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.PrincipalDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.AccountRecord;
 
 import java.util.Locale;
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
 
 /**
  * Accounts as sign-in sees them: looked up by email, and described to the front end as a principal.

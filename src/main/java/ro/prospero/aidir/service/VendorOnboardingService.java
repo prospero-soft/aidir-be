@@ -18,12 +18,12 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.COMPANY_INFORMATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN_PRICE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_SUBMISSION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_SUBMISSION_IMAGE_METADATA;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.COMPANY_INFORMATION;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN_PRICE;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_SUBMISSION;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_SUBMISSION_IMAGE_METADATA;
 
 /**
  * The vendor wizard's one write: an account, the company behind it, and a tool submission parked for

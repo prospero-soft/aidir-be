@@ -12,13 +12,13 @@ import ro.prospero.aidir.data.DealDTO;
 import ro.prospero.aidir.data.DealPayload;
 import ro.prospero.aidir.data.DealReviewDTO;
 import ro.prospero.aidir.data.DealStatus;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.DealRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.DealRecord;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
 
 /**
  * The admin's side of deals: the queue of submitted deals and the verdict on each. An approved deal goes

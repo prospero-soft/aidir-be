@@ -4,7 +4,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_IMAGE_METADATA;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_IMAGE_METADATA;
 
 /**
  * Reads the published catalogue, which is what the CMS used to be. The details page and the search index

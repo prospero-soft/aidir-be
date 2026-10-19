@@ -14,15 +14,15 @@ import ro.prospero.aidir.data.ArticleOrderKind;
 import ro.prospero.aidir.data.ArticleOrderStatus;
 import ro.prospero.aidir.data.ArticleQuoteDTO;
 import ro.prospero.aidir.data.WritingTier;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ArticleOrderRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ArticleOrderRecord;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER_IMAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ARTICLE_ORDER_TOPIC;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER_IMAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_ORDER_TOPIC;
 
 /**
  * The article order tables, read into {@link ArticleOrderDTO}, and the JSON the list and quote columns hold.

@@ -8,12 +8,12 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.AccountRecord;
 import ro.prospero.aidir.service.AccountService;
 
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
 
 /**
  * The only way an admin account comes to exist: no onboarding route creates one.

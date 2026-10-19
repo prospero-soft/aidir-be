@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL_PLACEMENT;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
 
 /**
  * The deals the public directory lists: approved, with a deal-card placement - Top Category or Homepage -

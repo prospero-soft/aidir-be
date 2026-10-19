@@ -11,13 +11,13 @@ import ro.prospero.aidir.data.FacetCount;
 import ro.prospero.aidir.data.TalentBrowseQuery;
 import ro.prospero.aidir.data.TalentLocationScope;
 import ro.prospero.aidir.data.TalentPage;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.TalentProfileRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.TalentProfileRecord;
 
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_SKILL;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_LANGUAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROFILE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_SKILL;
 
 /**
  * The talent directory browse query: filtering, counting, faceting and paging, in SQL.

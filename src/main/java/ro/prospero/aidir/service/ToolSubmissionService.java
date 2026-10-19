@@ -12,15 +12,15 @@ import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.ToolDTO;
 import ro.prospero.aidir.data.ToolSubmissionDTO;
 import ro.prospero.aidir.event.ToolUploadEventPublisher;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolSubmissionRecord;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_IMAGE_METADATA;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_SUBMISSION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL_SUBMISSION_IMAGE_METADATA;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_IMAGE_METADATA;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_SUBMISSION;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL_SUBMISSION_IMAGE_METADATA;
 
 @Service
 public class ToolSubmissionService {

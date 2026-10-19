@@ -5,15 +5,15 @@ import org.jooq.Field;
 import org.jooq.Table;
 import org.springframework.stereotype.Component;
 import ro.prospero.aidir.data.TalentCardDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.TalentProfileRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.TalentProfileRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_SKILL;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_LANGUAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_SKILL;
 
 /** Builds directory cards out of profile rows, for the directory itself and for the similar strip on a profile. */
 @Component

@@ -5,17 +5,17 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
-import ro.prospero.aidir.jooq.generated.public_.tables.FeatureGrant;
+import ro.prospero.aidir.jooq.generated.tables.FeatureGrant;
 
 import java.time.OffsetDateTime;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT_ADDON;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ADDON;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ADDON_FEATURE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.FEATURE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.FEATURE_GRANT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN_FEATURE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.SUBSCRIPTION;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT_ADDON;
+import static ro.prospero.aidir.jooq.generated.Tables.ADDON;
+import static ro.prospero.aidir.jooq.generated.Tables.ADDON_FEATURE;
+import static ro.prospero.aidir.jooq.generated.Tables.FEATURE;
+import static ro.prospero.aidir.jooq.generated.Tables.FEATURE_GRANT;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN_FEATURE;
+import static ro.prospero.aidir.jooq.generated.Tables.SUBSCRIPTION;
 
 /**
  * Everything that reads or writes feature_grant.

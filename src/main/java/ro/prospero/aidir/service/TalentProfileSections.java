@@ -6,13 +6,13 @@ import ro.prospero.aidir.data.UserOnboardingPayload;
 
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_CERTIFICATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_COURSE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EDUCATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EXPERIENCE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROJECT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_SKILL;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_CERTIFICATION;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_COURSE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_EDUCATION;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_EXPERIENCE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_LANGUAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROJECT;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_SKILL;
 
 /**
  * Writes the seven list sections hanging off a talent profile, for the onboarding wizard and the Resume / CV

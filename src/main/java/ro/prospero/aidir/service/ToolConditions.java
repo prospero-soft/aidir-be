@@ -6,7 +6,7 @@ import ro.prospero.aidir.data.JsonbArrays;
 
 import java.util.List;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
 
 /**
  * Predicates over {@code tool} that more than one query needs. The sidebar filter and the alternatives

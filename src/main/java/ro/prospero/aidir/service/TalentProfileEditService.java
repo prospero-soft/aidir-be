@@ -11,8 +11,8 @@ import ro.prospero.aidir.data.UserOnboardingPayload;
 
 import java.util.function.BiConsumer;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROFILE;
 import static ro.prospero.aidir.service.TalentProfileSections.blankToNull;
 
 /**

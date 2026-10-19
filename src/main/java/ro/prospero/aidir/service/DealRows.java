@@ -18,8 +18,8 @@ import ro.prospero.aidir.data.DealPayload.Schedule;
 import ro.prospero.aidir.data.DealStatus;
 import ro.prospero.aidir.data.OfferType;
 import ro.prospero.aidir.data.Placement;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.DealPlacementRecord;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.DealRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.DealPlacementRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.DealRecord;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.DEAL_PLACEMENT;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
 
 /**
  * The deal tables, read into {@link DealDTO} and written from the form's {@link PlacementContent}. The

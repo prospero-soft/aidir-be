@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolCardDTO;
 import ro.prospero.aidir.data.ToolDetailsDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TOOL;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
 
 /**
  * One published listing, read whole.

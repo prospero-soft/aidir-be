@@ -6,7 +6,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.TalentCardDTO;
 import ro.prospero.aidir.data.TalentDetailsDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.TalentProfileRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.TalentProfileRecord;
 
 import java.util.List;
 import java.util.Map;
@@ -14,14 +14,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_CERTIFICATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_COURSE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EDUCATION;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_EXPERIENCE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_LANGUAGE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROFILE;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_PROJECT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.TALENT_SKILL;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_CERTIFICATION;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_COURSE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_EDUCATION;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_EXPERIENCE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_LANGUAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROFILE;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_PROJECT;
+import static ro.prospero.aidir.jooq.generated.Tables.TALENT_SKILL;
 
 /**
  * One public talent profile, read whole.

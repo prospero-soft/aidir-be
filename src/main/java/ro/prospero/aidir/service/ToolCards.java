@@ -3,7 +3,7 @@ package ro.prospero.aidir.service;
 import org.springframework.stereotype.Component;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolCardDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.util.List;
 import java.util.Map;

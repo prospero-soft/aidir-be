@@ -101,21 +101,6 @@
             <artifactId>jooq</artifactId>
             <version>3.19.15</version>
         </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta</artifactId>
-            <version>3.19.15</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>3.19.15</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta-extensions-liquibase</artifactId>
-            <version>3.19.15</version>
-        </dependency>
 
         <dependency>
             <groupId>org.modelmapper</groupId>
@@ -176,6 +161,48 @@
                     <username>aidir</username>
                     <password>aidir</password>
                 </configuration>
+            </plugin>
+            <!-- No executions: runs only as `mvn jooq-codegen:generate`, which does not compile the
+                 project, so it works even when hand-written code is out of step with the schema -->
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.19.15</version>
+                <configuration>
+                    <jdbc>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/aidir</url>
+                        <user>aidir</user>
+                        <password>aidir</password>
+                    </jdbc>
+                    <generator>
+                        <database>
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                            <inputSchema>public</inputSchema>
+                            <!-- the only routines in the schema come from the btree_gist extension -->
+                            <includeRoutines>false</includeRoutines>
+                            <includes>.*</includes>
+                            <excludes>
+                                PG_.*
+                                | DATABASECHANGELOG
+                                | DATABASECHANGELOGLOCK
+                                | SPRING_SESSION
+                                | SPRING_SESSION_ATTRIBUTES
+                            </excludes>
+                        </database>
+                        <target>
+                            <packageName>ro.prospero.aidir.jooq.generated</packageName>
+                            <directory>${project.basedir}/src/main/java</directory>
+                        </target>
+                    </generator>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.7.3</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -7,18 +7,18 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.SubscriptionEnd;
 import ro.prospero.aidir.data.SubscriptionReason;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.SubscriptionRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.SubscriptionRecord;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ACCOUNT_ADDON;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.ADDON;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.PLAN;
-import static ro.prospero.aidir.jooq.generated.public_.Tables.SUBSCRIPTION;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT_ADDON;
+import static ro.prospero.aidir.jooq.generated.Tables.ADDON;
+import static ro.prospero.aidir.jooq.generated.Tables.PLAN;
+import static ro.prospero.aidir.jooq.generated.Tables.SUBSCRIPTION;
 
 /**
  * An account's subscription history, which is the whole of its standing: one row per period,

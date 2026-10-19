@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolSubmissionDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolSubmissionRecord;
 
 import java.util.List;
 
