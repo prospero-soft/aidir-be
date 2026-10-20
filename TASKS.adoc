@@ -41,11 +41,6 @@ handling deal edits for submitted deals:
 
 3. running deals should not be editable, but should be cancellable (if they want to pull the campaign that's their business)
 
-=== deals: clicking on the create a deal CTA when logged in as a non-vendor user redirects you to the dashboard, which is very confusing; for logged in users there should be some intermediate page or toast that notifies them that only vendors can access that functionality (and probably as a funnel for non-logged-in users as well)
-
-=== deals: there is currently no tab/design for standard listing deals or sidebar deals, no scheduling or anything
-
-=== deals: deal page layout, central tile at the bottom of the page, text is crowded against the bottom margin on my screen
 
 === news: handle templates and editor
 the current input for submitted articles is a bare text-area, but we're going to have to offer some way of formatting the articles to the people who submit: either templates or a limited editor (TipTap is the react library that looks like the most promising editor candidate)
@@ -58,11 +53,28 @@ integration yet, so renew/beginGrace/recoverFromGrace have nothing to charge aga
 currently only reachable by hand.
 
 === articles: take payment for sponsored article orders
-Both article flows place an order priced by `ArticlePricing` and store it unpaid: `article_order.paid_at`
-stays null, because there is no payment provider to settle it. The front end's success page still opens
-with "Payment successful!" and promises a payment receipt by email, neither of which is true yet. Decide
-whether payment is taken when the order is placed or once the editors approve it (the pricing page's FAQ
-says the latter), then set `paid_at` from the provider.
+Both article flows are priced by `ArticlePricing` and stored unpaid: `submitted_article.paid_at` and
+`article_brief.paid_at` stay null, because there is no payment provider to settle them. The front end's
+success page still opens with "Payment successful!" and promises a payment receipt by email, neither of
+which is true yet. Decide whether payment is taken when the article or brief is placed or once it is
+approved or accepted (the pricing page's FAQ says the latter), then set `paid_at` from the provider.
+
+=== articles: let vendors revise and resubmit an article sent back by compliance review
+Compliance review can send a submitted article back (`changes_requested`, with `review_notes` for the
+vendor), but there is no way for the vendor to act on it: no endpoint to replace the body, images and
+options of their own article and return it to `pending_review`, and no front end that shows the notes and
+reopens the editor on the article. Resubmitting changes what the article bills (links and images come from
+the body), so it has to be re-quoted and the vendor shown the new price, which ties in with payment above.
+Decide too whether a review round keeps the earlier versions and notes, or only the latest.
+
+=== articles: write briefs through drafting and client review rounds
+Brief triage is wired up (`received` -> `accepted` | `declined`), but nothing moves an accepted brief on.
+The rest of the lifecycle is in the `article_brief_status` vocabulary: an editor writes a draft
+(`writing`), the client reviews it (`client_review`) and either takes it (`completed`) or sends it back
+(`revisions_requested` -> `writing`) for another round. Still to build: storage for the draft of each
+round (its body as `ArticleBlock`s, as a submitted article's is) and the client's feedback on it, the
+internal editor our editors write drafts in, assigning a brief to an editor, and the vendor's side of
+reviewing a draft.
 
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
 

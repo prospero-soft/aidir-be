@@ -17,11 +17,9 @@ import ro.prospero.aidir.jooq.generated.tables.AccountTypes;
 import ro.prospero.aidir.jooq.generated.tables.Addon;
 import ro.prospero.aidir.jooq.generated.tables.AddonBilling;
 import ro.prospero.aidir.jooq.generated.tables.AddonFeature;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderImage;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderKind;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderStatus;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderTopic;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefStatus;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic;
 import ro.prospero.aidir.jooq.generated.tables.ArticleWritingTier;
 import ro.prospero.aidir.jooq.generated.tables.Category;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation;
@@ -49,6 +47,10 @@ import ro.prospero.aidir.jooq.generated.tables.Recurrence;
 import ro.prospero.aidir.jooq.generated.tables.Role;
 import ro.prospero.aidir.jooq.generated.tables.RolePermission;
 import ro.prospero.aidir.jooq.generated.tables.Skill;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
 import ro.prospero.aidir.jooq.generated.tables.SubscriptionEnd;
 import ro.prospero.aidir.jooq.generated.tables.SubscriptionReason;
@@ -111,29 +113,19 @@ public class Public extends SchemaImpl {
     public final AddonFeature ADDON_FEATURE = AddonFeature.ADDON_FEATURE;
 
     /**
-     * The table <code>public.article_order</code>.
+     * The table <code>public.article_brief</code>.
      */
-    public final ArticleOrder ARTICLE_ORDER = ArticleOrder.ARTICLE_ORDER;
+    public final ArticleBrief ARTICLE_BRIEF = ArticleBrief.ARTICLE_BRIEF;
 
     /**
-     * The table <code>public.article_order_image</code>.
+     * The table <code>public.article_brief_status</code>.
      */
-    public final ArticleOrderImage ARTICLE_ORDER_IMAGE = ArticleOrderImage.ARTICLE_ORDER_IMAGE;
+    public final ArticleBriefStatus ARTICLE_BRIEF_STATUS = ArticleBriefStatus.ARTICLE_BRIEF_STATUS;
 
     /**
-     * The table <code>public.article_order_kind</code>.
+     * The table <code>public.article_brief_topic</code>.
      */
-    public final ArticleOrderKind ARTICLE_ORDER_KIND = ArticleOrderKind.ARTICLE_ORDER_KIND;
-
-    /**
-     * The table <code>public.article_order_status</code>.
-     */
-    public final ArticleOrderStatus ARTICLE_ORDER_STATUS = ArticleOrderStatus.ARTICLE_ORDER_STATUS;
-
-    /**
-     * The table <code>public.article_order_topic</code>.
-     */
-    public final ArticleOrderTopic ARTICLE_ORDER_TOPIC = ArticleOrderTopic.ARTICLE_ORDER_TOPIC;
+    public final ArticleBriefTopic ARTICLE_BRIEF_TOPIC = ArticleBriefTopic.ARTICLE_BRIEF_TOPIC;
 
     /**
      * The table <code>public.article_writing_tier</code>.
@@ -271,6 +263,26 @@ public class Public extends SchemaImpl {
     public final Skill SKILL = Skill.SKILL;
 
     /**
+     * The table <code>public.submitted_article</code>.
+     */
+    public final SubmittedArticle SUBMITTED_ARTICLE = SubmittedArticle.SUBMITTED_ARTICLE;
+
+    /**
+     * The table <code>public.submitted_article_image</code>.
+     */
+    public final SubmittedArticleImage SUBMITTED_ARTICLE_IMAGE = SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE;
+
+    /**
+     * The table <code>public.submitted_article_status</code>.
+     */
+    public final SubmittedArticleStatus SUBMITTED_ARTICLE_STATUS = SubmittedArticleStatus.SUBMITTED_ARTICLE_STATUS;
+
+    /**
+     * The table <code>public.submitted_article_topic</code>.
+     */
+    public final SubmittedArticleTopic SUBMITTED_ARTICLE_TOPIC = SubmittedArticleTopic.SUBMITTED_ARTICLE_TOPIC;
+
+    /**
      * The table <code>public.subscription</code>.
      */
     public final Subscription SUBSCRIPTION = Subscription.SUBSCRIPTION;
@@ -372,11 +384,9 @@ public class Public extends SchemaImpl {
             Addon.ADDON,
             AddonBilling.ADDON_BILLING,
             AddonFeature.ADDON_FEATURE,
-            ArticleOrder.ARTICLE_ORDER,
-            ArticleOrderImage.ARTICLE_ORDER_IMAGE,
-            ArticleOrderKind.ARTICLE_ORDER_KIND,
-            ArticleOrderStatus.ARTICLE_ORDER_STATUS,
-            ArticleOrderTopic.ARTICLE_ORDER_TOPIC,
+            ArticleBrief.ARTICLE_BRIEF,
+            ArticleBriefStatus.ARTICLE_BRIEF_STATUS,
+            ArticleBriefTopic.ARTICLE_BRIEF_TOPIC,
             ArticleWritingTier.ARTICLE_WRITING_TIER,
             Category.CATEGORY,
             CompanyInformation.COMPANY_INFORMATION,
@@ -404,6 +414,10 @@ public class Public extends SchemaImpl {
             Role.ROLE,
             RolePermission.ROLE_PERMISSION,
             Skill.SKILL,
+            SubmittedArticle.SUBMITTED_ARTICLE,
+            SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE,
+            SubmittedArticleStatus.SUBMITTED_ARTICLE_STATUS,
+            SubmittedArticleTopic.SUBMITTED_ARTICLE_TOPIC,
             Subscription.SUBSCRIPTION,
             SubscriptionEnd.SUBSCRIPTION_END,
             SubscriptionReason.SUBSCRIPTION_REASON,

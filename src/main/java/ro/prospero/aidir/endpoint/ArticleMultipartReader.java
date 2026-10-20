@@ -16,29 +16,30 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Reads the multipart requests both article flows send: a {@code payload} part holding the JSON, a
- * {@code featured-image} part, and for a submitted article an {@code additional-image-<n>} part per extra
- * image, numbered in the order the vendor added them.
+ * Reads the multipart requests that submit an article and place a brief: a {@code payload} part holding the
+ * JSON, a {@code featured-image} part, and for a submitted article an {@code additional-image-<n>} part per
+ * in-article image, numbered as the body's image blocks number them.
  */
 @Component
-public class ArticleRequestReader {
+public class ArticleMultipartReader {
     static final String FEATURED_IMAGE_PART = "featured-image";
     private static final Pattern ADDITIONAL_IMAGE_PART = Pattern.compile("additional-image-(\\d{1,3})");
 
     private final ObjectMapper objectMapper;
     private final Validator validator;
 
-    public ArticleRequestReader(ObjectMapper objectMapper, Validator validator) {
+    public ArticleMultipartReader(ObjectMapper objectMapper, Validator validator) {
         this.objectMapper = objectMapper;
         this.validator = validator;
     }
 
-    public <T> T payload(String payloadJson, Class<T> type) throws JsonProcessingException {
+    /** @param subject what the payload is, for the message: "article" or "brief" */
+    public <T> T payload(String payloadJson, Class<T> type, String subject) throws JsonProcessingException {
         T payload = objectMapper.readValue(payloadJson, type);
         Set<ConstraintViolation<T>> violations = validator.validate(payload);
 
         if (!violations.isEmpty()) {
-            throw new ApiPayloadValidationException("Validating the article order failed.", violations);
+            throw new ApiPayloadValidationException("Validating the " + subject + " failed.", violations);
         }
         return payload;
     }

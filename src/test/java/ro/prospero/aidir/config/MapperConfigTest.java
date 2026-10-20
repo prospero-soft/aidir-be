@@ -4,7 +4,7 @@ import org.jooq.JSONB;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import ro.prospero.aidir.data.ToolSubmissionDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolSubmissionRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolSubmissionRecord;
 
 import java.time.OffsetDateTime;
 

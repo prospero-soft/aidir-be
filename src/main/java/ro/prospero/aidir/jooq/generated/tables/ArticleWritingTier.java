@@ -29,7 +29,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder.ArticleOrderPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief.ArticleBriefPath;
 import ro.prospero.aidir.jooq.generated.tables.records.ArticleWritingTierRecord;
 
 
@@ -133,17 +133,17 @@ public class ArticleWritingTier extends TableImpl<ArticleWritingTierRecord> {
         return Keys.ARTICLE_WRITING_TIER_PKEY;
     }
 
-    private transient ArticleOrderPath _articleOrder;
+    private transient ArticleBriefPath _articleBrief;
 
     /**
      * Get the implicit to-many join path to the
-     * <code>public.article_order</code> table
+     * <code>public.article_brief</code> table
      */
-    public ArticleOrderPath articleOrder() {
-        if (_articleOrder == null)
-            _articleOrder = new ArticleOrderPath(this, null, Keys.ARTICLE_ORDER__ARTICLE_ORDER_WRITING_TIER_FKEY.getInverseKey());
+    public ArticleBriefPath articleBrief() {
+        if (_articleBrief == null)
+            _articleBrief = new ArticleBriefPath(this, null, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_WRITING_TIER_FKEY.getInverseKey());
 
-        return _articleOrder;
+        return _articleBrief;
     }
 
     @Override

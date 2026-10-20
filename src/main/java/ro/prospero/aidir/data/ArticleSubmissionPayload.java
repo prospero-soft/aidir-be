@@ -9,19 +9,19 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 /**
- * An article the vendor wrote, sent for editorial review. Mirrors buildArticlePayload in aidir-fe
+ * An article the vendor wrote, sent for compliance review. Mirrors buildArticlePayload in aidir-fe
  * (src/components/article-submission/articlePayload.ts). The images travel as multipart parts beside it:
- * {@code featured-image}, and {@code additional-image-<n>} for each extra one.
+ * {@code featured-image}, and {@code additional-image-<n>} for each one the body's image blocks number.
  *
- * <p>What Bean Validation cannot say - the word count, the links in the body, the topics and the images -
- * is checked by {@link ro.prospero.aidir.service.ArticleOrderService}.
+ * <p>What Bean Validation cannot say - the word count, the links, pull quotes and images in the body, the
+ * topics - is checked by {@link ro.prospero.aidir.service.SubmittedArticleService}.
  *
  * <p>{@code quotedTotal} is the total the vendor was shown. The backend prices the order itself and refuses
  * it when the two differ, so nobody is billed a price they did not see.
  */
 public record ArticleSubmissionPayload(@NotBlank @Size(max = 120) String headline,
                                        @NotNull @Size(min = 1, max = 3) List<@NotBlank String> topics,
-                                       @NotBlank @Size(max = 100_000) String body,
+                                       @NotNull @Size(min = 1, max = 2_000) List<@NotNull @Valid ArticleBlock> body,
                                        @NotNull @Size(max = 10)
                                        List<@Size(max = 500) @Pattern(regexp = DealPayload.HTTP_URL) String> sources,
                                        @NotNull @Valid Options options,

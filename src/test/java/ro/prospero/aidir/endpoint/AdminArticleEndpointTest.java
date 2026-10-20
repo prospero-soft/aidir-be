@@ -5,13 +5,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import ro.prospero.aidir.data.ArticleOrderKind;
 
 import java.nio.charset.StandardCharsets;
-
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -24,20 +21,41 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/** Article order moderation and its development helpers, as far as who may reach them and what they carry. */
+/**
+ * The compliance review of submitted articles and its development helpers, as far as who may reach them and
+ * what they carry.
+ */
 class AdminArticleEndpointTest extends EndpointSecurityTestBase {
+
+    private static final String SUBMISSION = """
+            {"headline":"Acme ships a faster writer","topics":["AI News"],
+             "body":[{"kind":"paragraph","content":[{"text":"Words go here.","href":null,"bold":false,"italic":false}]}],
+             "sources":[],
+             "options":{"permanentLinks":false,"unlabelled":false},
+             "consents":{"accurate":true,"terms":true},"quotedTotal":89}
+            """;
+
+    private static MockPart payloadPart(String json) {
+        MockPart part = new MockPart("payload", json.getBytes(StandardCharsets.UTF_8));
+        part.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        return part;
+    }
+
+    private static MockMultipartFile image(String part, String name) {
+        return new MockMultipartFile(part, name, MediaType.IMAGE_PNG_VALUE, new byte[]{1, 2, 3});
+    }
 
     @Test
     void aVendorCannotSeeTheQueue() throws Exception {
         mockMvc.perform(get("/api/admin/articles/queue").cookie(signIn(VENDOR)))
                .andExpect(status().isForbidden());
 
-        verifyNoInteractions(articleReviewService);
+        verifyNoInteractions(submittedArticleReviewService);
     }
 
     @Test
     void anAdminSeesTheQueue() throws Exception {
-        when(articleReviewService.queue()).thenReturn(List.of());
+        when(submittedArticleReviewService.queue()).thenReturn(List.of());
 
         mockMvc.perform(get("/api/admin/articles/queue").cookie(signIn(ADMIN)))
                .andExpect(status().isOk())
@@ -49,66 +67,51 @@ class AdminArticleEndpointTest extends EndpointSecurityTestBase {
         mockMvc.perform(postWithCsrf("/api/admin/articles/9/approve").cookie(signIn(ADMIN)))
                .andExpect(status().isNoContent());
 
-        verify(articleReviewService).approve(9L);
+        verify(submittedArticleReviewService).approve(9L);
     }
 
     @Test
-    void aRejectionNeedsAReason() throws Exception {
-        mockMvc.perform(postWithCsrf("/api/admin/articles/9/reject").cookie(signIn(ADMIN))
-                                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                                     .content("{\"reason\":\"  \"}"))
+    void requestingChangesNeedsNotes() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/admin/articles/9/requestChanges").cookie(signIn(ADMIN))
+                                                                             .contentType(MediaType.APPLICATION_JSON)
+                                                                             .content("{\"note\":\"  \"}"))
                .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.constraintViolations[0]").value("reason: must not be blank"));
+               .andExpect(jsonPath("$.constraintViolations[0]").value("note: must not be blank"));
 
-        verify(articleReviewService, never()).reject(anyLong(), anyString());
+        verify(submittedArticleReviewService, never()).requestChanges(anyLong(), anyString());
     }
 
     @Test
-    void aRejectionCarriesItsReason() throws Exception {
-        mockMvc.perform(postWithCsrf("/api/admin/articles/9/reject").cookie(signIn(ADMIN))
-                                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                                     .content("{\"reason\":\"Too promotional.\"}"))
+    void requestingChangesCarriesTheNotes() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/admin/articles/9/requestChanges")
+                                .cookie(signIn(ADMIN))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"Label the second link as sponsored.\"}"))
                .andExpect(status().isNoContent());
 
-        verify(articleReviewService).reject(9L, "Too promotional.");
+        verify(submittedArticleReviewService).requestChanges(9L, "Label the second link as sponsored.");
     }
 
     @Test
-    void approvingTheQueueCanBeNarrowedToOneKind() throws Exception {
-        mockMvc.perform(postWithCsrf("/api/admin/articles/devApproveAll?kind=submitted").cookie(signIn(ADMIN)))
-               .andExpect(status().isNoContent());
-
-        verify(articleReviewService).devApproveAll(ArticleOrderKind.SUBMITTED);
-    }
-
-    @Test
-    void approvingTheQueueWithoutAKindApprovesEveryKind() throws Exception {
+    void approvingTheQueueAnswersWithNoContent() throws Exception {
         mockMvc.perform(postWithCsrf("/api/admin/articles/devApproveAll").cookie(signIn(ADMIN)))
                .andExpect(status().isNoContent());
 
-        verify(articleReviewService).devApproveAll(null);
-    }
-
-    @Test
-    void anUnknownKindIsA400() throws Exception {
-        mockMvc.perform(postWithCsrf("/api/admin/articles/devApproveAll?kind=draft").cookie(signIn(ADMIN)))
-               .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(articleReviewService);
+        verify(submittedArticleReviewService).devApproveAll();
     }
 
     @Test
     void aVendorCannotPushTestArticles() throws Exception {
-        mockMvc.perform(multipartWithCsrf(HttpMethod.POST, "/api/admin/articles/devRequest?vendorIndex=0")
-                                .part(payloadPart(REQUEST))
+        mockMvc.perform(multipartWithCsrf(HttpMethod.POST, "/api/admin/articles/devSubmit?vendorIndex=0")
+                                .part(payloadPart(SUBMISSION))
                                 .cookie(signIn(VENDOR)))
                .andExpect(status().isForbidden());
 
-        verifyNoInteractions(articleReviewService);
+        verifyNoInteractions(submittedArticleReviewService);
     }
 
     @Test
-    void aPushedSubmissionReachesTheServiceWithItsVendorAndImages() throws Exception {
+    void aPushedArticleReachesTheServiceWithItsVendorAndImages() throws Exception {
         mockMvc.perform(multipartWithCsrf(HttpMethod.POST, "/api/admin/articles/devSubmitAs?vendorEmail=" + VENDOR)
                                 .part(payloadPart(SUBMISSION))
                                 .file(image("featured-image", "cover.png"))
@@ -116,43 +119,9 @@ class AdminArticleEndpointTest extends EndpointSecurityTestBase {
                                 .cookie(signIn(ADMIN)))
                .andExpect(status().isCreated());
 
-        verify(articleReviewService).devSubmitArticleAs(
+        verify(submittedArticleReviewService).devSubmitAs(
                 eq(VENDOR), argThat(payload -> payload.quotedTotal() == 89),
                 argThat(file -> "cover.png".equals(file.getOriginalFilename())),
                 argThat(files -> files.size() == 1));
-    }
-
-    @Test
-    void aPushedRequestReachesTheServiceWithItsVendorIndex() throws Exception {
-        mockMvc.perform(multipartWithCsrf(HttpMethod.POST, "/api/admin/articles/devRequest?vendorIndex=12")
-                                .part(payloadPart(REQUEST))
-                                .cookie(signIn(ADMIN)))
-               .andExpect(status().isCreated());
-
-        verify(articleReviewService).devRequestArticleAt(eq(12), any(), eq(null));
-    }
-
-    private static final String SUBMISSION = """
-            {"headline":"Acme ships a faster writer","topics":["AI News"],"body":"Words go here.","sources":[],
-             "options":{"permanentLinks":false,"unlabelled":false},
-             "consents":{"accurate":true,"terms":true},"quotedTotal":89}
-            """;
-
-    private static final String REQUEST = """
-            {"headline":"Acme ships a faster writer","brief":"Cover the launch.","topics":["Enterprise"],
-             "audience":null,"keyMessages":["It is fast","It is cheap","It is here"],"sources":[],
-             "preferredDate":null,
-             "options":{"writing":"short","links":1,"permanentLinks":false,"unlabelled":false},
-             "consents":{"accurate":true,"terms":true},"quotedTotal":178}
-            """;
-
-    private static MockPart payloadPart(String json) {
-        MockPart part = new MockPart("payload", json.getBytes(StandardCharsets.UTF_8));
-        part.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        return part;
-    }
-
-    private static MockMultipartFile image(String part, String name) {
-        return new MockMultipartFile(part, name, MediaType.IMAGE_PNG_VALUE, new byte[]{1, 2, 3});
     }
 }

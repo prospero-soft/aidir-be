@@ -10,11 +10,9 @@ import ro.prospero.aidir.jooq.generated.tables.AccountTypes;
 import ro.prospero.aidir.jooq.generated.tables.Addon;
 import ro.prospero.aidir.jooq.generated.tables.AddonBilling;
 import ro.prospero.aidir.jooq.generated.tables.AddonFeature;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderImage;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderKind;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderStatus;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderTopic;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefStatus;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic;
 import ro.prospero.aidir.jooq.generated.tables.ArticleWritingTier;
 import ro.prospero.aidir.jooq.generated.tables.Category;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation;
@@ -42,6 +40,10 @@ import ro.prospero.aidir.jooq.generated.tables.Recurrence;
 import ro.prospero.aidir.jooq.generated.tables.Role;
 import ro.prospero.aidir.jooq.generated.tables.RolePermission;
 import ro.prospero.aidir.jooq.generated.tables.Skill;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
 import ro.prospero.aidir.jooq.generated.tables.SubscriptionEnd;
 import ro.prospero.aidir.jooq.generated.tables.SubscriptionReason;
@@ -97,29 +99,19 @@ public class Tables {
     public static final AddonFeature ADDON_FEATURE = AddonFeature.ADDON_FEATURE;
 
     /**
-     * The table <code>public.article_order</code>.
+     * The table <code>public.article_brief</code>.
      */
-    public static final ArticleOrder ARTICLE_ORDER = ArticleOrder.ARTICLE_ORDER;
+    public static final ArticleBrief ARTICLE_BRIEF = ArticleBrief.ARTICLE_BRIEF;
 
     /**
-     * The table <code>public.article_order_image</code>.
+     * The table <code>public.article_brief_status</code>.
      */
-    public static final ArticleOrderImage ARTICLE_ORDER_IMAGE = ArticleOrderImage.ARTICLE_ORDER_IMAGE;
+    public static final ArticleBriefStatus ARTICLE_BRIEF_STATUS = ArticleBriefStatus.ARTICLE_BRIEF_STATUS;
 
     /**
-     * The table <code>public.article_order_kind</code>.
+     * The table <code>public.article_brief_topic</code>.
      */
-    public static final ArticleOrderKind ARTICLE_ORDER_KIND = ArticleOrderKind.ARTICLE_ORDER_KIND;
-
-    /**
-     * The table <code>public.article_order_status</code>.
-     */
-    public static final ArticleOrderStatus ARTICLE_ORDER_STATUS = ArticleOrderStatus.ARTICLE_ORDER_STATUS;
-
-    /**
-     * The table <code>public.article_order_topic</code>.
-     */
-    public static final ArticleOrderTopic ARTICLE_ORDER_TOPIC = ArticleOrderTopic.ARTICLE_ORDER_TOPIC;
+    public static final ArticleBriefTopic ARTICLE_BRIEF_TOPIC = ArticleBriefTopic.ARTICLE_BRIEF_TOPIC;
 
     /**
      * The table <code>public.article_writing_tier</code>.
@@ -255,6 +247,26 @@ public class Tables {
      * The table <code>public.skill</code>.
      */
     public static final Skill SKILL = Skill.SKILL;
+
+    /**
+     * The table <code>public.submitted_article</code>.
+     */
+    public static final SubmittedArticle SUBMITTED_ARTICLE = SubmittedArticle.SUBMITTED_ARTICLE;
+
+    /**
+     * The table <code>public.submitted_article_image</code>.
+     */
+    public static final SubmittedArticleImage SUBMITTED_ARTICLE_IMAGE = SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE;
+
+    /**
+     * The table <code>public.submitted_article_status</code>.
+     */
+    public static final SubmittedArticleStatus SUBMITTED_ARTICLE_STATUS = SubmittedArticleStatus.SUBMITTED_ARTICLE_STATUS;
+
+    /**
+     * The table <code>public.submitted_article_topic</code>.
+     */
+    public static final SubmittedArticleTopic SUBMITTED_ARTICLE_TOPIC = SubmittedArticleTopic.SUBMITTED_ARTICLE_TOPIC;
 
     /**
      * The table <code>public.subscription</code>.

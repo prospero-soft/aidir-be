@@ -10,11 +10,12 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 
 import ro.prospero.aidir.jooq.generated.tables.AccountAddon;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief;
 import ro.prospero.aidir.jooq.generated.tables.Deal;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.tables.Feature;
 import ro.prospero.aidir.jooq.generated.tables.FeatureGrant;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
 import ro.prospero.aidir.jooq.generated.tables.TalentSkill;
 
@@ -30,14 +31,16 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index ACCOUNT_ADDON_LIVE_IDX = Internal.createIndex(DSL.name("account_addon_live_idx"), AccountAddon.ACCOUNT_ADDON, new OrderField[] { AccountAddon.ACCOUNT_ADDON.ACCOUNT_ID }, false);
-    public static final Index ARTICLE_ORDER_ACCOUNT_IDX = Internal.createIndex(DSL.name("article_order_account_idx"), ArticleOrder.ARTICLE_ORDER, new OrderField[] { ArticleOrder.ARTICLE_ORDER.ACCOUNT_ID }, false);
-    public static final Index ARTICLE_ORDER_STATUS_IDX = Internal.createIndex(DSL.name("article_order_status_idx"), ArticleOrder.ARTICLE_ORDER, new OrderField[] { ArticleOrder.ARTICLE_ORDER.STATUS }, false);
+    public static final Index ARTICLE_BRIEF_ACCOUNT_IDX = Internal.createIndex(DSL.name("article_brief_account_idx"), ArticleBrief.ARTICLE_BRIEF, new OrderField[] { ArticleBrief.ARTICLE_BRIEF.ACCOUNT_ID }, false);
+    public static final Index ARTICLE_BRIEF_STATUS_IDX = Internal.createIndex(DSL.name("article_brief_status_idx"), ArticleBrief.ARTICLE_BRIEF, new OrderField[] { ArticleBrief.ARTICLE_BRIEF.STATUS }, false);
     public static final Index DEAL_ACCOUNT_IDX = Internal.createIndex(DSL.name("deal_account_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.ACCOUNT_ID }, false);
     public static final Index DEAL_PLACEMENT_RUNNING_IDX = Internal.createIndex(DSL.name("deal_placement_running_idx"), DealPlacement.DEAL_PLACEMENT, new OrderField[] { DealPlacement.DEAL_PLACEMENT.PLACEMENT, DealPlacement.DEAL_PLACEMENT.START_DATE, DealPlacement.DEAL_PLACEMENT.END_DATE }, false);
     public static final Index DEAL_STATUS_IDX = Internal.createIndex(DSL.name("deal_status_idx"), Deal.DEAL, new OrderField[] { Deal.DEAL.STATUS }, false);
     public static final Index FEATURE_DISPLAY_IDX = Internal.createIndex(DSL.name("feature_display_idx"), Feature.FEATURE, new OrderField[] { Feature.FEATURE.ACCOUNT_TYPE, Feature.FEATURE.DISPLAY_SECTION, Feature.FEATURE.DISPLAY_ORDER }, false);
     public static final Index FEATURE_GRANT_SPENDABLE_IDX = Internal.createIndex(DSL.name("feature_grant_spendable_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.ACCOUNT_ID, FeatureGrant.FEATURE_GRANT.FEATURE_CODE, FeatureGrant.FEATURE_GRANT.EXPIRES_AT }, false);
     public static final Index FEATURE_GRANT_SUBSCRIPTION_IDX = Internal.createIndex(DSL.name("feature_grant_subscription_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.SUBSCRIPTION_ID }, false);
+    public static final Index SUBMITTED_ARTICLE_ACCOUNT_IDX = Internal.createIndex(DSL.name("submitted_article_account_idx"), SubmittedArticle.SUBMITTED_ARTICLE, new OrderField[] { SubmittedArticle.SUBMITTED_ARTICLE.ACCOUNT_ID }, false);
+    public static final Index SUBMITTED_ARTICLE_STATUS_IDX = Internal.createIndex(DSL.name("submitted_article_status_idx"), SubmittedArticle.SUBMITTED_ARTICLE, new OrderField[] { SubmittedArticle.SUBMITTED_ARTICLE.STATUS }, false);
     public static final Index SUBSCRIPTION_ACCOUNT_HISTORY_IDX = Internal.createIndex(DSL.name("subscription_account_history_idx"), Subscription.SUBSCRIPTION, new OrderField[] { Subscription.SUBSCRIPTION.ACCOUNT_ID, Subscription.SUBSCRIPTION.PERIOD_START }, false);
     public static final Index TALENT_SKILL_SKILL_IDX = Internal.createIndex(DSL.name("talent_skill_skill_idx"), TalentSkill.TALENT_SKILL, new OrderField[] { TalentSkill.TALENT_SKILL.SKILL }, false);
 }

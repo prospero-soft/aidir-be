@@ -3,7 +3,7 @@ package ro.prospero.aidir.service;
 import org.jooq.JSONB;
 import org.junit.jupiter.api.Test;
 import ro.prospero.aidir.data.ToolDTO;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.ToolRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.time.OffsetDateTime;
 import java.util.List;

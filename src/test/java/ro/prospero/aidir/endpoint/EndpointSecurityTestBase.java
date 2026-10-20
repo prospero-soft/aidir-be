@@ -24,16 +24,18 @@ import ro.prospero.aidir.config.SecurityConfig;
 import ro.prospero.aidir.config.StorageConfig;
 import ro.prospero.aidir.data.PrincipalDTO;
 import ro.prospero.aidir.event.MetricEventPublisher;
-import ro.prospero.aidir.jooq.generated.public_.tables.records.AccountRecord;
+import ro.prospero.aidir.jooq.generated.tables.records.AccountRecord;
 import ro.prospero.aidir.security.AccountUserDetailsService;
 import ro.prospero.aidir.service.AccountService;
-import ro.prospero.aidir.service.ArticleOrderService;
-import ro.prospero.aidir.service.ArticleReviewService;
+import ro.prospero.aidir.service.ArticleBriefService;
+import ro.prospero.aidir.service.ArticleBriefTriageService;
 import ro.prospero.aidir.service.DealReviewService;
 import ro.prospero.aidir.service.DealService;
 import ro.prospero.aidir.service.DocumentIndexService;
 import ro.prospero.aidir.service.DocumentSearchService;
 import ro.prospero.aidir.service.PublicDealService;
+import ro.prospero.aidir.service.SubmittedArticleReviewService;
+import ro.prospero.aidir.service.SubmittedArticleService;
 import ro.prospero.aidir.service.TalentProfileEditService;
 import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolSubmissionService;
@@ -62,10 +64,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {AuthEndpoint.class, ToolSubmissionEndpoint.class, SearchEndpoint.class,
                            CategoryEndpoint.class, TalentProfileEditEndpoint.class, VendorDealEndpoint.class,
                            VendorCompanyEndpoint.class, AdminDealEndpoint.class, DealEndpoint.class,
-                           VendorArticleEndpoint.class, AdminArticleEndpoint.class},
+                           VendorArticleEndpoint.class, VendorBriefEndpoint.class, AdminArticleEndpoint.class,
+                           AdminBriefEndpoint.class},
             properties = "aidir.uploads.root=target/test-uploads")
 @Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class, DealRequestReader.class,
-         ArticleRequestReader.class, EndpointSecurityTestBase.InMemorySessions.class})
+         ArticleMultipartReader.class, EndpointSecurityTestBase.InMemorySessions.class})
 @ImportAutoConfiguration(SessionAutoConfiguration.class)
 abstract class EndpointSecurityTestBase {
     static final String SESSION_COOKIE = "SESSION";
@@ -110,9 +113,13 @@ abstract class EndpointSecurityTestBase {
     @MockitoBean
     VendorCompanyService vendorCompanyService;
     @MockitoBean
-    ArticleOrderService articleOrderService;
+    SubmittedArticleService submittedArticleService;
     @MockitoBean
-    ArticleReviewService articleReviewService;
+    SubmittedArticleReviewService submittedArticleReviewService;
+    @MockitoBean
+    ArticleBriefService articleBriefService;
+    @MockitoBean
+    ArticleBriefTriageService articleBriefTriageService;
 
     @TestConfiguration(proxyBeanMethods = false)
     @EnableSpringHttpSession

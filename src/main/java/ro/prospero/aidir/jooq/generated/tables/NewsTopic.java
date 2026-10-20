@@ -29,8 +29,10 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder.ArticleOrderPath;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrderTopic.ArticleOrderTopicPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief.ArticleBriefPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic.ArticleBriefTopicPath;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle.SubmittedArticlePath;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic.SubmittedArticleTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.records.NewsTopicRecord;
 
 
@@ -132,25 +134,46 @@ public class NewsTopic extends TableImpl<NewsTopicRecord> {
         return Keys.NEWS_TOPIC_PKEY;
     }
 
-    private transient ArticleOrderTopicPath _articleOrderTopic;
+    private transient ArticleBriefTopicPath _articleBriefTopic;
 
     /**
      * Get the implicit to-many join path to the
-     * <code>public.article_order_topic</code> table
+     * <code>public.article_brief_topic</code> table
      */
-    public ArticleOrderTopicPath articleOrderTopic() {
-        if (_articleOrderTopic == null)
-            _articleOrderTopic = new ArticleOrderTopicPath(this, null, Keys.ARTICLE_ORDER_TOPIC__ARTICLE_ORDER_TOPIC_TOPIC_FKEY.getInverseKey());
+    public ArticleBriefTopicPath articleBriefTopic() {
+        if (_articleBriefTopic == null)
+            _articleBriefTopic = new ArticleBriefTopicPath(this, null, Keys.ARTICLE_BRIEF_TOPIC__ARTICLE_BRIEF_TOPIC_TOPIC_FKEY.getInverseKey());
 
-        return _articleOrderTopic;
+        return _articleBriefTopic;
+    }
+
+    private transient SubmittedArticleTopicPath _submittedArticleTopic;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.submitted_article_topic</code> table
+     */
+    public SubmittedArticleTopicPath submittedArticleTopic() {
+        if (_submittedArticleTopic == null)
+            _submittedArticleTopic = new SubmittedArticleTopicPath(this, null, Keys.SUBMITTED_ARTICLE_TOPIC__SUBMITTED_ARTICLE_TOPIC_TOPIC_FKEY.getInverseKey());
+
+        return _submittedArticleTopic;
     }
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>public.article_order</code> table
+     * <code>public.article_brief</code> table
      */
-    public ArticleOrderPath articleOrder() {
-        return articleOrderTopic().articleOrder();
+    public ArticleBriefPath articleBrief() {
+        return articleBriefTopic().articleBrief();
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.submitted_article</code> table
+     */
+    public SubmittedArticlePath submittedArticle() {
+        return submittedArticleTopic().submittedArticle();
     }
 
     @Override

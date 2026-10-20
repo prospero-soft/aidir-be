@@ -35,11 +35,12 @@ import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.AccountAddon.AccountAddonPath;
 import ro.prospero.aidir.jooq.generated.tables.AccountTypes.AccountTypesPath;
-import ro.prospero.aidir.jooq.generated.tables.ArticleOrder.ArticleOrderPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBrief.ArticleBriefPath;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation.CompanyInformationPath;
 import ro.prospero.aidir.jooq.generated.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.tables.FeatureGrant.FeatureGrantPath;
 import ro.prospero.aidir.jooq.generated.tables.Role.RolePath;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle.SubmittedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.Subscription.SubscriptionPath;
 import ro.prospero.aidir.jooq.generated.tables.TalentProfile.TalentProfilePath;
 import ro.prospero.aidir.jooq.generated.tables.Tool.ToolPath;
@@ -228,17 +229,17 @@ public class Account extends TableImpl<AccountRecord> {
         return _accountAddon;
     }
 
-    private transient ArticleOrderPath _articleOrder;
+    private transient ArticleBriefPath _articleBrief;
 
     /**
      * Get the implicit to-many join path to the
-     * <code>public.article_order</code> table
+     * <code>public.article_brief</code> table
      */
-    public ArticleOrderPath articleOrder() {
-        if (_articleOrder == null)
-            _articleOrder = new ArticleOrderPath(this, null, Keys.ARTICLE_ORDER__ARTICLE_ORDER_ACCOUNT_ID_FKEY.getInverseKey());
+    public ArticleBriefPath articleBrief() {
+        if (_articleBrief == null)
+            _articleBrief = new ArticleBriefPath(this, null, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY.getInverseKey());
 
-        return _articleOrder;
+        return _articleBrief;
     }
 
     private transient CompanyInformationPath _companyInformation;
@@ -277,6 +278,19 @@ public class Account extends TableImpl<AccountRecord> {
             _featureGrant = new FeatureGrantPath(this, null, Keys.FEATURE_GRANT__FEATURE_GRANT_ACCOUNT_ID_FKEY.getInverseKey());
 
         return _featureGrant;
+    }
+
+    private transient SubmittedArticlePath _submittedArticle;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.submitted_article</code> table
+     */
+    public SubmittedArticlePath submittedArticle() {
+        if (_submittedArticle == null)
+            _submittedArticle = new SubmittedArticlePath(this, null, Keys.SUBMITTED_ARTICLE__SUBMITTED_ARTICLE_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _submittedArticle;
     }
 
     private transient SubscriptionPath _subscription;
