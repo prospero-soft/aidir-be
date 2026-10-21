@@ -16,6 +16,7 @@ import ro.prospero.aidir.jooq.generated.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.tables.Feature;
 import ro.prospero.aidir.jooq.generated.tables.FeatureGrant;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleReviewRound;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
 import ro.prospero.aidir.jooq.generated.tables.TalentSkill;
 
@@ -40,6 +41,7 @@ public class Indexes {
     public static final Index FEATURE_GRANT_SPENDABLE_IDX = Internal.createIndex(DSL.name("feature_grant_spendable_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.ACCOUNT_ID, FeatureGrant.FEATURE_GRANT.FEATURE_CODE, FeatureGrant.FEATURE_GRANT.EXPIRES_AT }, false);
     public static final Index FEATURE_GRANT_SUBSCRIPTION_IDX = Internal.createIndex(DSL.name("feature_grant_subscription_idx"), FeatureGrant.FEATURE_GRANT, new OrderField[] { FeatureGrant.FEATURE_GRANT.SUBSCRIPTION_ID }, false);
     public static final Index SUBMITTED_ARTICLE_ACCOUNT_IDX = Internal.createIndex(DSL.name("submitted_article_account_idx"), SubmittedArticle.SUBMITTED_ARTICLE, new OrderField[] { SubmittedArticle.SUBMITTED_ARTICLE.ACCOUNT_ID }, false);
+    public static final Index SUBMITTED_ARTICLE_REVIEW_ROUND_ARTICLE_IDX = Internal.createIndex(DSL.name("submitted_article_review_round_article_idx"), SubmittedArticleReviewRound.SUBMITTED_ARTICLE_REVIEW_ROUND, new OrderField[] { SubmittedArticleReviewRound.SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID }, false);
     public static final Index SUBMITTED_ARTICLE_STATUS_IDX = Internal.createIndex(DSL.name("submitted_article_status_idx"), SubmittedArticle.SUBMITTED_ARTICLE, new OrderField[] { SubmittedArticle.SUBMITTED_ARTICLE.STATUS }, false);
     public static final Index SUBSCRIPTION_ACCOUNT_HISTORY_IDX = Internal.createIndex(DSL.name("subscription_account_history_idx"), Subscription.SUBSCRIPTION, new OrderField[] { Subscription.SUBSCRIPTION.ACCOUNT_ID, Subscription.SUBSCRIPTION.PERIOD_START }, false);
     public static final Index TALENT_SKILL_SKILL_IDX = Internal.createIndex(DSL.name("talent_skill_skill_idx"), TalentSkill.TALENT_SKILL, new OrderField[] { TalentSkill.TALENT_SKILL.SKILL }, false);

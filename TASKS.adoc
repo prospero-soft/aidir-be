@@ -59,14 +59,6 @@ success page still opens with "Payment successful!" and promises a payment recei
 which is true yet. Decide whether payment is taken when the article or brief is placed or once it is
 approved or accepted (the pricing page's FAQ says the latter), then set `paid_at` from the provider.
 
-=== articles: let vendors revise and resubmit an article sent back by compliance review
-Compliance review can send a submitted article back (`changes_requested`, with `review_notes` for the
-vendor), but there is no way for the vendor to act on it: no endpoint to replace the body, images and
-options of their own article and return it to `pending_review`, and no front end that shows the notes and
-reopens the editor on the article. Resubmitting changes what the article bills (links and images come from
-the body), so it has to be re-quoted and the vendor shown the new price, which ties in with payment above.
-Decide too whether a review round keeps the earlier versions and notes, or only the latest.
-
 === articles: write briefs through drafting and client review rounds
 Brief triage is wired up (`received` -> `accepted` | `declined`), but nothing moves an accepted brief on.
 The rest of the lifecycle is in the `article_brief_status` vocabulary: an editor writes a draft

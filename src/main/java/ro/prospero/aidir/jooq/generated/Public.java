@@ -49,6 +49,7 @@ import ro.prospero.aidir.jooq.generated.tables.RolePermission;
 import ro.prospero.aidir.jooq.generated.tables.Skill;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleReviewRound;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
@@ -273,6 +274,11 @@ public class Public extends SchemaImpl {
     public final SubmittedArticleImage SUBMITTED_ARTICLE_IMAGE = SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE;
 
     /**
+     * The table <code>public.submitted_article_review_round</code>.
+     */
+    public final SubmittedArticleReviewRound SUBMITTED_ARTICLE_REVIEW_ROUND = SubmittedArticleReviewRound.SUBMITTED_ARTICLE_REVIEW_ROUND;
+
+    /**
      * The table <code>public.submitted_article_status</code>.
      */
     public final SubmittedArticleStatus SUBMITTED_ARTICLE_STATUS = SubmittedArticleStatus.SUBMITTED_ARTICLE_STATUS;
@@ -416,6 +422,7 @@ public class Public extends SchemaImpl {
             Skill.SKILL,
             SubmittedArticle.SUBMITTED_ARTICLE,
             SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE,
+            SubmittedArticleReviewRound.SUBMITTED_ARTICLE_REVIEW_ROUND,
             SubmittedArticleStatus.SUBMITTED_ARTICLE_STATUS,
             SubmittedArticleTopic.SUBMITTED_ARTICLE_TOPIC,
             Subscription.SUBSCRIPTION,

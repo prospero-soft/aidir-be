@@ -40,6 +40,7 @@ import ro.prospero.aidir.service.TalentProfileEditService;
 import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolSubmissionService;
 import ro.prospero.aidir.service.VendorCompanyService;
+import ro.prospero.aidir.service.VendorNoticeService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -65,7 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                            CategoryEndpoint.class, TalentProfileEditEndpoint.class, VendorDealEndpoint.class,
                            VendorCompanyEndpoint.class, AdminDealEndpoint.class, DealEndpoint.class,
                            VendorArticleEndpoint.class, VendorBriefEndpoint.class, AdminArticleEndpoint.class,
-                           AdminBriefEndpoint.class},
+                           AdminBriefEndpoint.class, VendorNoticeEndpoint.class},
             properties = "aidir.uploads.root=target/test-uploads")
 @Import({SecurityConfig.class, StorageConfig.class, AccountUserDetailsService.class, DealRequestReader.class,
          ArticleMultipartReader.class, EndpointSecurityTestBase.InMemorySessions.class})
@@ -120,6 +121,8 @@ abstract class EndpointSecurityTestBase {
     ArticleBriefService articleBriefService;
     @MockitoBean
     ArticleBriefTriageService articleBriefTriageService;
+    @MockitoBean
+    VendorNoticeService vendorNoticeService;
 
     @TestConfiguration(proxyBeanMethods = false)
     @EnableSpringHttpSession

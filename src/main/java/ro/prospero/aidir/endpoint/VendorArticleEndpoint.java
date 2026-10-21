@@ -7,11 +7,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartRequest;
+import ro.prospero.aidir.data.ArticleRevisionPayload;
 import ro.prospero.aidir.data.ArticleSubmissionPayload;
 import ro.prospero.aidir.data.SubmittedArticleDTO;
 import ro.prospero.aidir.security.AccountPrincipal;
@@ -22,9 +24,9 @@ import java.util.List;
 import static ro.prospero.aidir.endpoint.VendorPrincipals.vendorId;
 
 /**
- * The articles the signed-in vendor wrote and sent us to publish. A submission is multipart, laid out as
- * {@link ArticleMultipartReader} reads it, and answers with the article as submitted, its reference and price
- * included.
+ * The articles the signed-in vendor wrote and sent us to publish. A submission, and a revision of one that
+ * review sent back, is multipart, laid out as {@link ArticleMultipartReader} reads it, and answers with the
+ * article as submitted, its reference and price included.
  */
 @RestController
 @RequestMapping(path = "api/vendor/articles", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,5 +59,18 @@ public class VendorArticleEndpoint {
                                      multipartReader.payload(payloadJson, ArticleSubmissionPayload.class, "article"),
                                      multipartReader.featuredImage(request),
                                      multipartReader.additionalImages(request));
+    }
+
+    /** The vendor's revision of an article that review sent back, which returns it to review. */
+    @PutMapping(path = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public SubmittedArticleDTO resubmit(@AuthenticationPrincipal AccountPrincipal principal,
+                                        @PathVariable long id,
+                                        @RequestPart("payload") String payloadJson,
+                                        MultipartRequest request) throws JsonProcessingException {
+        long accountId = vendorId(principal);
+        return articleService.resubmit(accountId, id,
+                                       multipartReader.payload(payloadJson, ArticleRevisionPayload.class, "article"),
+                                       multipartReader.featuredImage(request),
+                                       multipartReader.additionalImages(request));
     }
 }

@@ -19,11 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE;
+import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_REVIEW_ROUND;
 
 /**
  * The compliance review of articles vendors wrote: the queue of those waiting, and the verdict on each. An
- * article either passes or goes back to its vendor with the issues to fix. Approving only records the verdict -
- * publishing the article is not wired up yet.
+ * article either passes or goes back to its vendor with the issues to fix, opening a review round their
+ * revision closes. Approving only records the verdict - publishing the article is not wired up yet.
  */
 @Service
 public class SubmittedArticleReviewService {
@@ -45,11 +46,11 @@ public class SubmittedArticleReviewService {
         this.devVendors = devVendors;
     }
 
-    /** The articles waiting for review, oldest first. */
+    /** The articles waiting for review, longest waiting first: a revision waits from when it came back. */
     public List<SubmittedArticleReviewDTO> queue() {
         List<SubmittedArticleRows.Stored> pending =
                 rows.read(dslContext, SUBMITTED_ARTICLE.STATUS.eq(SubmittedArticleStatus.PENDING_REVIEW.wire()),
-                          SUBMITTED_ARTICLE.CREATED_AT.asc());
+                          SUBMITTED_ARTICLE.SUBMITTED_AT.asc());
         if (pending.isEmpty()) {
             return List.of();
         }
@@ -76,7 +77,6 @@ public class SubmittedArticleReviewService {
             tx.update(SUBMITTED_ARTICLE)
               .set(SUBMITTED_ARTICLE.STATUS, SubmittedArticleStatus.APPROVED.wire())
               .set(SUBMITTED_ARTICLE.REVIEWED_AT, OffsetDateTime.now())
-              .set(SUBMITTED_ARTICLE.REVIEW_NOTES, (String) null)
               .where(SUBMITTED_ARTICLE.ID.eq(articleId))
               .execute();
         });
@@ -88,11 +88,16 @@ public class SubmittedArticleReviewService {
             DSLContext tx = DSL.using(cfg);
             requirePendingReview(SubmittedArticleStatus.fromWire(lock(tx, articleId).getStatus()), articleId);
 
+            OffsetDateTime now = OffsetDateTime.now();
             tx.update(SUBMITTED_ARTICLE)
               .set(SUBMITTED_ARTICLE.STATUS, SubmittedArticleStatus.CHANGES_REQUESTED.wire())
-              .set(SUBMITTED_ARTICLE.REVIEWED_AT, OffsetDateTime.now())
-              .set(SUBMITTED_ARTICLE.REVIEW_NOTES, notes.trim())
+              .set(SUBMITTED_ARTICLE.REVIEWED_AT, now)
               .where(SUBMITTED_ARTICLE.ID.eq(articleId))
+              .execute();
+            tx.insertInto(SUBMITTED_ARTICLE_REVIEW_ROUND)
+              .set(SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID, articleId)
+              .set(SUBMITTED_ARTICLE_REVIEW_ROUND.NOTES, notes.trim())
+              .set(SUBMITTED_ARTICLE_REVIEW_ROUND.REQUESTED_AT, now)
               .execute();
         });
     }
@@ -106,7 +111,7 @@ public class SubmittedArticleReviewService {
                 dslContext.select(SUBMITTED_ARTICLE.ID)
                           .from(SUBMITTED_ARTICLE)
                           .where(SUBMITTED_ARTICLE.STATUS.eq(SubmittedArticleStatus.PENDING_REVIEW.wire()))
-                          .orderBy(SUBMITTED_ARTICLE.CREATED_AT.asc())
+                          .orderBy(SUBMITTED_ARTICLE.SUBMITTED_AT.asc())
                           .fetch(SUBMITTED_ARTICLE.ID);
         for (Long articleId : articleIds) {
             try {

@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_IMAGE;
+import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_REVIEW_ROUND;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_TOPIC;
 
 /**
@@ -41,7 +42,7 @@ public class SubmittedArticleRows {
         }
         List<Long> ids = rows.stream().map(SubmittedArticleRecord::getId).toList();
 
-        // One query each for the topics and images of every article read, not one per article.
+        // One query each for the topics, images and review rounds of every article read, not one per article.
         Map<Long, List<String>> topics =
                 ctx.select(SUBMITTED_ARTICLE_TOPIC.SUBMITTED_ARTICLE_ID, SUBMITTED_ARTICLE_TOPIC.TOPIC)
                    .from(SUBMITTED_ARTICLE_TOPIC)
@@ -54,12 +55,24 @@ public class SubmittedArticleRows {
                    .where(SUBMITTED_ARTICLE_IMAGE.SUBMITTED_ARTICLE_ID.in(ids))
                    .orderBy(SUBMITTED_ARTICLE_IMAGE.POSITION)
                    .fetchGroups(SUBMITTED_ARTICLE_IMAGE.SUBMITTED_ARTICLE_ID, SUBMITTED_ARTICLE_IMAGE.PATH);
+        Map<Long, List<SubmittedArticleDTO.ReviewRound>> rounds =
+                ctx.select(SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID,
+                           SUBMITTED_ARTICLE_REVIEW_ROUND.NOTES,
+                           SUBMITTED_ARTICLE_REVIEW_ROUND.REQUESTED_AT,
+                           SUBMITTED_ARTICLE_REVIEW_ROUND.RESUBMITTED_AT)
+                   .from(SUBMITTED_ARTICLE_REVIEW_ROUND)
+                   .where(SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID.in(ids))
+                   .orderBy(SUBMITTED_ARTICLE_REVIEW_ROUND.REQUESTED_AT, SUBMITTED_ARTICLE_REVIEW_ROUND.ID)
+                   .fetchGroups(SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID,
+                                round -> new SubmittedArticleDTO.ReviewRound(round.value2(), round.value3(),
+                                                                             round.value4()));
 
         return rows.stream()
                    .map(row -> new Stored(row.getAccountId(),
                                           toDto(row,
                                                 topics.getOrDefault(row.getId(), List.of()),
-                                                images.getOrDefault(row.getId(), List.of()))))
+                                                images.getOrDefault(row.getId(), List.of()),
+                                                rounds.getOrDefault(row.getId(), List.of()))))
                    .toList();
     }
 
@@ -67,22 +80,35 @@ public class SubmittedArticleRows {
         return read(ctx, condition).stream().findFirst();
     }
 
-    private SubmittedArticleDTO toDto(SubmittedArticleRecord row, List<String> topics, List<String> imagePaths) {
+    private SubmittedArticleDTO toDto(SubmittedArticleRecord row, List<String> topics, List<String> imagePaths,
+                                      List<SubmittedArticleDTO.ReviewRound> rounds) {
+        SubmittedArticleStatus status = SubmittedArticleStatus.fromWire(row.getStatus());
         return new SubmittedArticleDTO(row.getId(),
                                        "AIDA-%d-%04d".formatted(row.getCreatedAt().getYear(), row.getId()),
-                                       SubmittedArticleStatus.fromWire(row.getStatus()),
+                                       status,
                                        row.getHeadline(),
                                        topics,
                                        mediaUrls.publicUrl(row.getFeaturedImagePath()),
                                        ArticleJson.body(row.getBody()),
                                        imagePaths.stream().map(mediaUrls::publicUrl).toList(),
                                        ArticleJson.strings(row.getSources()),
-                                       new SubmittedArticleDTO.Options(row.getLinks(), row.getPermanentLinks(),
-                                                                       row.getUnlabelled()),
+                                       new SubmittedArticleDTO.Options(row.getLinks(), row.getImages(),
+                                                                       row.getPermanentLinks(), row.getUnlabelled()),
                                        ArticleJson.quote(row.getQuote()),
-                                       row.getReviewNotes(),
+                                       openNotes(status, rounds),
+                                       rounds,
                                        row.getCreatedAt(),
+                                       row.getSubmittedAt(),
                                        row.getReviewedAt(),
                                        row.getPaidAt());
+    }
+
+    /** The notes of the round the vendor has yet to answer, while the article waits for them. */
+    private static String openNotes(SubmittedArticleStatus status, List<SubmittedArticleDTO.ReviewRound> rounds) {
+        if (status != SubmittedArticleStatus.CHANGES_REQUESTED || rounds.isEmpty()) {
+            return null;
+        }
+        SubmittedArticleDTO.ReviewRound last = rounds.getLast();
+        return last.resubmittedAt() == null ? last.notes() : null;
     }
 }

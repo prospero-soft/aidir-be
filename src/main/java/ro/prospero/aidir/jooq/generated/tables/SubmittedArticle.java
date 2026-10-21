@@ -41,6 +41,7 @@ import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
 import ro.prospero.aidir.jooq.generated.tables.NewsTopic.NewsTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage.SubmittedArticleImagePath;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleReviewRound.SubmittedArticleReviewRoundPath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus.SubmittedArticleStatusPath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic.SubmittedArticleTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.records.SubmittedArticleRecord;
@@ -108,6 +109,11 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
     public final TableField<SubmittedArticleRecord, Integer> LINKS = createField(DSL.name("links"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
+     * The column <code>public.submitted_article.images</code>.
+     */
+    public final TableField<SubmittedArticleRecord, Integer> IMAGES = createField(DSL.name("images"), SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
      * The column <code>public.submitted_article.permanent_links</code>.
      */
     public final TableField<SubmittedArticleRecord, Boolean> PERMANENT_LINKS = createField(DSL.name("permanent_links"), SQLDataType.BOOLEAN.nullable(false), this, "");
@@ -128,11 +134,6 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
     public final TableField<SubmittedArticleRecord, Integer> TOTAL_EUR = createField(DSL.name("total_eur"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>public.submitted_article.review_notes</code>.
-     */
-    public final TableField<SubmittedArticleRecord, String> REVIEW_NOTES = createField(DSL.name("review_notes"), SQLDataType.VARCHAR(2000), this, "");
-
-    /**
      * The column <code>public.submitted_article.consented_at</code>.
      */
     public final TableField<SubmittedArticleRecord, OffsetDateTime> CONSENTED_AT = createField(DSL.name("consented_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
@@ -141,6 +142,11 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
      * The column <code>public.submitted_article.created_at</code>.
      */
     public final TableField<SubmittedArticleRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
+
+    /**
+     * The column <code>public.submitted_article.submitted_at</code>.
+     */
+    public final TableField<SubmittedArticleRecord, OffsetDateTime> SUBMITTED_AT = createField(DSL.name("submitted_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
     /**
      * The column <code>public.submitted_article.reviewed_at</code>.
@@ -277,6 +283,19 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
         return _submittedArticleImage;
     }
 
+    private transient SubmittedArticleReviewRoundPath _submittedArticleReviewRound;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.submitted_article_review_round</code> table
+     */
+    public SubmittedArticleReviewRoundPath submittedArticleReviewRound() {
+        if (_submittedArticleReviewRound == null)
+            _submittedArticleReviewRound = new SubmittedArticleReviewRoundPath(this, null, Keys.SUBMITTED_ARTICLE_REVIEW_ROUND__SUBMITTED_ARTICLE_REVIEW_ROUND_SUBMITTED_ARTICLE_ID_FKEY.getInverseKey());
+
+        return _submittedArticleReviewRound;
+    }
+
     private transient SubmittedArticleTopicPath _submittedArticleTopic;
 
     /**
@@ -301,6 +320,7 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
     @Override
     public List<Check<SubmittedArticleRecord>> getChecks() {
         return Arrays.asList(
+            Internal.createCheck(this, DSL.name("submitted_article_images_in_range"), "(((images >= 0) AND (images <= 4)))", true),
             Internal.createCheck(this, DSL.name("submitted_article_links_in_range"), "(((links >= 1) AND (links <= 3)))", true)
         );
     }

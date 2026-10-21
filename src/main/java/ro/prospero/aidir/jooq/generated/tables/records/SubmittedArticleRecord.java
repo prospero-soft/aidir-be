@@ -134,73 +134,73 @@ public class SubmittedArticleRecord extends UpdatableRecordImpl<SubmittedArticle
     }
 
     /**
+     * Setter for <code>public.submitted_article.images</code>.
+     */
+    public void setImages(Integer value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.submitted_article.images</code>.
+     */
+    public Integer getImages() {
+        return (Integer) get(8);
+    }
+
+    /**
      * Setter for <code>public.submitted_article.permanent_links</code>.
      */
     public void setPermanentLinks(Boolean value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.permanent_links</code>.
      */
     public Boolean getPermanentLinks() {
-        return (Boolean) get(8);
+        return (Boolean) get(9);
     }
 
     /**
      * Setter for <code>public.submitted_article.unlabelled</code>.
      */
     public void setUnlabelled(Boolean value) {
-        set(9, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.unlabelled</code>.
      */
     public Boolean getUnlabelled() {
-        return (Boolean) get(9);
+        return (Boolean) get(10);
     }
 
     /**
      * Setter for <code>public.submitted_article.quote</code>.
      */
     public void setQuote(JSONB value) {
-        set(10, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.quote</code>.
      */
     public JSONB getQuote() {
-        return (JSONB) get(10);
+        return (JSONB) get(11);
     }
 
     /**
      * Setter for <code>public.submitted_article.total_eur</code>.
      */
     public void setTotalEur(Integer value) {
-        set(11, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.total_eur</code>.
      */
     public Integer getTotalEur() {
-        return (Integer) get(11);
-    }
-
-    /**
-     * Setter for <code>public.submitted_article.review_notes</code>.
-     */
-    public void setReviewNotes(String value) {
-        set(12, value);
-    }
-
-    /**
-     * Getter for <code>public.submitted_article.review_notes</code>.
-     */
-    public String getReviewNotes() {
-        return (String) get(12);
+        return (Integer) get(12);
     }
 
     /**
@@ -232,31 +232,45 @@ public class SubmittedArticleRecord extends UpdatableRecordImpl<SubmittedArticle
     }
 
     /**
+     * Setter for <code>public.submitted_article.submitted_at</code>.
+     */
+    public void setSubmittedAt(OffsetDateTime value) {
+        set(15, value);
+    }
+
+    /**
+     * Getter for <code>public.submitted_article.submitted_at</code>.
+     */
+    public OffsetDateTime getSubmittedAt() {
+        return (OffsetDateTime) get(15);
+    }
+
+    /**
      * Setter for <code>public.submitted_article.reviewed_at</code>.
      */
     public void setReviewedAt(OffsetDateTime value) {
-        set(15, value);
+        set(16, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.reviewed_at</code>.
      */
     public OffsetDateTime getReviewedAt() {
-        return (OffsetDateTime) get(15);
+        return (OffsetDateTime) get(16);
     }
 
     /**
      * Setter for <code>public.submitted_article.paid_at</code>.
      */
     public void setPaidAt(OffsetDateTime value) {
-        set(16, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>public.submitted_article.paid_at</code>.
      */
     public OffsetDateTime getPaidAt() {
-        return (OffsetDateTime) get(16);
+        return (OffsetDateTime) get(17);
     }
 
     // -------------------------------------------------------------------------
@@ -282,7 +296,7 @@ public class SubmittedArticleRecord extends UpdatableRecordImpl<SubmittedArticle
     /**
      * Create a detached, initialised SubmittedArticleRecord
      */
-    public SubmittedArticleRecord(Long id, Long accountId, String status, String headline, String featuredImagePath, JSONB body, JSONB sources, Integer links, Boolean permanentLinks, Boolean unlabelled, JSONB quote, Integer totalEur, String reviewNotes, OffsetDateTime consentedAt, OffsetDateTime createdAt, OffsetDateTime reviewedAt, OffsetDateTime paidAt) {
+    public SubmittedArticleRecord(Long id, Long accountId, String status, String headline, String featuredImagePath, JSONB body, JSONB sources, Integer links, Integer images, Boolean permanentLinks, Boolean unlabelled, JSONB quote, Integer totalEur, OffsetDateTime consentedAt, OffsetDateTime createdAt, OffsetDateTime submittedAt, OffsetDateTime reviewedAt, OffsetDateTime paidAt) {
         super(SubmittedArticle.SUBMITTED_ARTICLE);
 
         setId(id);
@@ -293,13 +307,14 @@ public class SubmittedArticleRecord extends UpdatableRecordImpl<SubmittedArticle
         setBody(body);
         setSources(sources);
         setLinks(links);
+        setImages(images);
         setPermanentLinks(permanentLinks);
         setUnlabelled(unlabelled);
         setQuote(quote);
         setTotalEur(totalEur);
-        setReviewNotes(reviewNotes);
         setConsentedAt(consentedAt);
         setCreatedAt(createdAt);
+        setSubmittedAt(submittedAt);
         setReviewedAt(reviewedAt);
         setPaidAt(paidAt);
         resetChangedOnNotNull();

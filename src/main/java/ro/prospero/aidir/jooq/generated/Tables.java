@@ -42,6 +42,7 @@ import ro.prospero.aidir.jooq.generated.tables.RolePermission;
 import ro.prospero.aidir.jooq.generated.tables.Skill;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage;
+import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleReviewRound;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic;
 import ro.prospero.aidir.jooq.generated.tables.Subscription;
@@ -257,6 +258,11 @@ public class Tables {
      * The table <code>public.submitted_article_image</code>.
      */
     public static final SubmittedArticleImage SUBMITTED_ARTICLE_IMAGE = SubmittedArticleImage.SUBMITTED_ARTICLE_IMAGE;
+
+    /**
+     * The table <code>public.submitted_article_review_round</code>.
+     */
+    public static final SubmittedArticleReviewRound SUBMITTED_ARTICLE_REVIEW_ROUND = SubmittedArticleReviewRound.SUBMITTED_ARTICLE_REVIEW_ROUND;
 
     /**
      * The table <code>public.submitted_article_status</code>.

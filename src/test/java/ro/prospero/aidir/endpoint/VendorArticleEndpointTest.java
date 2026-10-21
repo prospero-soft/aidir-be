@@ -7,12 +7,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import ro.prospero.aidir.data.ArticleQuoteDTO;
+import ro.prospero.aidir.data.ArticleRevisionPayload;
 import ro.prospero.aidir.data.ArticleSubmissionPayload;
 import ro.prospero.aidir.data.SubmittedArticleDTO;
 import ro.prospero.aidir.data.SubmittedArticleStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -20,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -62,9 +65,24 @@ class VendorArticleEndpointTest extends EndpointSecurityTestBase {
     private static SubmittedArticleDTO article(long id) {
         return new SubmittedArticleDTO(id, "AIDA-2026-%04d".formatted(id), SubmittedArticleStatus.PENDING_REVIEW,
                                        "Acme ships a faster writer", List.of("AI News"), null, List.of(), List.of(),
-                                       List.of(), new SubmittedArticleDTO.Options(1, false, false),
-                                       new ArticleQuoteDTO(List.of(), 79, 0, 79), null,
+                                       List.of(), new SubmittedArticleDTO.Options(1, 0, false, false),
+                                       new ArticleQuoteDTO(List.of(), 79, 0, 79), null, List.of(),
+                                       OffsetDateTime.parse("2026-10-16T10:00:00Z"),
                                        OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null);
+    }
+
+    private static final String REVISION = """
+            {"headline":"Acme ships a faster writer","topics":["AI News"],
+             "body":[{"kind":"paragraph","content":[{"text":"Words go here.","href":null,"bold":false,"italic":false}]},
+                     {"kind":"image","image":0,"alt":""},{"kind":"image","image":1,"alt":""}],
+             "sources":[],
+             "consents":{"accurate":true,"terms":true},"keptImages":[1,null]}
+            """;
+
+    private static MockMultipartHttpServletRequestBuilder put(String url, String json) {
+        MockMultipartHttpServletRequestBuilder builder = multipartWithCsrf(HttpMethod.PUT, url);
+        builder.part(payloadPart(json));
+        return builder;
     }
 
     @Test
@@ -129,6 +147,52 @@ class VendorArticleEndpointTest extends EndpointSecurityTestBase {
         mockMvc.perform(post("/api/vendor/articles", blankHeading).cookie(signIn(VENDOR)))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.constraintViolations").value(hasItem("body[2].text: must not be blank")));
+
+        verifyNoInteractions(submittedArticleService);
+    }
+
+    @Test
+    void aRevisionWithoutASessionIsA401() throws Exception {
+        mockMvc.perform(put("/api/vendor/articles/42", REVISION))
+               .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(submittedArticleService);
+    }
+
+    @Test
+    void aRevisionFromATalentAccountIsA403() throws Exception {
+        mockMvc.perform(put("/api/vendor/articles/42", REVISION).cookie(signIn(TALENT)))
+               .andExpect(status().isForbidden());
+
+        verifyNoInteractions(submittedArticleService);
+    }
+
+    @Test
+    void aRevisionHandsThePayloadAndNewImagesToTheServiceAndKeepsTheCoverWhenNoneIsSent() throws Exception {
+        MockMultipartFile replacement = image("additional-image-1", "replacement.png");
+        when(submittedArticleService.resubmit(anyLong(), anyLong(), any(), any(), any())).thenReturn(article(42L));
+
+        mockMvc.perform(put("/api/vendor/articles/42", REVISION).file(replacement).cookie(signIn(VENDOR)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.reference").value("AIDA-2026-0042"));
+
+        verify(submittedArticleService).resubmit(
+                eq(VENDOR_ID),
+                eq(42L),
+                argThat((ArticleRevisionPayload payload) -> payload.keptImages().equals(Arrays.asList(1, null))),
+                isNull(),
+                argThat(files -> files.stream().map(f -> f.getOriginalFilename()).toList()
+                                      .equals(List.of("replacement.png"))));
+    }
+
+    @Test
+    void aRevisionWithoutConsentIsA400AndChangesNothing() throws Exception {
+        String noTerms = REVISION.replace("\"terms\":true", "\"terms\":false");
+
+        mockMvc.perform(put("/api/vendor/articles/42", noTerms).cookie(signIn(VENDOR)))
+               .andExpect(status().isBadRequest())
+               .andExpect(jsonPath("$.constraintViolations").value(
+                       hasItem("consents.terms: Accept the terms and the publication rules")));
 
         verifyNoInteractions(submittedArticleService);
     }
