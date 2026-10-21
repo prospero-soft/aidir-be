@@ -22,7 +22,8 @@ import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_BRIEF;
 
 /**
  * Triage of the briefs vendors place: the queue of those just received, and whether we take each on. An
- * accepted brief waits for an editor to start writing; a declined one goes back to its vendor with the reason.
+ * accepted brief goes to the writing desk ({@link ArticleBriefWritingService}) to be assigned an editor; a
+ * declined one goes back to its vendor with the reason.
  */
 @Service
 public class ArticleBriefTriageService {
@@ -47,7 +48,7 @@ public class ArticleBriefTriageService {
     public List<ArticleBriefReviewDTO> queue() {
         List<ArticleBriefRows.Stored> received =
                 rows.read(dslContext, ARTICLE_BRIEF.STATUS.eq(ArticleBriefStatus.RECEIVED.wire()),
-                          ARTICLE_BRIEF.CREATED_AT.asc());
+                          ArticleBriefRows.DraftScope.ALL, ARTICLE_BRIEF.CREATED_AT.asc());
         if (received.isEmpty()) {
             return List.of();
         }
@@ -57,7 +58,8 @@ public class ArticleBriefTriageService {
 
         return received.stream().map(stored -> {
             VendorContacts.Contact vendor = VendorContacts.orUnknown(vendors, stored.accountId());
-            return new ArticleBriefReviewDTO(stored.brief(), stored.accountId(), vendor.name(), vendor.email());
+            return new ArticleBriefReviewDTO(stored.brief(), stored.accountId(), vendor.name(), vendor.email(), null,
+                                             false);
         }).toList();
     }
 

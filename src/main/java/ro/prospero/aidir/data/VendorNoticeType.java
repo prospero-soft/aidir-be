@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum VendorNoticeType {
     /** Review sent an article back; the vendor is to revise and resubmit it. */
-    ARTICLE_CHANGES_REQUESTED("article_changes_requested");
+    ARTICLE_CHANGES_REQUESTED("article_changes_requested"),
+    /** Our editors sent the draft of a brief; the vendor is to approve it or ask for revisions. */
+    BRIEF_DRAFT_READY("brief_draft_ready");
 
     private final String wire;
     VendorNoticeType(String wire) { this.wire = wire; }

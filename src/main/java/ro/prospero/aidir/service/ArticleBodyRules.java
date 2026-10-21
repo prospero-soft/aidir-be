@@ -70,15 +70,20 @@ public final class ArticleBodyRules {
                            + plural(maxPullQuotes, "pull quote"));
         }
 
-        // The editor numbers its images in the order they appear, one part each.
+        violations.addAll(checkImageNumbering(body, images));
+        return violations;
+    }
+
+    /** The editor numbers its images in the order they appear, one image each. */
+    public static List<String> checkImageNumbering(List<ArticleBlock> body, int images) {
         List<Integer> numbered = body.stream()
                                      .filter(ArticleBlock.Image.class::isInstance)
                                      .map(block -> ((ArticleBlock.Image) block).image())
                                      .toList();
         if (!numbered.equals(IntStream.range(0, images).boxed().toList())) {
-            violations.add("body: The images in the article do not match the images sent with it");
+            return List.of("body: The images in the article do not match the images sent with it");
         }
-        return violations;
+        return List.of();
     }
 
     /** The follow links billed: the links in the body, with the one the base price includes as the floor. */

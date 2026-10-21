@@ -16,11 +16,9 @@ import ro.prospero.aidir.jooq.generated.tables.records.SubmittedArticleRecord;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_IMAGE;
@@ -143,7 +141,7 @@ public class SubmittedArticleService {
         if (featuredImage != null) {
             ArticleOrderChecks.checkImage("featuredImage", featuredImage, violations);
         }
-        violations.addAll(keptImageViolations(keptImages, newImages.size()));
+        violations.addAll(ArticleOrderChecks.keptImageViolations(keptImages, newImages.size()));
         for (int i = 0; i < newImages.size(); i++) {
             ArticleOrderChecks.checkImage("additionalImages[" + i + "]", newImages.get(i), violations);
         }
@@ -215,27 +213,6 @@ public class SubmittedArticleService {
         }
         superseded.forEach(fileStorageService::delete);
         return get(accountId, articleId);
-    }
-
-    /**
-     * What a revision's {@code keptImages} can be checked for before the stored images are read: each stored
-     * image kept at most once, and a new part for every new image and no more.
-     */
-    static List<String> keptImageViolations(List<Integer> keptImages, int newImages) {
-        List<String> violations = new ArrayList<>();
-        Set<Integer> seen = new HashSet<>();
-        int fresh = 0;
-        for (Integer position : keptImages) {
-            if (position == null) {
-                fresh++;
-            } else if (position < 0 || !seen.add(position)) {
-                violations.add("keptImages: Keep each stored image at most once");
-            }
-        }
-        if (fresh != newImages) {
-            violations.add("additionalImages: Send a file for each new image, " + fresh + " in all");
-        }
-        return violations;
     }
 
     /** The revision against the order as paid, and the stored images it keeps against those there are. */

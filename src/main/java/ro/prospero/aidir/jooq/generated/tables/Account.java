@@ -36,6 +36,7 @@ import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.AccountAddon.AccountAddonPath;
 import ro.prospero.aidir.jooq.generated.tables.AccountTypes.AccountTypesPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBrief.ArticleBriefPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefDraft.ArticleBriefDraftPath;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation.CompanyInformationPath;
 import ro.prospero.aidir.jooq.generated.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.tables.FeatureGrant.FeatureGrantPath;
@@ -229,17 +230,45 @@ public class Account extends TableImpl<AccountRecord> {
         return _accountAddon;
     }
 
-    private transient ArticleBriefPath _articleBrief;
+    private transient ArticleBriefPath _articleBriefAccountIdFkey;
 
     /**
      * Get the implicit to-many join path to the
-     * <code>public.article_brief</code> table
+     * <code>public.article_brief</code> table, via the
+     * <code>article_brief_account_id_fkey</code> key
      */
-    public ArticleBriefPath articleBrief() {
-        if (_articleBrief == null)
-            _articleBrief = new ArticleBriefPath(this, null, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY.getInverseKey());
+    public ArticleBriefPath articleBriefAccountIdFkey() {
+        if (_articleBriefAccountIdFkey == null)
+            _articleBriefAccountIdFkey = new ArticleBriefPath(this, null, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY.getInverseKey());
 
-        return _articleBrief;
+        return _articleBriefAccountIdFkey;
+    }
+
+    private transient ArticleBriefDraftPath _articleBriefDraft;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.article_brief_draft</code> table
+     */
+    public ArticleBriefDraftPath articleBriefDraft() {
+        if (_articleBriefDraft == null)
+            _articleBriefDraft = new ArticleBriefDraftPath(this, null, Keys.ARTICLE_BRIEF_DRAFT__ARTICLE_BRIEF_DRAFT_WRITTEN_BY_FKEY.getInverseKey());
+
+        return _articleBriefDraft;
+    }
+
+    private transient ArticleBriefPath _articleBriefEditorIdFkey;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.article_brief</code> table, via the
+     * <code>article_brief_editor_id_fkey</code> key
+     */
+    public ArticleBriefPath articleBriefEditorIdFkey() {
+        if (_articleBriefEditorIdFkey == null)
+            _articleBriefEditorIdFkey = new ArticleBriefPath(this, null, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_EDITOR_ID_FKEY.getInverseKey());
+
+        return _articleBriefEditorIdFkey;
     }
 
     private transient CompanyInformationPath _companyInformation;

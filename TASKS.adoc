@@ -59,15 +59,6 @@ success page still opens with "Payment successful!" and promises a payment recei
 which is true yet. Decide whether payment is taken when the article or brief is placed or once it is
 approved or accepted (the pricing page's FAQ says the latter), then set `paid_at` from the provider.
 
-=== articles: write briefs through drafting and client review rounds
-Brief triage is wired up (`received` -> `accepted` | `declined`), but nothing moves an accepted brief on.
-The rest of the lifecycle is in the `article_brief_status` vocabulary: an editor writes a draft
-(`writing`), the client reviews it (`client_review`) and either takes it (`completed`) or sends it back
-(`revisions_requested` -> `writing`) for another round. Still to build: storage for the draft of each
-round (its body as `ArticleBlock`s, as a submitted article's is) and the client's feedback on it, the
-internal editor our editors write drafts in, assigning a brief to an editor, and the vendor's side of
-reviewing a draft.
-
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
 
 === [FE] when onboarding, if user attempts to advance to next step but cannot because of validation errors, those errors need to be displayed (currently not the case for at least CompanyInformationStep)

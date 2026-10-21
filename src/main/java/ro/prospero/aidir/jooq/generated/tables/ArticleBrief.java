@@ -40,6 +40,7 @@ import ro.prospero.aidir.jooq.generated.Indexes;
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefDraft.ArticleBriefDraftPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefStatus.ArticleBriefStatusPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic.ArticleBriefTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleWritingTier.ArticleWritingTierPath;
@@ -154,6 +155,11 @@ public class ArticleBrief extends TableImpl<ArticleBriefRecord> {
     public final TableField<ArticleBriefRecord, String> DECLINE_REASON = createField(DSL.name("decline_reason"), SQLDataType.VARCHAR(2000), this, "");
 
     /**
+     * The column <code>public.article_brief.editor_id</code>.
+     */
+    public final TableField<ArticleBriefRecord, Long> EDITOR_ID = createField(DSL.name("editor_id"), SQLDataType.BIGINT, this, "");
+
+    /**
      * The column <code>public.article_brief.consented_at</code>.
      */
     public final TableField<ArticleBriefRecord, OffsetDateTime> CONSENTED_AT = createField(DSL.name("consented_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
@@ -167,6 +173,16 @@ public class ArticleBrief extends TableImpl<ArticleBriefRecord> {
      * The column <code>public.article_brief.triaged_at</code>.
      */
     public final TableField<ArticleBriefRecord, OffsetDateTime> TRIAGED_AT = createField(DSL.name("triaged_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
+
+    /**
+     * The column <code>public.article_brief.assigned_at</code>.
+     */
+    public final TableField<ArticleBriefRecord, OffsetDateTime> ASSIGNED_AT = createField(DSL.name("assigned_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
+
+    /**
+     * The column <code>public.article_brief.completed_at</code>.
+     */
+    public final TableField<ArticleBriefRecord, OffsetDateTime> COMPLETED_AT = createField(DSL.name("completed_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
      * The column <code>public.article_brief.paid_at</code>.
@@ -257,19 +273,33 @@ public class ArticleBrief extends TableImpl<ArticleBriefRecord> {
 
     @Override
     public List<ForeignKey<ArticleBriefRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_STATUS_FKEY, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_WRITING_TIER_FKEY);
+        return Arrays.asList(Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_EDITOR_ID_FKEY, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_STATUS_FKEY, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_WRITING_TIER_FKEY);
     }
 
-    private transient AccountPath _account;
+    private transient AccountPath _articleBriefAccountIdFkey;
 
     /**
-     * Get the implicit join path to the <code>public.account</code> table.
+     * Get the implicit join path to the <code>public.account</code> table, via
+     * the <code>article_brief_account_id_fkey</code> key.
      */
-    public AccountPath account() {
-        if (_account == null)
-            _account = new AccountPath(this, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY, null);
+    public AccountPath articleBriefAccountIdFkey() {
+        if (_articleBriefAccountIdFkey == null)
+            _articleBriefAccountIdFkey = new AccountPath(this, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_ACCOUNT_ID_FKEY, null);
 
-        return _account;
+        return _articleBriefAccountIdFkey;
+    }
+
+    private transient AccountPath _articleBriefEditorIdFkey;
+
+    /**
+     * Get the implicit join path to the <code>public.account</code> table, via
+     * the <code>article_brief_editor_id_fkey</code> key.
+     */
+    public AccountPath articleBriefEditorIdFkey() {
+        if (_articleBriefEditorIdFkey == null)
+            _articleBriefEditorIdFkey = new AccountPath(this, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_EDITOR_ID_FKEY, null);
+
+        return _articleBriefEditorIdFkey;
     }
 
     private transient ArticleBriefStatusPath _articleBriefStatus;
@@ -296,6 +326,19 @@ public class ArticleBrief extends TableImpl<ArticleBriefRecord> {
             _articleWritingTier = new ArticleWritingTierPath(this, Keys.ARTICLE_BRIEF__ARTICLE_BRIEF_WRITING_TIER_FKEY, null);
 
         return _articleWritingTier;
+    }
+
+    private transient ArticleBriefDraftPath _articleBriefDraft;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.article_brief_draft</code> table
+     */
+    public ArticleBriefDraftPath articleBriefDraft() {
+        if (_articleBriefDraft == null)
+            _articleBriefDraft = new ArticleBriefDraftPath(this, null, Keys.ARTICLE_BRIEF_DRAFT__ARTICLE_BRIEF_DRAFT_ARTICLE_BRIEF_ID_FKEY.getInverseKey());
+
+        return _articleBriefDraft;
     }
 
     private transient ArticleBriefTopicPath _articleBriefTopic;

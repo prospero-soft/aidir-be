@@ -10,7 +10,8 @@ import java.util.List;
  * cover to us.
  *
  * <p>{@code reference} is what the vendor is told to quote: {@code AIDB-<year placed>-<id>}.
- * {@code declineReason} is set once triage turns the brief down. A null {@code paidAt} means unpaid.
+ * {@code declineReason} is set once triage turns the brief down. {@code drafts} are the rounds of writing,
+ * oldest first; the vendor is only sent the rounds that were sent to them. A null {@code paidAt} means unpaid.
  */
 public record ArticleBriefDTO(long id,
                               String reference,
@@ -26,8 +27,10 @@ public record ArticleBriefDTO(long id,
                               Options options,
                               ArticleQuoteDTO quote,
                               String declineReason,
+                              List<ArticleBriefDraftDTO> drafts,
                               OffsetDateTime createdAt,
                               OffsetDateTime triagedAt,
+                              OffsetDateTime completedAt,
                               OffsetDateTime paidAt) {
 
     /** {@code links} is the number of follow links the vendor chose. */

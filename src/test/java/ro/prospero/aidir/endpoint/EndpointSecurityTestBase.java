@@ -29,6 +29,7 @@ import ro.prospero.aidir.security.AccountUserDetailsService;
 import ro.prospero.aidir.service.AccountService;
 import ro.prospero.aidir.service.ArticleBriefService;
 import ro.prospero.aidir.service.ArticleBriefTriageService;
+import ro.prospero.aidir.service.ArticleBriefWritingService;
 import ro.prospero.aidir.service.DealReviewService;
 import ro.prospero.aidir.service.DealService;
 import ro.prospero.aidir.service.DocumentIndexService;
@@ -121,6 +122,8 @@ abstract class EndpointSecurityTestBase {
     ArticleBriefService articleBriefService;
     @MockitoBean
     ArticleBriefTriageService articleBriefTriageService;
+    @MockitoBean
+    ArticleBriefWritingService articleBriefWritingService;
     @MockitoBean
     VendorNoticeService vendorNoticeService;
 

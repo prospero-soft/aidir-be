@@ -261,59 +261,101 @@ public class ArticleBriefRecord extends UpdatableRecordImpl<ArticleBriefRecord> 
     }
 
     /**
+     * Setter for <code>public.article_brief.editor_id</code>.
+     */
+    public void setEditorId(Long value) {
+        set(17, value);
+    }
+
+    /**
+     * Getter for <code>public.article_brief.editor_id</code>.
+     */
+    public Long getEditorId() {
+        return (Long) get(17);
+    }
+
+    /**
      * Setter for <code>public.article_brief.consented_at</code>.
      */
     public void setConsentedAt(OffsetDateTime value) {
-        set(17, value);
+        set(18, value);
     }
 
     /**
      * Getter for <code>public.article_brief.consented_at</code>.
      */
     public OffsetDateTime getConsentedAt() {
-        return (OffsetDateTime) get(17);
+        return (OffsetDateTime) get(18);
     }
 
     /**
      * Setter for <code>public.article_brief.created_at</code>.
      */
     public void setCreatedAt(OffsetDateTime value) {
-        set(18, value);
+        set(19, value);
     }
 
     /**
      * Getter for <code>public.article_brief.created_at</code>.
      */
     public OffsetDateTime getCreatedAt() {
-        return (OffsetDateTime) get(18);
+        return (OffsetDateTime) get(19);
     }
 
     /**
      * Setter for <code>public.article_brief.triaged_at</code>.
      */
     public void setTriagedAt(OffsetDateTime value) {
-        set(19, value);
+        set(20, value);
     }
 
     /**
      * Getter for <code>public.article_brief.triaged_at</code>.
      */
     public OffsetDateTime getTriagedAt() {
-        return (OffsetDateTime) get(19);
+        return (OffsetDateTime) get(20);
+    }
+
+    /**
+     * Setter for <code>public.article_brief.assigned_at</code>.
+     */
+    public void setAssignedAt(OffsetDateTime value) {
+        set(21, value);
+    }
+
+    /**
+     * Getter for <code>public.article_brief.assigned_at</code>.
+     */
+    public OffsetDateTime getAssignedAt() {
+        return (OffsetDateTime) get(21);
+    }
+
+    /**
+     * Setter for <code>public.article_brief.completed_at</code>.
+     */
+    public void setCompletedAt(OffsetDateTime value) {
+        set(22, value);
+    }
+
+    /**
+     * Getter for <code>public.article_brief.completed_at</code>.
+     */
+    public OffsetDateTime getCompletedAt() {
+        return (OffsetDateTime) get(22);
     }
 
     /**
      * Setter for <code>public.article_brief.paid_at</code>.
      */
     public void setPaidAt(OffsetDateTime value) {
-        set(20, value);
+        set(23, value);
     }
 
     /**
      * Getter for <code>public.article_brief.paid_at</code>.
      */
     public OffsetDateTime getPaidAt() {
-        return (OffsetDateTime) get(20);
+        return (OffsetDateTime) get(23);
     }
 
     // -------------------------------------------------------------------------
@@ -339,7 +381,7 @@ public class ArticleBriefRecord extends UpdatableRecordImpl<ArticleBriefRecord> 
     /**
      * Create a detached, initialised ArticleBriefRecord
      */
-    public ArticleBriefRecord(Long id, Long accountId, String status, String headline, String brief, String audience, JSONB keyMessages, LocalDate preferredDate, String writingTier, String featuredImagePath, JSONB sources, Integer links, Boolean permanentLinks, Boolean unlabelled, JSONB quote, Integer totalEur, String declineReason, OffsetDateTime consentedAt, OffsetDateTime createdAt, OffsetDateTime triagedAt, OffsetDateTime paidAt) {
+    public ArticleBriefRecord(Long id, Long accountId, String status, String headline, String brief, String audience, JSONB keyMessages, LocalDate preferredDate, String writingTier, String featuredImagePath, JSONB sources, Integer links, Boolean permanentLinks, Boolean unlabelled, JSONB quote, Integer totalEur, String declineReason, Long editorId, OffsetDateTime consentedAt, OffsetDateTime createdAt, OffsetDateTime triagedAt, OffsetDateTime assignedAt, OffsetDateTime completedAt, OffsetDateTime paidAt) {
         super(ArticleBrief.ARTICLE_BRIEF);
 
         setId(id);
@@ -359,9 +401,12 @@ public class ArticleBriefRecord extends UpdatableRecordImpl<ArticleBriefRecord> 
         setQuote(quote);
         setTotalEur(totalEur);
         setDeclineReason(declineReason);
+        setEditorId(editorId);
         setConsentedAt(consentedAt);
         setCreatedAt(createdAt);
         setTriagedAt(triagedAt);
+        setAssignedAt(assignedAt);
+        setCompletedAt(completedAt);
         setPaidAt(paidAt);
         resetChangedOnNotNull();
     }

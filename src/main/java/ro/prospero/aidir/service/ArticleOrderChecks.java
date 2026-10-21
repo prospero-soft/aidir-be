@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ro.prospero.aidir.data.ArticleQuoteDTO;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +47,28 @@ public class ArticleOrderChecks {
         } else if (image.getSize() > MAX_IMAGE_BYTES) {
             violations.add(field + ": Use an image of up to 5MB");
         }
+    }
+
+    /**
+     * What a {@code keptImages} list can be checked for before the stored images are read: each stored image
+     * kept at most once, and a new part for every new image and no more. A revised article and a brief's draft
+     * both carry one.
+     */
+    static List<String> keptImageViolations(List<Integer> keptImages, int newImages) {
+        List<String> violations = new ArrayList<>();
+        Set<Integer> seen = new HashSet<>();
+        int fresh = 0;
+        for (Integer position : keptImages) {
+            if (position == null) {
+                fresh++;
+            } else if (position < 0 || !seen.add(position)) {
+                violations.add("keptImages: Keep each stored image at most once");
+            }
+        }
+        if (fresh != newImages) {
+            violations.add("additionalImages: Send a file for each new image, " + fresh + " in all");
+        }
+        return violations;
     }
 
     /** The client's total is only compared with ours, so nobody is billed a price other than the one accepted. */

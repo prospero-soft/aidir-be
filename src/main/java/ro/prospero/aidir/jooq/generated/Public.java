@@ -18,6 +18,8 @@ import ro.prospero.aidir.jooq.generated.tables.Addon;
 import ro.prospero.aidir.jooq.generated.tables.AddonBilling;
 import ro.prospero.aidir.jooq.generated.tables.AddonFeature;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBrief;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefDraft;
+import ro.prospero.aidir.jooq.generated.tables.ArticleBriefDraftImage;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefStatus;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic;
 import ro.prospero.aidir.jooq.generated.tables.ArticleWritingTier;
@@ -117,6 +119,16 @@ public class Public extends SchemaImpl {
      * The table <code>public.article_brief</code>.
      */
     public final ArticleBrief ARTICLE_BRIEF = ArticleBrief.ARTICLE_BRIEF;
+
+    /**
+     * The table <code>public.article_brief_draft</code>.
+     */
+    public final ArticleBriefDraft ARTICLE_BRIEF_DRAFT = ArticleBriefDraft.ARTICLE_BRIEF_DRAFT;
+
+    /**
+     * The table <code>public.article_brief_draft_image</code>.
+     */
+    public final ArticleBriefDraftImage ARTICLE_BRIEF_DRAFT_IMAGE = ArticleBriefDraftImage.ARTICLE_BRIEF_DRAFT_IMAGE;
 
     /**
      * The table <code>public.article_brief_status</code>.
@@ -391,6 +403,8 @@ public class Public extends SchemaImpl {
             AddonBilling.ADDON_BILLING,
             AddonFeature.ADDON_FEATURE,
             ArticleBrief.ARTICLE_BRIEF,
+            ArticleBriefDraft.ARTICLE_BRIEF_DRAFT,
+            ArticleBriefDraftImage.ARTICLE_BRIEF_DRAFT_IMAGE,
             ArticleBriefStatus.ARTICLE_BRIEF_STATUS,
             ArticleBriefTopic.ARTICLE_BRIEF_TOPIC,
             ArticleWritingTier.ARTICLE_WRITING_TIER,

@@ -56,8 +56,8 @@ class VendorBriefEndpointTest extends EndpointSecurityTestBase {
                                    List.of("It is fast", "It is cheap", "It is here"), null, null,
                                    List.of("Enterprise"), List.of(),
                                    new ArticleBriefDTO.Options(WritingTier.STANDARD, 2, false, false),
-                                   new ArticleQuoteDTO(List.of(), 251, 0, 251), null,
-                                   OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null);
+                                   new ArticleQuoteDTO(List.of(), 251, 0, 251), null, List.of(),
+                                   OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null, null);
     }
 
     @Test
@@ -112,6 +112,51 @@ class VendorBriefEndpointTest extends EndpointSecurityTestBase {
 
         mockMvc.perform(post("/api/vendor/briefs", unknown).cookie(signIn(VENDOR)))
                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(articleBriefService);
+    }
+
+    @Test
+    void approvingWithoutASessionIsA401() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/vendor/briefs/7/approve"))
+               .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(articleBriefService);
+    }
+
+    @Test
+    void aTalentAccountCannotApprove() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/vendor/briefs/7/approve").cookie(signIn(TALENT)))
+               .andExpect(status().isForbidden());
+
+        verifyNoInteractions(articleBriefService);
+    }
+
+    @Test
+    void approvingAnswersWithNoContent() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/vendor/briefs/7/approve").cookie(signIn(VENDOR)))
+               .andExpect(status().isNoContent());
+
+        verify(articleBriefService).approve(VENDOR_ID, 7L);
+    }
+
+    @Test
+    void revisionsCarryTheirNote() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/vendor/briefs/7/revisions").cookie(signIn(VENDOR))
+                                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                                      .content("{\"note\":\"Shorter intro.\"}"))
+               .andExpect(status().isNoContent());
+
+        verify(articleBriefService).requestRevisions(VENDOR_ID, 7L, "Shorter intro.");
+    }
+
+    @Test
+    void revisionsNeedANote() throws Exception {
+        mockMvc.perform(postWithCsrf("/api/vendor/briefs/7/revisions").cookie(signIn(VENDOR))
+                                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                                      .content("{\"note\":\" \"}"))
+               .andExpect(status().isBadRequest())
+               .andExpect(jsonPath("$.constraintViolations[0]").value("note: must not be blank"));
 
         verifyNoInteractions(articleBriefService);
     }
