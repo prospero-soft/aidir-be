@@ -4,6 +4,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.springframework.stereotype.Component;
+import ro.prospero.aidir.data.ArticlePublicationDTO;
 import ro.prospero.aidir.data.SubmittedArticleDTO;
 import ro.prospero.aidir.data.SubmittedArticleStatus;
 import ro.prospero.aidir.jooq.generated.tables.records.SubmittedArticleRecord;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static ro.prospero.aidir.jooq.generated.Tables.PUBLISHED_ARTICLE;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_IMAGE;
 import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_REVIEW_ROUND;
@@ -42,7 +44,8 @@ public class SubmittedArticleRows {
         }
         List<Long> ids = rows.stream().map(SubmittedArticleRecord::getId).toList();
 
-        // One query each for the topics, images and review rounds of every article read, not one per article.
+        // One query each for the topics, images, review rounds and publications of every article read, not one
+        // per article.
         Map<Long, List<String>> topics =
                 ctx.select(SUBMITTED_ARTICLE_TOPIC.SUBMITTED_ARTICLE_ID, SUBMITTED_ARTICLE_TOPIC.TOPIC)
                    .from(SUBMITTED_ARTICLE_TOPIC)
@@ -66,13 +69,21 @@ public class SubmittedArticleRows {
                    .fetchGroups(SUBMITTED_ARTICLE_REVIEW_ROUND.SUBMITTED_ARTICLE_ID,
                                 round -> new SubmittedArticleDTO.ReviewRound(round.value2(), round.value3(),
                                                                              round.value4()));
+        Map<Long, ArticlePublicationDTO> publications =
+                ctx.select(PUBLISHED_ARTICLE.SUBMITTED_ARTICLE_ID, PUBLISHED_ARTICLE.SLUG,
+                           PUBLISHED_ARTICLE.PUBLISHED_AT)
+                   .from(PUBLISHED_ARTICLE)
+                   .where(PUBLISHED_ARTICLE.SUBMITTED_ARTICLE_ID.in(ids))
+                   .fetchMap(PUBLISHED_ARTICLE.SUBMITTED_ARTICLE_ID,
+                             r -> new ArticlePublicationDTO(r.value2(), r.value3()));
 
         return rows.stream()
                    .map(row -> new Stored(row.getAccountId(),
                                           toDto(row,
                                                 topics.getOrDefault(row.getId(), List.of()),
                                                 images.getOrDefault(row.getId(), List.of()),
-                                                rounds.getOrDefault(row.getId(), List.of()))))
+                                                rounds.getOrDefault(row.getId(), List.of()),
+                                                publications.get(row.getId()))))
                    .toList();
     }
 
@@ -81,7 +92,8 @@ public class SubmittedArticleRows {
     }
 
     private SubmittedArticleDTO toDto(SubmittedArticleRecord row, List<String> topics, List<String> imagePaths,
-                                      List<SubmittedArticleDTO.ReviewRound> rounds) {
+                                      List<SubmittedArticleDTO.ReviewRound> rounds,
+                                      ArticlePublicationDTO publication) {
         SubmittedArticleStatus status = SubmittedArticleStatus.fromWire(row.getStatus());
         return new SubmittedArticleDTO(row.getId(),
                                        "AIDA-%d-%04d".formatted(row.getCreatedAt().getYear(), row.getId()),
@@ -100,7 +112,8 @@ public class SubmittedArticleRows {
                                        row.getCreatedAt(),
                                        row.getSubmittedAt(),
                                        row.getReviewedAt(),
-                                       row.getPaidAt());
+                                       row.getPaidAt(),
+                                       publication);
     }
 
     /** The notes of the round the vendor has yet to answer, while the article waits for them. */

@@ -12,6 +12,7 @@ import java.util.List;
  * <p>{@code reference} is what the vendor is told to quote: {@code AIDB-<year placed>-<id>}.
  * {@code declineReason} is set once triage turns the brief down. {@code drafts} are the rounds of writing,
  * oldest first; the vendor is only sent the rounds that were sent to them. A null {@code paidAt} means unpaid.
+ * {@code publication} is set once the brief is completed and its article published.
  */
 public record ArticleBriefDTO(long id,
                               String reference,
@@ -31,7 +32,8 @@ public record ArticleBriefDTO(long id,
                               OffsetDateTime createdAt,
                               OffsetDateTime triagedAt,
                               OffsetDateTime completedAt,
-                              OffsetDateTime paidAt) {
+                              OffsetDateTime paidAt,
+                              ArticlePublicationDTO publication) {
 
     /** {@code links} is the number of follow links the vendor chose. */
     public record Options(WritingTier writing, int links, boolean permanentLinks, boolean unlabelled) {

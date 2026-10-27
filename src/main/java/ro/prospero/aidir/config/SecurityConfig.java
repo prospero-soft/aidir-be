@@ -157,7 +157,9 @@ public class SecurityConfig {
                                      "/api/category",
                                      "/api/search",
                                      "/api/search/preview",
-                                     "/api/deals").permitAll()
+                                     "/api/deals",
+                                     "/api/news",
+                                     "/api/news/**").permitAll()
                     .requestMatchers(HttpMethod.POST,
                                      "/api/user-onboarding/**",
                                      "/api/vendor-onboarding").permitAll()

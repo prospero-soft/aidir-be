@@ -197,6 +197,7 @@ class EndpointSecurityTest extends EndpointSecurityTestBase {
         mockMvc.perform(get("/api/category")).andExpect(status().isOk());
         mockMvc.perform(get("/api/search").param("query", "widget")).andExpect(status().isOk());
         mockMvc.perform(get("/api/search/preview").param("query", "widget")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/news")).andExpect(status().isOk());
     }
 
     @Test

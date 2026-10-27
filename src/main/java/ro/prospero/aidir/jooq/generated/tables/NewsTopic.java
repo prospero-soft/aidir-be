@@ -31,6 +31,8 @@ import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBrief.ArticleBriefPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic.ArticleBriefTopicPath;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticle.PublishedArticlePath;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticleTopic.PublishedArticleTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle.SubmittedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleTopic.SubmittedArticleTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.records.NewsTopicRecord;
@@ -147,6 +149,19 @@ public class NewsTopic extends TableImpl<NewsTopicRecord> {
         return _articleBriefTopic;
     }
 
+    private transient PublishedArticleTopicPath _publishedArticleTopic;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.published_article_topic</code> table
+     */
+    public PublishedArticleTopicPath publishedArticleTopic() {
+        if (_publishedArticleTopic == null)
+            _publishedArticleTopic = new PublishedArticleTopicPath(this, null, Keys.PUBLISHED_ARTICLE_TOPIC__PUBLISHED_ARTICLE_TOPIC_TOPIC_FKEY.getInverseKey());
+
+        return _publishedArticleTopic;
+    }
+
     private transient SubmittedArticleTopicPath _submittedArticleTopic;
 
     /**
@@ -166,6 +181,14 @@ public class NewsTopic extends TableImpl<NewsTopicRecord> {
      */
     public ArticleBriefPath articleBrief() {
         return articleBriefTopic().articleBrief();
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.published_article</code> table
+     */
+    public PublishedArticlePath publishedArticle() {
+        return publishedArticleTopic().publishedArticle();
     }
 
     /**

@@ -28,12 +28,17 @@ public class VendorContacts {
      * account that is not found answers with an empty contact rather than being left out.
      */
     public Map<Long, Contact> of(Collection<Long> accountIds) {
-        return dslContext.select(ACCOUNT.ID, ACCOUNT.DISPLAY_NAME, COMPANY_INFORMATION.OFFICIAL_NAME, ACCOUNT.EMAIL)
-                         .from(ACCOUNT)
-                         .leftJoin(COMPANY_INFORMATION).on(COMPANY_INFORMATION.ACCOUNT_ID.eq(ACCOUNT.ID))
-                         .where(ACCOUNT.ID.in(accountIds))
-                         .fetchMap(ACCOUNT.ID, r -> new Contact(r.value3() != null ? r.value3() : r.value2(),
-                                                                r.value4()));
+        return of(dslContext, accountIds);
+    }
+
+    /** As {@link #of(Collection)}, run on {@code ctx} so it can be read inside a transaction. */
+    public Map<Long, Contact> of(DSLContext ctx, Collection<Long> accountIds) {
+        return ctx.select(ACCOUNT.ID, ACCOUNT.DISPLAY_NAME, COMPANY_INFORMATION.OFFICIAL_NAME, ACCOUNT.EMAIL)
+                  .from(ACCOUNT)
+                  .leftJoin(COMPANY_INFORMATION).on(COMPANY_INFORMATION.ACCOUNT_ID.eq(ACCOUNT.ID))
+                  .where(ACCOUNT.ID.in(accountIds))
+                  .fetchMap(ACCOUNT.ID, r -> new Contact(r.value3() != null ? r.value3() : r.value2(),
+                                                         r.value4()));
     }
 
     public static Contact orUnknown(Map<Long, Contact> contacts, long accountId) {

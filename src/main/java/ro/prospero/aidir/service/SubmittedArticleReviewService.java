@@ -24,7 +24,7 @@ import static ro.prospero.aidir.jooq.generated.Tables.SUBMITTED_ARTICLE_REVIEW_R
 /**
  * The compliance review of articles vendors wrote: the queue of those waiting, and the verdict on each. An
  * article either passes or goes back to its vendor with the issues to fix, opening a review round their
- * revision closes. Approving only records the verdict - publishing the article is not wired up yet.
+ * revision closes. Approving publishes the article to the news pages in the same transaction.
  */
 @Service
 public class SubmittedArticleReviewService {
@@ -35,15 +35,17 @@ public class SubmittedArticleReviewService {
     private final VendorContacts vendorContacts;
     private final SubmittedArticleService articleService;
     private final DevVendorAccounts devVendors;
+    private final ArticlePublisher publisher;
 
     public SubmittedArticleReviewService(DSLContext dslContext, SubmittedArticleRows rows,
                                          VendorContacts vendorContacts, SubmittedArticleService articleService,
-                                         DevVendorAccounts devVendors) {
+                                         DevVendorAccounts devVendors, ArticlePublisher publisher) {
         this.dslContext = dslContext;
         this.rows = rows;
         this.vendorContacts = vendorContacts;
         this.articleService = articleService;
         this.devVendors = devVendors;
+        this.publisher = publisher;
     }
 
     /** The articles waiting for review, longest waiting first: a revision waits from when it came back. */
@@ -64,21 +66,23 @@ public class SubmittedArticleReviewService {
         }).toList();
     }
 
-    /** Approving twice is the same as approving once; approving anything not waiting for review is a conflict. */
+    /**
+     * Approves the article and publishes it. Approving twice is the same as approving once, and publishes an
+     * approved article that is not yet published; approving anything not waiting for review is a conflict.
+     */
     public void approve(long articleId) {
         dslContext.transaction(cfg -> {
             DSLContext tx = DSL.using(cfg);
             SubmittedArticleStatus status = SubmittedArticleStatus.fromWire(lock(tx, articleId).getStatus());
-            if (status == SubmittedArticleStatus.APPROVED) {
-                return;
+            if (status != SubmittedArticleStatus.APPROVED) {
+                requirePendingReview(status, articleId);
+                tx.update(SUBMITTED_ARTICLE)
+                  .set(SUBMITTED_ARTICLE.STATUS, SubmittedArticleStatus.APPROVED.wire())
+                  .set(SUBMITTED_ARTICLE.REVIEWED_AT, OffsetDateTime.now())
+                  .where(SUBMITTED_ARTICLE.ID.eq(articleId))
+                  .execute();
             }
-            requirePendingReview(status, articleId);
-
-            tx.update(SUBMITTED_ARTICLE)
-              .set(SUBMITTED_ARTICLE.STATUS, SubmittedArticleStatus.APPROVED.wire())
-              .set(SUBMITTED_ARTICLE.REVIEWED_AT, OffsetDateTime.now())
-              .where(SUBMITTED_ARTICLE.ID.eq(articleId))
-              .execute();
+            publisher.publishSubmitted(tx, articleId);
         });
     }
 

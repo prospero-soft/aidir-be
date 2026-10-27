@@ -45,6 +45,7 @@ import ro.prospero.aidir.jooq.generated.tables.ArticleBriefStatus.ArticleBriefSt
 import ro.prospero.aidir.jooq.generated.tables.ArticleBriefTopic.ArticleBriefTopicPath;
 import ro.prospero.aidir.jooq.generated.tables.ArticleWritingTier.ArticleWritingTierPath;
 import ro.prospero.aidir.jooq.generated.tables.NewsTopic.NewsTopicPath;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticle.PublishedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.records.ArticleBriefRecord;
 
 
@@ -352,6 +353,19 @@ public class ArticleBrief extends TableImpl<ArticleBriefRecord> {
             _articleBriefTopic = new ArticleBriefTopicPath(this, null, Keys.ARTICLE_BRIEF_TOPIC__ARTICLE_BRIEF_TOPIC_ARTICLE_BRIEF_ID_FKEY.getInverseKey());
 
         return _articleBriefTopic;
+    }
+
+    private transient PublishedArticlePath _publishedArticle;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.published_article</code> table
+     */
+    public PublishedArticlePath publishedArticle() {
+        if (_publishedArticle == null)
+            _publishedArticle = new PublishedArticlePath(this, null, Keys.PUBLISHED_ARTICLE__PUBLISHED_ARTICLE_ARTICLE_BRIEF_ID_FKEY.getInverseKey());
+
+        return _publishedArticle;
     }
 
     /**

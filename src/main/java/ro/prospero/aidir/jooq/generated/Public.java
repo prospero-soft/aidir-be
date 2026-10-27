@@ -45,6 +45,9 @@ import ro.prospero.aidir.jooq.generated.tables.PlanAddon;
 import ro.prospero.aidir.jooq.generated.tables.PlanFeature;
 import ro.prospero.aidir.jooq.generated.tables.PlanPrice;
 import ro.prospero.aidir.jooq.generated.tables.Pricing;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticle;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticleImage;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticleTopic;
 import ro.prospero.aidir.jooq.generated.tables.Recurrence;
 import ro.prospero.aidir.jooq.generated.tables.Role;
 import ro.prospero.aidir.jooq.generated.tables.RolePermission;
@@ -256,6 +259,21 @@ public class Public extends SchemaImpl {
     public final Pricing PRICING = Pricing.PRICING;
 
     /**
+     * The table <code>public.published_article</code>.
+     */
+    public final PublishedArticle PUBLISHED_ARTICLE = PublishedArticle.PUBLISHED_ARTICLE;
+
+    /**
+     * The table <code>public.published_article_image</code>.
+     */
+    public final PublishedArticleImage PUBLISHED_ARTICLE_IMAGE = PublishedArticleImage.PUBLISHED_ARTICLE_IMAGE;
+
+    /**
+     * The table <code>public.published_article_topic</code>.
+     */
+    public final PublishedArticleTopic PUBLISHED_ARTICLE_TOPIC = PublishedArticleTopic.PUBLISHED_ARTICLE_TOPIC;
+
+    /**
      * The table <code>public.recurrence</code>.
      */
     public final Recurrence RECURRENCE = Recurrence.RECURRENCE;
@@ -430,6 +448,9 @@ public class Public extends SchemaImpl {
             PlanFeature.PLAN_FEATURE,
             PlanPrice.PLAN_PRICE,
             Pricing.PRICING,
+            PublishedArticle.PUBLISHED_ARTICLE,
+            PublishedArticleImage.PUBLISHED_ARTICLE_IMAGE,
+            PublishedArticleTopic.PUBLISHED_ARTICLE_TOPIC,
             Recurrence.RECURRENCE,
             Role.ROLE,
             RolePermission.ROLE_PERMISSION,

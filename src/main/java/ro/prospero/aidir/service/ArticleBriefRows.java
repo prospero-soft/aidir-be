@@ -6,6 +6,7 @@ import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import ro.prospero.aidir.data.ArticleBriefDTO;
+import ro.prospero.aidir.data.ArticlePublicationDTO;
 import ro.prospero.aidir.data.ArticleBriefDraftDTO;
 import ro.prospero.aidir.data.ArticleBriefStatus;
 import ro.prospero.aidir.data.WritingTier;
@@ -21,6 +22,7 @@ import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_BRIEF;
 import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_BRIEF_DRAFT;
 import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_BRIEF_DRAFT_IMAGE;
 import static ro.prospero.aidir.jooq.generated.Tables.ARTICLE_BRIEF_TOPIC;
+import static ro.prospero.aidir.jooq.generated.Tables.PUBLISHED_ARTICLE;
 
 /**
  * The article brief tables, read into {@link ArticleBriefDTO}. The vendor, triage and writing services all go
@@ -55,7 +57,8 @@ public class ArticleBriefRows {
         }
         List<Long> ids = rows.stream().map(ArticleBriefRecord::getId).toList();
 
-        // One query each for the topics, drafts and draft images of every brief read, not one per brief.
+        // One query each for the topics, drafts, draft images and publications of every brief read, not one per
+        // brief.
         Map<Long, List<String>> topics =
                 ctx.select(ARTICLE_BRIEF_TOPIC.ARTICLE_BRIEF_ID, ARTICLE_BRIEF_TOPIC.TOPIC)
                    .from(ARTICLE_BRIEF_TOPIC)
@@ -75,6 +78,11 @@ public class ArticleBriefRows {
                              drafts.stream().map(ArticleBriefDraftRecord::getId).toList()))
                      .orderBy(ARTICLE_BRIEF_DRAFT_IMAGE.POSITION)
                      .fetchGroups(ARTICLE_BRIEF_DRAFT_IMAGE.ARTICLE_BRIEF_DRAFT_ID, ARTICLE_BRIEF_DRAFT_IMAGE.PATH);
+        Map<Long, ArticlePublicationDTO> publications =
+                ctx.select(PUBLISHED_ARTICLE.ARTICLE_BRIEF_ID, PUBLISHED_ARTICLE.SLUG, PUBLISHED_ARTICLE.PUBLISHED_AT)
+                   .from(PUBLISHED_ARTICLE)
+                   .where(PUBLISHED_ARTICLE.ARTICLE_BRIEF_ID.in(ids))
+                   .fetchMap(PUBLISHED_ARTICLE.ARTICLE_BRIEF_ID, r -> new ArticlePublicationDTO(r.value2(), r.value3()));
         Map<Long, List<ArticleBriefDraftRecord>> draftsByBrief =
                 drafts.stream().collect(Collectors.groupingBy(ArticleBriefDraftRecord::getArticleBriefId));
 
@@ -86,7 +94,8 @@ public class ArticleBriefRows {
                                                                 images.getOrDefault(draft.getId(), List.of())))
                                             .toList();
                        return new Stored(row.getAccountId(), row.getEditorId(),
-                                         toDto(row, topics.getOrDefault(row.getId(), List.of()), rounds));
+                                         toDto(row, topics.getOrDefault(row.getId(), List.of()), rounds,
+                                               publications.get(row.getId())));
                    })
                    .toList();
     }
@@ -95,7 +104,8 @@ public class ArticleBriefRows {
         return read(ctx, condition, scope).stream().findFirst();
     }
 
-    private ArticleBriefDTO toDto(ArticleBriefRecord row, List<String> topics, List<ArticleBriefDraftDTO> drafts) {
+    private ArticleBriefDTO toDto(ArticleBriefRecord row, List<String> topics, List<ArticleBriefDraftDTO> drafts,
+                                  ArticlePublicationDTO publication) {
         return new ArticleBriefDTO(row.getId(),
                                    "AIDB-%d-%04d".formatted(row.getCreatedAt().getYear(), row.getId()),
                                    ArticleBriefStatus.fromWire(row.getStatus()),
@@ -116,7 +126,8 @@ public class ArticleBriefRows {
                                    row.getCreatedAt(),
                                    row.getTriagedAt(),
                                    row.getCompletedAt(),
-                                   row.getPaidAt());
+                                   row.getPaidAt(),
+                                   publication);
     }
 
     private ArticleBriefDraftDTO toDto(ArticleBriefRecord brief, ArticleBriefDraftRecord draft,

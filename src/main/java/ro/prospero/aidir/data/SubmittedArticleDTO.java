@@ -11,7 +11,7 @@ import java.util.List;
  * {@code reviewNotes} are the compliance issues the vendor is to fix while the article waits for their
  * revision, and null otherwise; {@code reviewRounds} are every time review sent it back, oldest first.
  * {@code submittedAt} is when it last went to review. A null {@code paidAt} means unpaid, which every article
- * is until there is a payment provider.
+ * is until there is a payment provider. {@code publication} is set once the article is approved and published.
  */
 public record SubmittedArticleDTO(long id,
                                   String reference,
@@ -29,7 +29,8 @@ public record SubmittedArticleDTO(long id,
                                   OffsetDateTime createdAt,
                                   OffsetDateTime submittedAt,
                                   OffsetDateTime reviewedAt,
-                                  OffsetDateTime paidAt) {
+                                  OffsetDateTime paidAt,
+                                  ArticlePublicationDTO publication) {
 
     /**
      * {@code links} and {@code images} are the follow links and in-article images billed, which a revision

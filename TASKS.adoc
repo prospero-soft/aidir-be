@@ -59,7 +59,96 @@ success page still opens with "Payment successful!" and promises a payment recei
 which is true yet. Decide whether payment is taken when the article or brief is placed or once it is
 approved or accepted (the pricing page's FAQ says the latter), then set `paid_at` from the provider.
 
+=== articles: performance metrics
+The vendor dashboard's Articles section (`/vendor-dashboard/articles` on the front end) reports on each
+article, and nothing on this side measures any of it. Every figure below is a stand-in from
+`src/components/vendor-dashboard/articles/placeholders.ts`, shown only for published articles:
+
+* per article: total views, website clicks, social engagements and newsletter clicks, each against the
+  previous 30 days
+* views over time (the Article Views chart) and the share of views per referrer: Google, direct, social
+  media, newsletter, other
+* engagement: average time on page, average scroll depth, pages per session, conversion rate
+* per vendor: total views, website clicks and social engagements against last month, on the list page
+* the report's date range, which is a fixed "last 30 days" and cannot be changed
+* "Download Report", which is disabled
+
+Needs view and click counters on published articles (the same gap as "featured and trending signals"), a
+decision on what counts as a social engagement and a conversion (see "marketing metrics"), referrer
+capture, and an endpoint per article plus a per-vendor rollup. The counters belong on `published_article`;
+nothing records a view of `/news/{slug}` yet.
+
+=== articles: unpublishing and corrections
+Once an article is in `published_article` nothing takes it down or changes it: there is no admin action
+to unpublish one, and a correction to its text or images after publication can only be made in the
+database. Needs an admin action that unpublishes (hide the row or delete it), a way to edit a published
+article's copy, and a decision on what the vendor is told. Decide too what an unpublished article owes the
+vendor: the follow links they paid for run to `follow_links_until`, and pulling the article ends them early.
+
+=== articles: curated featuring
+The news page's hero shows the three newest articles, because nothing marks an article as featured: there
+is no flag on `published_article` and no admin control to set one. Overlaps the homepage feature sold under
+"articles: promotion add-ons" and the `vendor_homepage_spotlight` plan feature; decide whether featuring is
+an editorial choice, a paid extra, or both.
+
+=== [FE] front page news section
+`BlogSection` on the front page still renders its own hardcoded posts, links to none of them, and its
+"View All Blog Posts" button does nothing. Read the newest articles from `GET /api/news` and link the
+cards to `/news/{slug}` and the button to `/news`.
+
+=== end-to-end tests for article publishing
+Publishing is covered only where no database or browser is needed: the slug, excerpt, date and link-expiry
+rules (`PublicationRulesTest`) and the web layer of `GET /api/news` with the service stood in
+(`NewsEndpointTest`). What `ArticlePublisher` writes and what the news pages render are untested, because
+neither repo has an end-to-end setup yet. Driving the front end against a real backend and database:
+
+* approving a submitted article in `/admin/article-queue` puts it on `/news`, and `/news/{slug}` renders it
+  with the vendor's company name as byline, the publish date, the Sponsored tag and its images
+* completing a brief whose preferred date is still to come leaves it off `/news` and `/news/{slug}` until
+  that day, while the vendor dashboard lists it as Scheduled
+* once `follow_links_until` has passed, the article's links render with `rel="sponsored nofollow ..."`
+
+=== articles: promotion add-ons
+The Promotion tab of an article's details on the vendor Articles page sells four extras for a live article: homepage feature for 7 days
+(€25), social media promotion (€65), newsletter inclusion (€89) and an extra week of feature (€125). The
+options and prices exist only in `placeholders.ts`, and "Continue to payment" is disabled. Needs a price
+list (`ArticlePricing` has none of these), an order that refers to the article, delivery of each extra,
+and payment, which waits on "articles: take payment for sponsored article orders". The plan features
+`vendor_newsletter_feature`, `vendor_social_promotion` and `vendor_homepage_spotlight` and the
+`vendor_newsletter_slot` add-on overlap with these and are not connected to articles. Decide whether
+promotion is bought per article, drawn from the plan, or both.
+
+=== articles: invoices
+"View Invoice" on an article's purchase details and "Download invoices" in the Articles quick links are
+disabled: no invoice is issued for an article order. This follows on from taking payment.
+
+=== articles: vendor list endpoints
+`GET /api/vendor/articles` and `GET /api/vendor/briefs` return every row, newest first. The Articles page
+merges the two and searches, filters by status and topic, sorts and pages them in the browser. That is
+fine at a handful of articles per vendor. If a vendor's list grows, move it to one paged endpoint with
+search, status and topic filters, and sort by date or views once views exist.
+
+=== [FE] articles: keep unsaved drafts
+An article's revision and a brief draft's feedback are edited in the Review tab of the article's details
+on the vendor Articles page, and live only in component state. Choosing another row in the table, leaving
+the page or reloading it discards them; so does closing the tab partway through the completed-article
+and editorial request flows. Choose a mechanism that saves partial drafts as the vendor types and offers
+them back on return: in the browser (IndexedDB, since the article form holds image `File`s that
+`localStorage` cannot), or on the server as a draft row per article, brief or order, which also survives a
+change of device. Decide when a saved draft is dropped - on submit, and once the article it belongs to is
+no longer waiting on the vendor - and what happens if the article changed on our side since the draft was
+saved.
+
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
+
+=== vendor onboarding: AI Directory Rewards opt-in
+The product profile step of vendor onboarding asks the vendor to include their deals in the AI Directory
+Rewards program, which also means agreeing to the Rewards Program Policy. The front end keeps the answer as
+`rewardsOptIn` in its form state but leaves it out of `POST api/vendor-onboarding`, because
+`VendorSubmissionPayload` has no field for it and nothing stores it. Add the flag to the payload (on `Company`,
+since it covers the vendor's deals rather than the product), persist it with the submission and carry it onto
+the vendor account on approval, record when the policy was accepted, then have `buildSubmissionPayload` in the
+front end send it.
 
 === [FE] when onboarding, if user attempts to advance to next step but cannot because of validation errors, those errors need to be displayed (currently not the case for at least CompanyInformationStep)
 

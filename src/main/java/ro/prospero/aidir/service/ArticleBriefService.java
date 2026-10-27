@@ -33,13 +33,15 @@ public class ArticleBriefService {
     private final ArticleBriefRows rows;
     private final ArticleOrderChecks checks;
     private final FileStorageService fileStorageService;
+    private final ArticlePublisher publisher;
 
     public ArticleBriefService(DSLContext dslContext, ArticleBriefRows rows, ArticleOrderChecks checks,
-                               FileStorageService fileStorageService) {
+                               FileStorageService fileStorageService, ArticlePublisher publisher) {
         this.dslContext = dslContext;
         this.rows = rows;
         this.checks = checks;
         this.fileStorageService = fileStorageService;
+        this.publisher = publisher;
     }
 
     public List<ArticleBriefDTO> list(long accountId) {
@@ -113,7 +115,10 @@ public class ArticleBriefService {
         return get(accountId, briefId);
     }
 
-    /** The client takes the draft they were sent: the article is done. */
+    /**
+     * The client takes the draft they were sent: the article is done, and published on the day they asked
+     * for, or straight away if they asked for none or it has passed.
+     */
     public void approve(long accountId, long briefId) {
         dslContext.transaction(cfg -> {
             DSLContext tx = DSL.using(cfg);
@@ -123,6 +128,7 @@ public class ArticleBriefService {
               .set(ARTICLE_BRIEF.COMPLETED_AT, OffsetDateTime.now())
               .where(ARTICLE_BRIEF.ID.eq(briefId))
               .execute();
+            publisher.publishBrief(tx, briefId);
         });
     }
 

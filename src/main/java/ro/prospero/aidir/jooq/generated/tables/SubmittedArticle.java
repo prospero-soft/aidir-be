@@ -40,6 +40,7 @@ import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
 import ro.prospero.aidir.jooq.generated.tables.NewsTopic.NewsTopicPath;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticle.PublishedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleImage.SubmittedArticleImagePath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleReviewRound.SubmittedArticleReviewRoundPath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticleStatus.SubmittedArticleStatusPath;
@@ -268,6 +269,19 @@ public class SubmittedArticle extends TableImpl<SubmittedArticleRecord> {
             _submittedArticleStatus = new SubmittedArticleStatusPath(this, Keys.SUBMITTED_ARTICLE__SUBMITTED_ARTICLE_STATUS_FKEY, null);
 
         return _submittedArticleStatus;
+    }
+
+    private transient PublishedArticlePath _publishedArticle;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.published_article</code> table
+     */
+    public PublishedArticlePath publishedArticle() {
+        if (_publishedArticle == null)
+            _publishedArticle = new PublishedArticlePath(this, null, Keys.PUBLISHED_ARTICLE__PUBLISHED_ARTICLE_SUBMITTED_ARTICLE_ID_FKEY.getInverseKey());
+
+        return _publishedArticle;
     }
 
     private transient SubmittedArticleImagePath _submittedArticleImage;

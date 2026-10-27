@@ -68,7 +68,7 @@ class VendorArticleEndpointTest extends EndpointSecurityTestBase {
                                        List.of(), new SubmittedArticleDTO.Options(1, 0, false, false),
                                        new ArticleQuoteDTO(List.of(), 79, 0, 79), null, List.of(),
                                        OffsetDateTime.parse("2026-10-16T10:00:00Z"),
-                                       OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null);
+                                       OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null, null);
     }
 
     private static final String REVISION = """

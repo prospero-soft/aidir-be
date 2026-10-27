@@ -57,7 +57,7 @@ class VendorBriefEndpointTest extends EndpointSecurityTestBase {
                                    List.of("Enterprise"), List.of(),
                                    new ArticleBriefDTO.Options(WritingTier.STANDARD, 2, false, false),
                                    new ArticleQuoteDTO(List.of(), 251, 0, 251), null, List.of(),
-                                   OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null, null);
+                                   OffsetDateTime.parse("2026-10-16T10:00:00Z"), null, null, null, null);
     }
 
     @Test

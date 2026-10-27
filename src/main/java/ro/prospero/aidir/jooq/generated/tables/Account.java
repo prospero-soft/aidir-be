@@ -40,6 +40,7 @@ import ro.prospero.aidir.jooq.generated.tables.ArticleBriefDraft.ArticleBriefDra
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation.CompanyInformationPath;
 import ro.prospero.aidir.jooq.generated.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.tables.FeatureGrant.FeatureGrantPath;
+import ro.prospero.aidir.jooq.generated.tables.PublishedArticle.PublishedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.Role.RolePath;
 import ro.prospero.aidir.jooq.generated.tables.SubmittedArticle.SubmittedArticlePath;
 import ro.prospero.aidir.jooq.generated.tables.Subscription.SubscriptionPath;
@@ -307,6 +308,19 @@ public class Account extends TableImpl<AccountRecord> {
             _featureGrant = new FeatureGrantPath(this, null, Keys.FEATURE_GRANT__FEATURE_GRANT_ACCOUNT_ID_FKEY.getInverseKey());
 
         return _featureGrant;
+    }
+
+    private transient PublishedArticlePath _publishedArticle;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.published_article</code> table
+     */
+    public PublishedArticlePath publishedArticle() {
+        if (_publishedArticle == null)
+            _publishedArticle = new PublishedArticlePath(this, null, Keys.PUBLISHED_ARTICLE__PUBLISHED_ARTICLE_ACCOUNT_ID_FKEY.getInverseKey());
+
+        return _publishedArticle;
     }
 
     private transient SubmittedArticlePath _submittedArticle;
