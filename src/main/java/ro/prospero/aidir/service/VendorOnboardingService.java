@@ -207,34 +207,8 @@ public class VendorOnboardingService {
                     MONTHLY, accountId, planName);
     }
 
-    /**
-     * The {@code pricing} reference the directory filters on, read off the plans the vendor described:
-     * nothing paid is free, a free tier next to paid ones is freemium, anything else is paid.
-     */
     private static String pricingOf(VendorSubmissionPayload.Product product) {
-        List<PricingPlan> plans = product.plans() == null ? List.of() : product.plans();
-        boolean anyPaid = plans.stream().anyMatch(plan -> !isFree(product, plan));
-        if (!anyPaid) {
-            return "free";
-        }
-        boolean anyFree = plans.stream().anyMatch(plan -> isFree(product, plan));
-        return anyFree ? "freemium" : "paid";
-    }
-
-    /**
-     * The form marks one plan as the free tier and forces its price to "0", but the price is free text
-     * otherwise - "€0", "0.00" and an empty field all mean the same thing and none of them is a number.
-     */
-    private static boolean isFree(VendorSubmissionPayload.Product product, PricingPlan plan) {
-        if (plan.id() != null && plan.id().equals(product.freeTierPlanId())) {
-            return true;
-        }
-        String price = plan.price() == null ? "" : plan.price().trim();
-        if (price.isEmpty() || "free".equalsIgnoreCase(price)) {
-            return true;
-        }
-        String digits = price.replaceAll("[^0-9]", "");
-        return !digits.isEmpty() && digits.chars().allMatch(digit -> digit == '0');
+        return ToolPricing.of(product.plans(), product.freeTierPlanId(), PricingPlan::id, PricingPlan::price);
     }
 
     private JSONB toJsonb(Object value) {

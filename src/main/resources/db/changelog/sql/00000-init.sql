@@ -655,9 +655,11 @@ CREATE TABLE tool (
     highlight_plan_id VARCHAR,
     integrations JSONB,
     demo_video_url VARCHAR,
+    faqs JSONB, -- added by the vendor from the dashboard; the onboarding wizard does not collect them
     submitted_by VARCHAR(500) NOT NULL,
     submitted_at TIMESTAMPTZ NOT NULL,
     approved_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- last vendor edit from the dashboard; approval counts as the first
     published BOOLEAN NOT NULL DEFAULT true -- lets a listing be pulled without deleting it
 );
 

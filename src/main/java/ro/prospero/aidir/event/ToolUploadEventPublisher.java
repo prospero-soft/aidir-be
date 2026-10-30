@@ -14,4 +14,8 @@ public class ToolUploadEventPublisher {
     public void publish(ToolDTO tool) {
         applicationEventPublisher.publishEvent(new ToolUploadEvent(tool));
     }
+
+    public void publishUpdate(ToolDTO tool) {
+        applicationEventPublisher.publishEvent(new ToolUpdateEvent(tool));
+    }
 }

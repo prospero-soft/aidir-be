@@ -141,6 +141,21 @@ saved.
 
 === on product details page, allow vendors to link each pricing tier to its own dedicated sales page (feature gated by vendor package level)
 
+=== vendor tool profile editing: plan gate and moderation
+The dashboard's AI Tool Profile page (`/api/vendor/tool`, `VendorToolService`) lets every vendor edit every
+section of their listing: general information, logo, overview, features, integrations, media, pricing and FAQ.
+
+1. Gate the editing behind the plan. The Overview's "Unlock AI Tool Editing" card says editing comes with
+   the Premium Plan; decide which sections each plan may edit, enforce it on the `PUT` routes through
+   `EntitlementService`, and have the page show the locked state instead of the pencil.
+2. Edits go live straight away, with no review, while the original submission went through the approval
+   queue. Decide whether some sections (name, URL, logo, descriptions) need re-review before they replace
+   the listed copy.
+3. Only an approved listing can be edited; a vendor whose submission is still in review gets a 404 and the
+   page shows a notice. Decide whether pending submissions should be editable too.
+4. A vendor with more than one listing sees only the most recently approved one. The page's product
+   switcher is a static button for now.
+
 === vendor onboarding: AI Directory Rewards opt-in
 The product profile step of vendor onboarding asks the vendor to include their deals in the AI Directory
 Rewards program, which also means agreeing to the Rewards Program Policy. The front end keeps the answer as
@@ -201,6 +216,27 @@ behind any of them: there is no featured flag on a tool, no view or click counte
 column. Both tabs currently fall through to the newest listings and the Verified link opens the
 unfiltered directory. Needs the counters (which pairs with "store search/query metrics"), a curation flag
 for featured, and verification wired to the vendor tier that sells it.
+
+=== directory "Sales" filter: tools with a running deal
+The directory's Categories filter ends with a "Sales" row that narrows the list to tools with a deal running
+right now. Nothing links a deal to a directory listing in what `/api/tool/browse` serves: the response has
+no facet count for it, the query no parameter, and `ToolCardDTO` no flag. Needs all three, with "running"
+meaning approved and inside its scheduled window. Until then the front end renders the row disabled in
+`src/components/search/FiltersSidebar.tsx`.
+
+=== AI Discovery Assistant ("Get Recommendations")
+The directory's search bar has a "Get Recommendations" button, and the hero promises an AI Discovery
+Assistant, but the button does nothing and nothing behind it exists. Decide what it is - a guided
+questionnaire over the existing filters, or a recommender that takes a free-text need - and what the
+backend serves for it.
+
+=== [FE] load the design fonts
+The design is set in General Sans (headings) and Neue Montreal (body), and `index.css` names them in the
+`--font-display` and `--font-body` theme tokens, but never loads either: it imports only Inter and Plus
+Jakarta Sans from Google Fonts. On top of that, the unlayered `.font-display` and `.font-body` rules in
+`index.css` beat the Tailwind utilities generated from those tokens and force Plus Jakarta Sans and Inter,
+as do the `:root`, `body` and `.eyebrow` font stacks. Load the two fonts (self-hosted, or from Fontshare for
+General Sans), drop the overriding rules, and check every page, since all of their typography shifts.
 
 === talent signals the schema has nowhere to put
 `/api/talent/browse` serves the half of the directory's sidebar that has columns behind it - skills,

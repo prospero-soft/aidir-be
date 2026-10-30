@@ -246,59 +246,87 @@ public class ToolRecord extends UpdatableRecordImpl<ToolRecord> {
     }
 
     /**
+     * Setter for <code>public.tool.faqs</code>.
+     */
+    public void setFaqs(JSONB value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.tool.faqs</code>.
+     */
+    public JSONB getFaqs() {
+        return (JSONB) get(16);
+    }
+
+    /**
      * Setter for <code>public.tool.submitted_by</code>.
      */
     public void setSubmittedBy(String value) {
-        set(16, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>public.tool.submitted_by</code>.
      */
     public String getSubmittedBy() {
-        return (String) get(16);
+        return (String) get(17);
     }
 
     /**
      * Setter for <code>public.tool.submitted_at</code>.
      */
     public void setSubmittedAt(OffsetDateTime value) {
-        set(17, value);
+        set(18, value);
     }
 
     /**
      * Getter for <code>public.tool.submitted_at</code>.
      */
     public OffsetDateTime getSubmittedAt() {
-        return (OffsetDateTime) get(17);
+        return (OffsetDateTime) get(18);
     }
 
     /**
      * Setter for <code>public.tool.approved_at</code>.
      */
     public void setApprovedAt(OffsetDateTime value) {
-        set(18, value);
+        set(19, value);
     }
 
     /**
      * Getter for <code>public.tool.approved_at</code>.
      */
     public OffsetDateTime getApprovedAt() {
-        return (OffsetDateTime) get(18);
+        return (OffsetDateTime) get(19);
+    }
+
+    /**
+     * Setter for <code>public.tool.updated_at</code>.
+     */
+    public void setUpdatedAt(OffsetDateTime value) {
+        set(20, value);
+    }
+
+    /**
+     * Getter for <code>public.tool.updated_at</code>.
+     */
+    public OffsetDateTime getUpdatedAt() {
+        return (OffsetDateTime) get(20);
     }
 
     /**
      * Setter for <code>public.tool.published</code>.
      */
     public void setPublished(Boolean value) {
-        set(19, value);
+        set(21, value);
     }
 
     /**
      * Getter for <code>public.tool.published</code>.
      */
     public Boolean getPublished() {
-        return (Boolean) get(19);
+        return (Boolean) get(21);
     }
 
     // -------------------------------------------------------------------------
@@ -324,7 +352,7 @@ public class ToolRecord extends UpdatableRecordImpl<ToolRecord> {
     /**
      * Create a detached, initialised ToolRecord
      */
-    public ToolRecord(Long id, Long toolSubmissionId, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean published) {
+    public ToolRecord(Long id, Long toolSubmissionId, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, JSONB faqs, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, OffsetDateTime updatedAt, Boolean published) {
         super(Tool.TOOL);
 
         setId(id);
@@ -343,9 +371,11 @@ public class ToolRecord extends UpdatableRecordImpl<ToolRecord> {
         setHighlightPlanId(highlightPlanId);
         setIntegrations(integrations);
         setDemoVideoUrl(demoVideoUrl);
+        setFaqs(faqs);
         setSubmittedBy(submittedBy);
         setSubmittedAt(submittedAt);
         setApprovedAt(approvedAt);
+        setUpdatedAt(updatedAt);
         setPublished(published);
         resetChangedOnNotNull();
     }

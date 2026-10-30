@@ -143,6 +143,11 @@ public class Tool extends TableImpl<ToolRecord> {
     public final TableField<ToolRecord, String> DEMO_VIDEO_URL = createField(DSL.name("demo_video_url"), SQLDataType.VARCHAR, this, "");
 
     /**
+     * The column <code>public.tool.faqs</code>.
+     */
+    public final TableField<ToolRecord, JSONB> FAQS = createField(DSL.name("faqs"), SQLDataType.JSONB, this, "");
+
+    /**
      * The column <code>public.tool.submitted_by</code>.
      */
     public final TableField<ToolRecord, String> SUBMITTED_BY = createField(DSL.name("submitted_by"), SQLDataType.VARCHAR(500).nullable(false), this, "");
@@ -156,6 +161,11 @@ public class Tool extends TableImpl<ToolRecord> {
      * The column <code>public.tool.approved_at</code>.
      */
     public final TableField<ToolRecord, OffsetDateTime> APPROVED_AT = createField(DSL.name("approved_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
+
+    /**
+     * The column <code>public.tool.updated_at</code>.
+     */
+    public final TableField<ToolRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
     /**
      * The column <code>public.tool.published</code>.

@@ -23,4 +23,11 @@ public class ToolUploadEventListener {
         LOGGER.info("Indexing tool: {}", toolUploadEvent.tool());
         documentIndexService.create(toolUploadEvent.tool());
     }
+
+    @Async(SEARCH_EXECUTOR)
+    @EventListener
+    public void onToolUpdate(ToolUpdateEvent toolUpdateEvent) {
+        LOGGER.info("Re-indexing tool: {}", toolUpdateEvent.tool());
+        documentIndexService.update(toolUpdateEvent.tool());
+    }
 }
