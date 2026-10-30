@@ -11,6 +11,7 @@ import ro.prospero.aidir.data.DealPayload;
 import ro.prospero.aidir.data.DealPayload.PlacementContent;
 import ro.prospero.aidir.data.DealStatus;
 import ro.prospero.aidir.data.DealSummaryDTO;
+import ro.prospero.aidir.data.DealSummaryDTO.PlacementSchedule;
 import ro.prospero.aidir.data.Placement;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
 import ro.prospero.aidir.jooq.generated.tables.records.DealRecord;
@@ -286,8 +287,24 @@ public class DealService {
     private static DealSummaryDTO summaryOf(DealDTO deal) {
         PlacementContent banner = deal.perPlacement().get(Placement.BANNER.wire());
         String title = firstNonBlank(deal.productName(), banner == null ? null : banner.info().line1());
-        return new DealSummaryDTO(deal.id(), deal.status(), title, deal.placements(), deal.rejectionReason(),
-                                  deal.createdAt(), deal.updatedAt(), deal.submittedAt());
+        return new DealSummaryDTO(deal.id(), deal.status(), title, deal.placements(), schedulesOf(deal),
+                                  deal.campaign(), deal.rejectionReason(), deal.createdAt(), deal.updatedAt(),
+                                  deal.submittedAt(), deal.reviewedAt());
+    }
+
+    private static List<PlacementSchedule> schedulesOf(DealDTO deal) {
+        List<PlacementSchedule> schedules = new ArrayList<>();
+        for (Placement placement : deal.placements()) {
+            PlacementContent content = deal.perPlacement().get(placement.wire());
+            if (content == null || content.schedule().startDate() == null) {
+                continue;
+            }
+            LocalDate start = content.schedule().startDate();
+            Integer days = content.schedule().durationDays();
+            LocalDate end = days == null ? null : start.plusDays(days - 1L);
+            schedules.add(new PlacementSchedule(placement, start, end));
+        }
+        return schedules;
     }
 
     private static String firstNonBlank(String... values) {

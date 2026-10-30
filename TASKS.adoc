@@ -41,6 +41,19 @@ handling deal edits for submitted deals:
 
 3. running deals should not be editable, but should be cancellable (if they want to pull the campaign that's their business)
 
+=== vendor deals dashboard: metrics and missing actions
+
+The vendor dashboard's Deals page (`VendorDeals.tsx` in aidir-fe) follows the Figma design, but several of its parts have nothing behind them yet:
+
+1. Impressions, clicks, unique clicks and CTR: nothing counts them. Every figure the page shows for them, in the stat tiles, the performance chart, the table's metric columns, the deal's Performance tab and the "new impressions" activity line, comes from `vendor-dashboard/deals/placeholders.ts`. Record them, serve them per deal and per placement over a date range, and remove that file.
+2. Pause: the button is inert. It is the "cancellable" case of running deals in "deal edits" above; decide whether a paused deal can resume.
+3. Duplicate: the button is inert. It would create a draft from the deal's content, including a copy of its logo.
+4. Archived: the Figma status filter has it, but no deal status matches, so the filter leaves it out.
+5. Reports: Download Report (CSV, Excel, PDF) and the report period and contents choices are inert.
+6. Destination URL check: the Figma "Action Required" card warns when a deal's destination URL is unavailable; nothing checks URLs.
+7. Campaign creation: "Create a campaign" is inert; see "campaigns" above.
+8. Activity log: "Recent Activity" is derived from each deal's created, submitted and reviewed timestamps; there is no event log.
+
 
 === news: handle templates and editor
 the current input for submitted articles is a bare text-area, but we're going to have to offer some way of formatting the articles to the people who submit: either templates or a limited editor (TipTap is the react library that looks like the most promising editor candidate)
