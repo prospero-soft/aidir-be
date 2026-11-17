@@ -32,6 +32,20 @@ public class CategoryRecord extends UpdatableRecordImpl<CategoryRecord> {
         return (String) get(0);
     }
 
+    /**
+     * Setter for <code>public.category.description</code>.
+     */
+    public void setDescription(String value) {
+        set(1, value);
+    }
+
+    /**
+     * Getter for <code>public.category.description</code>.
+     */
+    public String getDescription() {
+        return (String) get(1);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -55,10 +69,11 @@ public class CategoryRecord extends UpdatableRecordImpl<CategoryRecord> {
     /**
      * Create a detached, initialised CategoryRecord
      */
-    public CategoryRecord(String name) {
+    public CategoryRecord(String name, String description) {
         super(Category.CATEGORY);
 
         setName(name);
+        setDescription(description);
         resetChangedOnNotNull();
     }
 }

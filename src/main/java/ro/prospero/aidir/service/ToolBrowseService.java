@@ -8,6 +8,7 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
+import ro.prospero.aidir.data.CategoryCount;
 import ro.prospero.aidir.data.FacetCount;
 import ro.prospero.aidir.data.ToolBrowseQuery;
 import ro.prospero.aidir.data.ToolPage;
@@ -97,15 +98,15 @@ public class ToolBrowseService {
      * reads, and a category disappearing from the menu the moment its last tool is unpublished would be a
      * worse answer than showing it with a zero.
      */
-    public List<FacetCount> categoryCounts() {
+    public List<CategoryCount> categoryCounts() {
         Map<String, Long> counts = categoryFacets(TOOL.PUBLISHED.isTrue())
                 .stream()
                 .collect(Collectors.toMap(FacetCount::value, FacetCount::count));
 
-        return dslContext.select(CATEGORY.NAME)
+        return dslContext.select(CATEGORY.NAME, CATEGORY.DESCRIPTION)
                          .from(CATEGORY)
                          .orderBy(CATEGORY.NAME.asc())
-                         .fetch(r -> new FacetCount(r.value1(), counts.getOrDefault(r.value1(), 0L)));
+                         .fetch(r -> new CategoryCount(r.value1(), r.value2(), counts.getOrDefault(r.value1(), 0L)));
     }
 
     private List<Long> rankedIds(String queryText) {

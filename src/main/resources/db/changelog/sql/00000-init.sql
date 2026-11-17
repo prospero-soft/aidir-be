@@ -529,26 +529,32 @@ INSERT INTO pricing (type) VALUES
     ('free'),('freemium'),('paid');
 
 -- The browse page's category facet and the vendor onboarding picker read the same vocabulary from here.
--- Seeded from CATEGORIES in src/components/vendor-onboarding/constants.ts, which is what submissions
--- already write into tool.categories - the directory sidebar used to carry a second, different list, and
--- filtering on it never matched anything that had been submitted.
+-- The front end carries a copy as CATEGORIES in src/data/categories.ts, and the names have to match it
+-- exactly: they are what submissions write into tool.categories and what /browse?category= filters on.
 CREATE TABLE category (
-    name VARCHAR PRIMARY KEY
+    name VARCHAR PRIMARY KEY,
+    description VARCHAR NOT NULL
 );
 
-INSERT INTO category (name) VALUES
-    ('Chatbots'),
-    ('Content Creation'),
-    ('Image Generation'),
-    ('Video Creation'),
-    ('Code Assistant'),
-    ('Analytics'),
-    ('Marketing'),
-    ('Sales'),
-    ('Customer Support'),
-    ('Productivity'),
-    ('Design'),
-    ('Audio Processing');
+INSERT INTO category (name, description) VALUES
+    ('Agents & Automation', 'Autonomous agents, multi-agent systems, workflow automation, browser agents, task automation, AI orchestration'),
+    ('Audio, Voice & Music', 'Text-to-speech, speech-to-text, voice cloning, transcription, audio editing, music generation, podcast tools'),
+    ('Business, Finance & Legal', 'Business intelligence, accounting, financial analysis, legal research, contract analysis, business planning'),
+    ('Chatbots & Assistants', 'AI chat assistants, conversational AI, virtual companions, personal assistants, customer-facing chatbots'),
+    ('Coding & Software Development', 'Coding assistants, code generation, debugging, testing, app development, website builders, no-code/low-code'),
+    ('Data Analytics & Business Intelligence', 'Data analysis, visualization, predictive analytics, reporting, dashboards, data extraction'),
+    ('Design & 3D Creation', 'Graphic design, UI/UX design, 3D modelling, 3D assets, interior design, architecture, product design'),
+    ('Education & Learning', 'AI tutors, language learning, personalized learning, course creation, assessment, educational assistants'),
+    ('Human Resources & Career', 'Recruitment, talent assessment, CV builders, interview preparation, employee management, career development'),
+    ('Image Generation & Editing', 'Text-to-image, image editing, image enhancement, background removal, image restoration, avatars, logo generation'),
+    ('Industry-Specific Solutions', 'Healthcare, real estate, e-commerce, manufacturing, agriculture, logistics, travel, government and sustainability'),
+    ('Marketing, SEO & Social Media', 'SEO, AI search visibility, advertising, social media management, content marketing, campaign creation, analytics'),
+    ('Productivity & Office Tools', 'Email assistants, meeting assistants, note-taking, calendars, presentations, spreadsheets, document management'),
+    ('Sales, CRM & Customer Support', 'Lead generation, sales automation, CRM, customer service, AI voice agents, helpdesk and call-center solutions'),
+    ('Search, Research & Knowledge', 'AI search engines, deep research, academic research, knowledge management, document analysis, information retrieval'),
+    ('Security, Detection & Compliance', 'AI detection, deepfake detection, cybersecurity, privacy, governance, compliance and risk management'),
+    ('Video Generation & Editing', 'Text-to-video, image-to-video, video editing, animation, video enhancement, subtitles, dubbing'),
+    ('Writing & Content Creation', 'Copywriting, blog writing, storytelling, rewriting, summarization, grammar, proofreading, prompt generation');
 
 -- Reference vocabularies. These are seeded from what the front end currently hardcodes, and are meant to
 -- become the source for those pickers rather than the other way round: SKILL_OPTIONS and LANGUAGE_OPTIONS

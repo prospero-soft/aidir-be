@@ -4,6 +4,24 @@
 
 == TODO
 
+=== Export figma for backup
+
+=== Try to use figma to add learning page
+
+=== update categories with newly-defined set
+
+=== [FE] tools: remove verified sticker, since all tools need to be verified to be listed
+
+=== [FE] tool listings payment model type: paid -> subscription
+
+=== [FE] tool details: share on social -> should open up a dropdown with x, facebook, linkedin, bluesky, reddit
+
+=== [FE] tool details: get started in top card on sidebar (should  link to product page)
+
+=== [FE] tool details: when logged in as vendor promote your AI tool should disappear, if looking at your own product page should be replaced with upgrade plan if an upgrade is available
+
+=== [FE] tool details: start learning link to learning directory(?)
+
 === deal scheduling
 right now vendors can set up deals by selecting any future date in the calendar, but many deal slots are limited in number; I need to devise a mechanism  to signal campaign availability so we don't promise things we can't deliver.
 
@@ -458,15 +476,3 @@ It'll also be used for the blog and the newsletter. While the blog is part of th
 
 Can the CMS push notifications to the backend when a new document is created, so the backend is aware? (listings, for example, blog posts etc.)
 
-==== Candidates:
-
-===== Directus
-
-===== Strapi
-
-===== Bloomreach
-
-
-
-
-== DONE

@@ -60,6 +60,11 @@ public class Category extends TableImpl<CategoryRecord> {
      */
     public final TableField<CategoryRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR.nullable(false), this, "");
 
+    /**
+     * The column <code>public.category.description</code>.
+     */
+    public final TableField<CategoryRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.VARCHAR.nullable(false), this, "");
+
     private Category(Name alias, Table<CategoryRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
