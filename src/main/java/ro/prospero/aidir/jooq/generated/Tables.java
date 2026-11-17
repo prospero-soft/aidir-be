@@ -20,7 +20,6 @@ import ro.prospero.aidir.jooq.generated.tables.Category;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation;
 import ro.prospero.aidir.jooq.generated.tables.DataPermission;
 import ro.prospero.aidir.jooq.generated.tables.Deal;
-import ro.prospero.aidir.jooq.generated.tables.DealCategory;
 import ro.prospero.aidir.jooq.generated.tables.DealOfferType;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacementKind;
@@ -153,11 +152,6 @@ public class Tables {
      * The table <code>public.deal</code>.
      */
     public static final Deal DEAL = Deal.DEAL;
-
-    /**
-     * The table <code>public.deal_category</code>.
-     */
-    public static final DealCategory DEAL_CATEGORY = DealCategory.DEAL_CATEGORY;
 
     /**
      * The table <code>public.deal_offer_type</code>.

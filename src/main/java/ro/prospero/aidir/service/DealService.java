@@ -27,8 +27,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import static ro.prospero.aidir.jooq.generated.Tables.CATEGORY;
 import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
-import static ro.prospero.aidir.jooq.generated.Tables.DEAL_CATEGORY;
 import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
 
 /**
@@ -247,7 +247,7 @@ public class DealService {
         }
 
         String category = payload.category();
-        if (category != null && !dslContext.fetchExists(DEAL_CATEGORY, DEAL_CATEGORY.NAME.eq(category))) {
+        if (category != null && !dslContext.fetchExists(CATEGORY, CATEGORY.NAME.eq(category))) {
             violations.add("category: unknown category '" + category + "'");
         }
 

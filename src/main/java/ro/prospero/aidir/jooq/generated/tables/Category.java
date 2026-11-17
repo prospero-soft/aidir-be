@@ -29,6 +29,7 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
+import ro.prospero.aidir.jooq.generated.tables.Deal.DealPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmissionCategory.ToolSubmissionCategoryPath;
 import ro.prospero.aidir.jooq.generated.tables.records.CategoryRecord;
@@ -135,6 +136,18 @@ public class Category extends TableImpl<CategoryRecord> {
     @Override
     public UniqueKey<CategoryRecord> getPrimaryKey() {
         return Keys.CATEGORY_PKEY;
+    }
+
+    private transient DealPath _deal;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.deal</code> table
+     */
+    public DealPath deal() {
+        if (_deal == null)
+            _deal = new DealPath(this, null, Keys.DEAL__DEAL_CATEGORY_FKEY.getInverseKey());
+
+        return _deal;
     }
 
     private transient ToolSubmissionCategoryPath _toolSubmissionCategory;

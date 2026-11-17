@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DealSubmissionRulesTest {
     private static final LocalDate TODAY = LocalDate.of(2026, 10, 12);
     private static final Schedule SCHEDULE = new Schedule(30, TODAY);
-    private static final Basics BASICS = new Basics("Acme Writer", "Content Creation", "Write faster",
+    private static final Basics BASICS = new Basics("Acme Writer", "Writing & Content Creation", "Write faster",
                                                    "/media/deals/1/logo-abc.png", "Writes everything faster.");
     private static final Info NO_INFO = new Info(null, null);
 

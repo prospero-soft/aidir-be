@@ -48,7 +48,7 @@ class VendorDealEndpointTest extends EndpointSecurityTestBase {
 
     private static final String PAYLOAD = """
             {"placements":["sidebar","top-category"],"sponsored":true,"sponsoredLabel":"Partner",
-             "productName":"Acme Writer","category":"Content Creation","logoUrl":null,
+             "productName":"Acme Writer","category":"Writing & Content Creation","logoUrl":null,
              "perPlacement":{"top-category":{
                "schedule":{"durationDays":7,"startDate":"%s"},
                "info":{},

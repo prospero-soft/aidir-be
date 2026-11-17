@@ -528,9 +528,10 @@ CREATE TABLE pricing (
 INSERT INTO pricing (type) VALUES
     ('free'),('freemium'),('paid');
 
--- The browse page's category facet and the vendor onboarding picker read the same vocabulary from here.
--- The front end carries a copy as CATEGORIES in src/data/categories.ts, and the names have to match it
--- exactly: they are what submissions write into tool.categories and what /browse?category= filters on.
+-- The one category vocabulary, shared by tools and deals: the browse page's category facet, the vendor
+-- onboarding picker and the deals directory all read it from here. The front end carries a copy as
+-- CATEGORIES in src/data/categories.ts, and the names have to match it exactly: they are what submissions
+-- write into tool.categories and deal.category, and what /browse?category= filters on.
 CREATE TABLE category (
     name VARCHAR PRIMARY KEY,
     description VARCHAR NOT NULL
@@ -805,16 +806,6 @@ CREATE TABLE deal_offer_type (
 INSERT INTO deal_offer_type (name) VALUES
     ('percentage'), ('fixed'), ('lifetime'), ('trial'), ('credits'), ('custom');
 
--- The deals directory's own vocabulary, seeded from DEAL_CATEGORIES in src/data/deals.ts. It differs
--- from the tool categories above, and the directory's category filter reads this one.
-CREATE TABLE deal_category (
-    name VARCHAR PRIMARY KEY
-);
-
-INSERT INTO deal_category (name) VALUES
-    ('Chatbots'), ('Analytics'), ('Development'), ('Content Creation'),
-    ('Design'), ('Audio'), ('Video'), ('Marketing');
-
 -- The product columns describe the deal in every placement it runs in. logo_path is relative to the
 -- uploads root, like tool_submission_image_metadata.
 CREATE TABLE deal (
@@ -826,7 +817,7 @@ CREATE TABLE deal (
     campaign VARCHAR(100),
     internal_campaign_id VARCHAR(100),
     product_name VARCHAR(200),
-    category VARCHAR REFERENCES deal_category(name),
+    category VARCHAR REFERENCES category(name),
     brand VARCHAR(200),
     short_description VARCHAR(80),
     logo_path VARCHAR,

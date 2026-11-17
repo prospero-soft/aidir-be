@@ -27,7 +27,6 @@ import ro.prospero.aidir.jooq.generated.tables.Category;
 import ro.prospero.aidir.jooq.generated.tables.CompanyInformation;
 import ro.prospero.aidir.jooq.generated.tables.DataPermission;
 import ro.prospero.aidir.jooq.generated.tables.Deal;
-import ro.prospero.aidir.jooq.generated.tables.DealCategory;
 import ro.prospero.aidir.jooq.generated.tables.DealOfferType;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacement;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacementKind;
@@ -167,11 +166,6 @@ public class Public extends SchemaImpl {
      * The table <code>public.deal</code>.
      */
     public final Deal DEAL = Deal.DEAL;
-
-    /**
-     * The table <code>public.deal_category</code>.
-     */
-    public final DealCategory DEAL_CATEGORY = DealCategory.DEAL_CATEGORY;
 
     /**
      * The table <code>public.deal_offer_type</code>.
@@ -430,7 +424,6 @@ public class Public extends SchemaImpl {
             CompanyInformation.COMPANY_INFORMATION,
             DataPermission.DATA_PERMISSION,
             Deal.DEAL,
-            DealCategory.DEAL_CATEGORY,
             DealOfferType.DEAL_OFFER_TYPE,
             DealPlacement.DEAL_PLACEMENT,
             DealPlacementKind.DEAL_PLACEMENT_KIND,

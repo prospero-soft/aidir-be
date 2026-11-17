@@ -36,7 +36,7 @@ import ro.prospero.aidir.jooq.generated.Indexes;
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
-import ro.prospero.aidir.jooq.generated.tables.DealCategory.DealCategoryPath;
+import ro.prospero.aidir.jooq.generated.tables.Category.CategoryPath;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacement.DealPlacementPath;
 import ro.prospero.aidir.jooq.generated.tables.DealPlacementKind.DealPlacementKindPath;
 import ro.prospero.aidir.jooq.generated.tables.DealStatus.DealStatusPath;
@@ -253,17 +253,16 @@ public class Deal extends TableImpl<DealRecord> {
         return _account;
     }
 
-    private transient DealCategoryPath _dealCategory;
+    private transient CategoryPath _category;
 
     /**
-     * Get the implicit join path to the <code>public.deal_category</code>
-     * table.
+     * Get the implicit join path to the <code>public.category</code> table.
      */
-    public DealCategoryPath dealCategory() {
-        if (_dealCategory == null)
-            _dealCategory = new DealCategoryPath(this, Keys.DEAL__DEAL_CATEGORY_FKEY, null);
+    public CategoryPath category() {
+        if (_category == null)
+            _category = new CategoryPath(this, Keys.DEAL__DEAL_CATEGORY_FKEY, null);
 
-        return _dealCategory;
+        return _category;
     }
 
     private transient DealStatusPath _dealStatus;
