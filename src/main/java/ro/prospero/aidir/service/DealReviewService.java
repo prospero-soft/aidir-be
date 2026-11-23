@@ -2,6 +2,7 @@ package ro.prospero.aidir.service;
 
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
+import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
 
 /**
  * The admin's side of deals: the queue of submitted deals and the verdict on each. An approved deal goes
@@ -116,24 +118,38 @@ public class DealReviewService {
 
     /**
      * Creates and submits a deal on behalf of a vendor account, through the same calls the vendor's own
-     * Save and Submit make, for the vendor {@link DevVendorAccounts#at} picks. Meant for development: the
-     * admin has no deals of its own.
+     * Save and Submit make, for the vendor {@link DevVendorAccounts#withPublishedToolAt} picks. Meant for
+     * development: the admin has no deals of its own.
+     *
+     * @param startedDaysAgo moves the deal's start dates back once it is submitted, for a deal that is already
+     *                       under way or over, which the form's validation rightly refuses; null leaves them
      */
-    public DealDTO devSubmit(int vendorIndex, DealPayload payload, MultipartFile logo) {
-        return createAndSubmit(devVendors.at(vendorIndex), payload, logo);
+    public DealDTO devSubmit(int vendorIndex, Integer startedDaysAgo, DealPayload payload, MultipartFile logo) {
+        return createAndSubmit(devVendors.withPublishedToolAt(vendorIndex), startedDaysAgo, payload, logo);
     }
 
     /**
      * Like {@link #devSubmit}, but for one vendor named by email, so a developer can sign in as that vendor
      * and find the deal under their own deals.
      */
-    public DealDTO devSubmitAs(String vendorEmail, DealPayload payload, MultipartFile logo) {
-        return createAndSubmit(devVendors.byEmail(vendorEmail), payload, logo);
+    public DealDTO devSubmitAs(String vendorEmail, Integer startedDaysAgo, DealPayload payload, MultipartFile logo) {
+        return createAndSubmit(devVendors.byEmail(vendorEmail), startedDaysAgo, payload, logo);
     }
 
-    private DealDTO createAndSubmit(long accountId, DealPayload payload, MultipartFile logo) {
+    private DealDTO createAndSubmit(long accountId, Integer startedDaysAgo, DealPayload payload, MultipartFile logo) {
         DealDTO draft = dealService.create(accountId, payload, logo);
-        return dealService.submit(accountId, draft.id());
+        DealDTO submitted = dealService.submit(accountId, draft.id());
+        if (startedDaysAgo == null || startedDaysAgo <= 0) {
+            return submitted;
+        }
+        // Subtracting whole days from a date stays a date in Postgres, and end_date follows as a generated column.
+        dslContext.update(DEAL_PLACEMENT)
+                  .set(DEAL_PLACEMENT.START_DATE,
+                       DSL.field("{0} - {1}", SQLDataType.LOCALDATE, DEAL_PLACEMENT.START_DATE,
+                                 DSL.inline(startedDaysAgo)))
+                  .where(DEAL_PLACEMENT.DEAL_ID.eq(submitted.id()))
+                  .execute();
+        return dealService.get(accountId, submitted.id());
     }
 
     private static DealRecord lock(DSLContext tx, long dealId) {

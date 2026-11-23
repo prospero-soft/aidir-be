@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 import static ro.prospero.aidir.jooq.generated.Tables.ACCOUNT;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
 
 /**
  * The vendor accounts the development helpers act for: the admin has no deals or articles of its own, so the
@@ -36,6 +37,22 @@ public class DevVendorAccounts {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                               "There are no vendor accounts to submit for. "
                                               + "Push vendor onboarding test data first.");
+        }
+        return vendors.get(Math.floorMod(index, vendors.size()));
+    }
+
+    /** Like {@link #at}, among the vendors with a published tool: the only ones that can submit a deal. */
+    public long withPublishedToolAt(int index) {
+        List<Long> vendors = dslContext.selectDistinct(TOOL.ACCOUNT_ID)
+                                       .from(TOOL)
+                                       .where(TOOL.PUBLISHED.isTrue())
+                                       .and(TOOL.ACCOUNT_ID.isNotNull())
+                                       .orderBy(TOOL.ACCOUNT_ID.asc())
+                                       .fetch(TOOL.ACCOUNT_ID);
+        if (vendors.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                              "There are no vendors with a published tool to submit for. "
+                                              + "Push vendor onboarding test data and approve it first.");
         }
         return vendors.get(Math.floorMod(index, vendors.size()));
     }

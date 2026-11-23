@@ -24,8 +24,13 @@ class DealSubmissionRulesTest {
     private static final Info NO_INFO = new Info(null, null);
 
     private static Offer offer(OfferType type) {
-        return new Offer(type, "EUR", new BigDecimal("100"), new BigDecimal("60"), 12, null, null, null, null,
+        return new Offer(type, "EUR", new BigDecimal("100"), new BigDecimal("60"), 40, 12, null, null, null, null,
                          null, null, null, "Get Started", "https://acme.example", null, null);
+    }
+
+    private static Offer percentage(Integer percent) {
+        return new Offer(OfferType.PERCENTAGE, "EUR", new BigDecimal("100"), null, percent, 12, null, null, null,
+                         null, null, null, null, "Get Started", "https://acme.example", null, null);
     }
 
     private static List<String> check(Placement placement, PlacementContent content) {
@@ -45,10 +50,19 @@ class DealSubmissionRulesTest {
     }
 
     @Test
-    void placementsWithoutContentNeedNothingElse() {
+    void everyPlacementNeedsContent() {
         assertThat(DealSubmissionRules.check(List.of(Placement.SIDEBAR, Placement.STANDARD_LISTING), BASICS,
                                              Map.of(), TODAY))
-                .isEmpty();
+                .containsExactly("sidebar.content: Fill in the schedule, details and offer",
+                                 "standard-listing.content: Fill in the schedule, details and offer");
+    }
+
+    @Test
+    void aSidebarOrStandardListingWithAnOfferPasses() {
+        PlacementContent content = new PlacementContent(SCHEDULE, NO_INFO, offer(OfferType.FIXED));
+
+        assertThat(check(Placement.SIDEBAR, content)).isEmpty();
+        assertThat(check(Placement.STANDARD_LISTING, content)).isEmpty();
     }
 
     @Test
@@ -60,8 +74,10 @@ class DealSubmissionRulesTest {
     @Test
     void theDealNeedsItsProductBasicsWhateverItsPlacements() {
         Basics empty = new Basics(" ", null, null, null, " ");
+        PlacementContent content = new PlacementContent(SCHEDULE, NO_INFO, offer(OfferType.FIXED));
 
-        assertThat(DealSubmissionRules.check(List.of(Placement.SIDEBAR), empty, Map.of(), TODAY))
+        assertThat(DealSubmissionRules.check(List.of(Placement.SIDEBAR), empty,
+                                             Map.of(Placement.SIDEBAR.wire(), content), TODAY))
                 .containsExactly("productName: Product Name is required",
                                  "category: Choose a category",
                                  "description: Short description is required",
@@ -82,20 +98,55 @@ class DealSubmissionRulesTest {
     @Test
     void theDealPriceMustBeLowerThanTheOriginal() {
         Offer offer = new Offer(OfferType.LIFETIME, "EUR", new BigDecimal("50"), new BigDecimal("50"), null, null,
-                                null, null, null, null, null, null, "Get Deal", "https://acme.example", null, null);
+                                null, null, null, null, null, null, null, "Get Deal", "https://acme.example",
+                                null, null);
 
         assertThat(check(Placement.TOP_CATEGORY, new PlacementContent(SCHEDULE, NO_INFO, offer)))
                 .containsExactly("top-category.dealPrice: Lifetime Price must be lower than the Original Price");
     }
 
     @Test
+    void aPercentageOfferTakesADiscountRatherThanADealPrice() {
+        assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, percentage(1)))).isEmpty();
+        assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, percentage(99)))).isEmpty();
+
+        for (Integer outOfRange : new Integer[]{null, 0, 100}) {
+            assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, percentage(outOfRange))))
+                    .containsExactly("homepage.discountPercent: Enter a discount between 1% and 99%");
+        }
+    }
+
+    @Test
+    void freeMonthsNeedAMonthlyPriceAndANumberOfMonths() {
+        Offer complete = new Offer(OfferType.FREE_MONTHS, "EUR", new BigDecimal("20"), null, null, 3, null, null,
+                                   null, null, null, null, null, "Get Deal", "https://acme.example", null, null);
+        Offer empty = new Offer(OfferType.FREE_MONTHS, "EUR", null, null, null, null, null, null, null, null, null,
+                                null, null, "Get Deal", "https://acme.example", null, null);
+
+        assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, complete))).isEmpty();
+        assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, empty)))
+                .containsExactly("homepage.originalPrice: Monthly Price is required",
+                                 "homepage.discountMonths: Choose how many months are free");
+    }
+
+    @Test
+    void bonusCreditsAskForTheSameFieldsAsFreeCredits() {
+        Offer bonus = new Offer(OfferType.BONUS_CREDITS, "USD", null, null, null, null, null, null, "Tokens",
+                                new BigDecimal("1000"), null, null, null, "Get Deal", "https://acme.example",
+                                null, null);
+
+        assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, bonus)))
+                .containsExactly("homepage.estimatedValue: Estimated Value is required");
+    }
+
+    @Test
     void eachOfferTypeAsksForItsOwnFields() {
-        Offer trial = new Offer(OfferType.TRIAL, "EUR", null, null, null, 45, null, null, null, null, null, null,
-                                "Subscribe", "https://acme.example", null, null);
-        Offer credits = new Offer(OfferType.CREDITS, "USD", null, null, null, null, null, "Tokens",
+        Offer trial = new Offer(OfferType.TRIAL, "EUR", null, null, null, null, 45, null, null, null, null, null,
+                                null, "Subscribe", "https://acme.example", null, null);
+        Offer credits = new Offer(OfferType.CREDITS, "USD", null, null, null, null, null, null, "Tokens",
                                   new BigDecimal("1000"), null, null, null, "Get Deal", "https://acme.example",
                                   null, null);
-        Offer custom = new Offer(OfferType.CUSTOM, null, null, null, null, null, null, null, null, null, "",
+        Offer custom = new Offer(OfferType.CUSTOM, null, null, null, null, null, null, null, null, null, null, "",
                                  null, "Get Deal", "https://acme.example", null, null);
 
         assertThat(check(Placement.HOMEPAGE, new PlacementContent(SCHEDULE, NO_INFO, trial)))
@@ -109,23 +160,27 @@ class DealSubmissionRulesTest {
     }
 
     @Test
-    void aSpotlightNeedsItsTextAndADestination() {
-        Offer offer = new Offer(null, null, null, null, null, null, null, null, null, null, null, null, null,
+    void aSpotlightNeedsItsTextADestinationAndAnOffer() {
+        Offer offer = new Offer(null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, " ", null);
 
         assertThat(check(Placement.SPOTLIGHTS, new PlacementContent(SCHEDULE, NO_INFO, offer)))
                 .containsExactly("spotlights.destinationUrl: Destination URL is required",
-                                 "spotlights.spotlightText: Spotlight Text is required");
+                                 "spotlights.spotlightText: Spotlight Text is required",
+                                 "spotlights.buttonText: Choose a button text",
+                                 "spotlights.offerType: Choose an offer type");
     }
 
     @Test
-    void aBannerNeedsBothLinesAndABadge() {
+    void aBannerNeedsBothLinesABadgeAndAnOffer() {
         Info info = new Info("Flash Sale", null);
-        Offer offer = new Offer(null, null, null, null, null, null, null, null, null, null, null, null, null,
+        Offer offer = new Offer(null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 "https://acme.example", null, " ");
 
         assertThat(check(Placement.BANNER, new PlacementContent(SCHEDULE, info, offer)))
                 .containsExactly("banner.line2: Line 2 is required",
-                                 "banner.bannerBadge: Banner Badge is required");
+                                 "banner.bannerBadge: Banner Badge is required",
+                                 "banner.buttonText: Choose a button text",
+                                 "banner.offerType: Choose an offer type");
     }
 }

@@ -73,9 +73,9 @@ public class StrapiService {
             data.put("name", tool.name());
             data.put("url", tool.url());
 
-            // pricing is JSON in Strapi, supplied as a String in the DTO
-            if (tool.pricing() != null) {
-                data.put("pricing", tool.pricing());
+            // pricing is JSON in Strapi, List<String> in the DTO
+            if (tool.pricingModels() != null) {
+                data.set("pricing", objectMapper.valueToTree(tool.pricingModels()));
             }
 
             data.put("shortDescription", tool.shortDescription());

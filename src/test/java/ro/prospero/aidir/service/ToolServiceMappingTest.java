@@ -21,7 +21,7 @@ class ToolServiceMappingTest {
         record.setId(7L);
         record.setName("Widget");
         record.setUrl("https://example.com");
-        record.setPricing("freemium");
+        record.setPricingModels(JSONB.valueOf("[\"free\",\"subscription\"]"));
         record.setShortDescription("short");
         record.setLongDescription("long");
         record.setTags(JSONB.valueOf("[\"alpha\",\"beta\"]"));
@@ -32,6 +32,7 @@ class ToolServiceMappingTest {
         ToolDTO dto = ToolService.toDto(record);
 
         assertThat(dto.id()).isEqualTo(7L);
+        assertThat(dto.pricingModels()).containsExactly("free", "subscription");
         assertThat(dto.tags()).containsExactly("alpha", "beta");
         assertThat(dto.categories()).containsExactly("writing");
         assertThat(dto.submittedAt()).isEqualTo(submitted);

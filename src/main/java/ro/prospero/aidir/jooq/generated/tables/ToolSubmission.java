@@ -36,7 +36,6 @@ import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
 import ro.prospero.aidir.jooq.generated.tables.Category.CategoryPath;
-import ro.prospero.aidir.jooq.generated.tables.Pricing.PricingPath;
 import ro.prospero.aidir.jooq.generated.tables.Tool.ToolPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmissionCategory.ToolSubmissionCategoryPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmissionImageMetadata.ToolSubmissionImageMetadataPath;
@@ -85,9 +84,19 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
     public final TableField<ToolSubmissionRecord, String> URL = createField(DSL.name("url"), SQLDataType.VARCHAR(250).nullable(false), this, "");
 
     /**
-     * The column <code>public.tool_submission.pricing</code>.
+     * The column <code>public.tool_submission.pricing_models</code>.
      */
-    public final TableField<ToolSubmissionRecord, String> PRICING = createField(DSL.name("pricing"), SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<ToolSubmissionRecord, JSONB> PRICING_MODELS = createField(DSL.name("pricing_models"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.tool_submission.price_ranges</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> PRICE_RANGES = createField(DSL.name("price_ranges"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.tool_submission.lowest_monthly_cents</code>.
+     */
+    public final TableField<ToolSubmissionRecord, Integer> LOWEST_MONTHLY_CENTS = createField(DSL.name("lowest_monthly_cents"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>public.tool_submission.short_description</code>.
@@ -120,11 +129,6 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
     public final TableField<ToolSubmissionRecord, JSONB> PLANS = createField(DSL.name("plans"), SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.tool_submission.free_tier_plan_id</code>.
-     */
-    public final TableField<ToolSubmissionRecord, String> FREE_TIER_PLAN_ID = createField(DSL.name("free_tier_plan_id"), SQLDataType.VARCHAR, this, "");
-
-    /**
      * The column <code>public.tool_submission.highlight_plan_id</code>.
      */
     public final TableField<ToolSubmissionRecord, String> HIGHLIGHT_PLAN_ID = createField(DSL.name("highlight_plan_id"), SQLDataType.VARCHAR, this, "");
@@ -133,6 +137,36 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
      * The column <code>public.tool_submission.integrations</code>.
      */
     public final TableField<ToolSubmissionRecord, JSONB> INTEGRATIONS = createField(DSL.name("integrations"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.platforms</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> PLATFORMS = createField(DSL.name("platforms"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.target_users</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> TARGET_USERS = createField(DSL.name("target_users"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.languages</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> LANGUAGES = createField(DSL.name("languages"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.ai_technologies</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> AI_TECHNOLOGIES = createField(DSL.name("ai_technologies"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.deployments</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> DEPLOYMENTS = createField(DSL.name("deployments"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool_submission.industries</code>.
+     */
+    public final TableField<ToolSubmissionRecord, JSONB> INDUSTRIES = createField(DSL.name("industries"), SQLDataType.JSONB, this, "");
 
     /**
      * The column <code>public.tool_submission.demo_video_url</code>.
@@ -243,7 +277,7 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
 
     @Override
     public List<ForeignKey<ToolSubmissionRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY);
+        return Arrays.asList(Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY);
     }
 
     private transient AccountPath _account;
@@ -256,18 +290,6 @@ public class ToolSubmission extends TableImpl<ToolSubmissionRecord> {
             _account = new AccountPath(this, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_ACCOUNT_ID_FKEY, null);
 
         return _account;
-    }
-
-    private transient PricingPath _pricing;
-
-    /**
-     * Get the implicit join path to the <code>public.pricing</code> table.
-     */
-    public PricingPath pricing() {
-        if (_pricing == null)
-            _pricing = new PricingPath(this, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY, null);
-
-        return _pricing;
     }
 
     private transient ToolSubmissionCategoryPath _toolSubmissionCategory;

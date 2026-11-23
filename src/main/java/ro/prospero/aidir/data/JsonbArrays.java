@@ -32,10 +32,10 @@ public final class JsonbArrays {
 
     /**
      * A one-element JSON array, {@code ["Design"]}, for the containment predicates that ask whether a
-     * stored array holds a value. Built through the mapper rather than by concatenation so that a category
-     * name carrying a quote does not produce invalid JSON.
+     * stored array holds a value, or an object with given properties. Built through the mapper rather than
+     * by concatenation so that a category name carrying a quote does not produce invalid JSON.
      */
-    public static JSONB jsonArrayOf(String value) {
+    public static JSONB jsonArrayOf(Object value) {
         try {
             return JSONB.valueOf(MAPPER.writeValueAsString(List.of(value)));
         } catch (JsonProcessingException e) {

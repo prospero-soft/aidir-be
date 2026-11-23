@@ -35,7 +35,6 @@ import org.jooq.impl.TableImpl;
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
 import ro.prospero.aidir.jooq.generated.tables.Account.AccountPath;
-import ro.prospero.aidir.jooq.generated.tables.Pricing.PricingPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolImageMetadata.ToolImageMetadataPath;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
@@ -88,9 +87,19 @@ public class Tool extends TableImpl<ToolRecord> {
     public final TableField<ToolRecord, String> URL = createField(DSL.name("url"), SQLDataType.VARCHAR(250).nullable(false), this, "");
 
     /**
-     * The column <code>public.tool.pricing</code>.
+     * The column <code>public.tool.pricing_models</code>.
      */
-    public final TableField<ToolRecord, String> PRICING = createField(DSL.name("pricing"), SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<ToolRecord, JSONB> PRICING_MODELS = createField(DSL.name("pricing_models"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.tool.price_ranges</code>.
+     */
+    public final TableField<ToolRecord, JSONB> PRICE_RANGES = createField(DSL.name("price_ranges"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.tool.lowest_monthly_cents</code>.
+     */
+    public final TableField<ToolRecord, Integer> LOWEST_MONTHLY_CENTS = createField(DSL.name("lowest_monthly_cents"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>public.tool.short_description</code>.
@@ -123,11 +132,6 @@ public class Tool extends TableImpl<ToolRecord> {
     public final TableField<ToolRecord, JSONB> PLANS = createField(DSL.name("plans"), SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.tool.free_tier_plan_id</code>.
-     */
-    public final TableField<ToolRecord, String> FREE_TIER_PLAN_ID = createField(DSL.name("free_tier_plan_id"), SQLDataType.VARCHAR, this, "");
-
-    /**
      * The column <code>public.tool.highlight_plan_id</code>.
      */
     public final TableField<ToolRecord, String> HIGHLIGHT_PLAN_ID = createField(DSL.name("highlight_plan_id"), SQLDataType.VARCHAR, this, "");
@@ -136,6 +140,36 @@ public class Tool extends TableImpl<ToolRecord> {
      * The column <code>public.tool.integrations</code>.
      */
     public final TableField<ToolRecord, JSONB> INTEGRATIONS = createField(DSL.name("integrations"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.platforms</code>.
+     */
+    public final TableField<ToolRecord, JSONB> PLATFORMS = createField(DSL.name("platforms"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.target_users</code>.
+     */
+    public final TableField<ToolRecord, JSONB> TARGET_USERS = createField(DSL.name("target_users"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.languages</code>.
+     */
+    public final TableField<ToolRecord, JSONB> LANGUAGES = createField(DSL.name("languages"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.ai_technologies</code>.
+     */
+    public final TableField<ToolRecord, JSONB> AI_TECHNOLOGIES = createField(DSL.name("ai_technologies"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.deployments</code>.
+     */
+    public final TableField<ToolRecord, JSONB> DEPLOYMENTS = createField(DSL.name("deployments"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.tool.industries</code>.
+     */
+    public final TableField<ToolRecord, JSONB> INDUSTRIES = createField(DSL.name("industries"), SQLDataType.JSONB, this, "");
 
     /**
      * The column <code>public.tool.demo_video_url</code>.
@@ -256,7 +290,7 @@ public class Tool extends TableImpl<ToolRecord> {
 
     @Override
     public List<ForeignKey<ToolRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TOOL__TOOL_ACCOUNT_ID_FKEY, Keys.TOOL__TOOL_PRICING_FKEY, Keys.TOOL__TOOL_TOOL_SUBMISSION_ID_FKEY);
+        return Arrays.asList(Keys.TOOL__TOOL_ACCOUNT_ID_FKEY, Keys.TOOL__TOOL_TOOL_SUBMISSION_ID_FKEY);
     }
 
     private transient AccountPath _account;
@@ -269,18 +303,6 @@ public class Tool extends TableImpl<ToolRecord> {
             _account = new AccountPath(this, Keys.TOOL__TOOL_ACCOUNT_ID_FKEY, null);
 
         return _account;
-    }
-
-    private transient PricingPath _pricing;
-
-    /**
-     * Get the implicit join path to the <code>public.pricing</code> table.
-     */
-    public PricingPath pricing() {
-        if (_pricing == null)
-            _pricing = new PricingPath(this, Keys.TOOL__TOOL_PRICING_FKEY, null);
-
-        return _pricing;
     }
 
     private transient ToolSubmissionPath _toolSubmission;

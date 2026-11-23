@@ -28,7 +28,7 @@ public class ToolCards {
                                                row.getName(),
                                                row.getShortDescription(),
                                                row.getUrl(),
-                                               row.getPricing(),
+                                               JsonbArrays.readStringArray(row.getPricingModels()),
                                                JsonbArrays.readStringArray(row.getCategories()),
                                                JsonbArrays.readStringArray(row.getTags()),
                                                logoUrls.get(row.getId()),

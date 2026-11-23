@@ -6,33 +6,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Optional;
 
 /**
- * The {@code deal_placement_kind} vocabulary, with the ids the creation form uses. Only the placements with
- * content carry a schedule, product details and an offer of their own.
+ * The {@code deal_placement_kind} vocabulary, with the ids the creation form uses. Every placement carries
+ * a schedule and an offer of its own, and lists the deal in the public directory while it runs.
  */
 public enum Placement {
-    SIDEBAR("sidebar", false),
-    STANDARD_LISTING("standard-listing", false),
-    TOP_CATEGORY("top-category", true),
-    HOMEPAGE("homepage", true),
-    SPOTLIGHTS("spotlights", true),
-    BANNER("banner", true);
+    SIDEBAR("sidebar"),
+    STANDARD_LISTING("standard-listing"),
+    TOP_CATEGORY("top-category"),
+    HOMEPAGE("homepage"),
+    SPOTLIGHTS("spotlights"),
+    BANNER("banner");
 
     private final String wire;
-    private final boolean hasContent;
 
-    Placement(String wire, boolean hasContent) {
+    Placement(String wire) {
         this.wire = wire;
-        this.hasContent = hasContent;
     }
 
     @JsonValue public String wire() { return wire; }
-
-    public boolean hasContent() { return hasContent; }
-
-    /** Top Category and Homepage share one set of fields: the deal card. */
-    public boolean isListing() {
-        return this == TOP_CATEGORY || this == HOMEPAGE;
-    }
 
     public static Optional<Placement> find(String v) {
         for (Placement p : values()) if (p.wire.equals(v)) return Optional.of(p);

@@ -3,6 +3,7 @@ package ro.prospero.aidir.endpoint;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,6 @@ import ro.prospero.aidir.data.ToolSort;
 import ro.prospero.aidir.service.ToolBrowseService;
 import ro.prospero.aidir.service.ToolDetailsService;
 
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/tool")
@@ -30,18 +29,17 @@ public class ToolEndpoint {
      * The directory. Every parameter is optional, and with none of them this is the front page of the
      * catalogue: browsing is the default, searching and filtering are what narrow it.
      *
-     * <p>{@code category} and {@code pricing} repeat rather than taking a delimited list, so a value is
-     * free to contain whatever punctuation a category name happens to have.
+     * <p>Each {@link ro.prospero.aidir.data.ToolFilter} is a repeating parameter. They are read from the raw
+     * map because binding one to a {@code List} splits a single value on commas, and category names have them.
      */
     @GetMapping("browse")
     @ResponseBody
     public ToolPage browse(@RequestParam(required = false) String query,
-                           @RequestParam(required = false) List<String> category,
-                           @RequestParam(required = false) List<String> pricing,
+                           @RequestParam MultiValueMap<String, String> params,
                            @RequestParam(required = false) ToolSort sort,
                            @RequestParam(required = false) Integer page,
                            @RequestParam(required = false) Integer size) {
-        return toolBrowseService.browse(ToolBrowseQuery.of(query, category, pricing, sort, page, size));
+        return toolBrowseService.browse(ToolBrowseQuery.of(query, params, sort, page, size));
     }
 
     /** One listing, whole: the card the directory showed plus the features, plans, media and alternatives. */

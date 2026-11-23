@@ -42,6 +42,8 @@ public class MapperConfig {
 
         modelMapper.typeMap(ToolSubmissionRecord.class, ToolSubmissionDTO.class)
                    .addMappings(m -> {
+                       m.using(jsonbToList).map(ToolSubmissionRecord::getPricingModels,
+                                                ToolSubmissionDTO::setPricingModels);
                        m.using(jsonbToList).map(ToolSubmissionRecord::getTags, ToolSubmissionDTO::setTags);
                        m.using(jsonbToList).map(ToolSubmissionRecord::getCategories,
                                                 ToolSubmissionDTO::setCategories);

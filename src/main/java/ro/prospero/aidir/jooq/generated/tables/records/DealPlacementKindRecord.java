@@ -32,20 +32,6 @@ public class DealPlacementKindRecord extends UpdatableRecordImpl<DealPlacementKi
         return (String) get(0);
     }
 
-    /**
-     * Setter for <code>public.deal_placement_kind.has_content</code>.
-     */
-    public void setHasContent(Boolean value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.deal_placement_kind.has_content</code>.
-     */
-    public Boolean getHasContent() {
-        return (Boolean) get(1);
-    }
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -69,11 +55,10 @@ public class DealPlacementKindRecord extends UpdatableRecordImpl<DealPlacementKi
     /**
      * Create a detached, initialised DealPlacementKindRecord
      */
-    public DealPlacementKindRecord(String name, Boolean hasContent) {
+    public DealPlacementKindRecord(String name) {
         super(DealPlacementKind.DEAL_PLACEMENT_KIND);
 
         setName(name);
-        setHasContent(hasContent);
         resetChangedOnNotNull();
     }
 }

@@ -98,7 +98,7 @@ public class DealRows {
         return ctx.select(DEAL.LOGO_PATH).from(DEAL).where(DEAL.ID.eq(dealId)).fetchOne(DEAL.LOGO_PATH);
     }
 
-    /** {@code content} is null for a placement without content of its own, which is then just its key. */
+    /** {@code content} is null for a placement a draft has chosen but not filled in, which is then just its key. */
     public void insertPlacement(DSLContext tx, long dealId, Placement placement, PlacementContent content) {
         DealPlacementRecord row = tx.newRecord(DEAL_PLACEMENT);
         row.setDealId(dealId);
@@ -120,6 +120,8 @@ public class DealRows {
                                                         offer.billingPeriod(), offer.creditType(),
                                                         offer.creditAmount(), offer.estimatedValue(),
                                                         offer.customText())));
+            Integer discountPercent = DealDiscounts.percentOf(offer);
+            row.setDiscountPercent(discountPercent == null ? null : discountPercent.shortValue());
             row.setDealLabel(offer.dealLabel());
             row.setButtonText(offer.buttonText());
             row.setDestinationUrl(offer.destinationUrl());
@@ -138,9 +140,7 @@ public class DealRows {
 
         Map<String, PlacementContent> perPlacement = new LinkedHashMap<>();
         for (DealPlacementRecord row : ordered) {
-            if (Placement.fromWire(row.getPlacement()).hasContent()) {
-                perPlacement.put(row.getPlacement(), toContent(row));
-            }
+            perPlacement.put(row.getPlacement(), toContent(row));
         }
 
         return new DealDTO(deal.getId(),
@@ -166,11 +166,13 @@ public class DealRows {
 
     private PlacementContent toContent(DealPlacementRecord row) {
         OfferTerms terms = readTerms(row.getOfferTerms());
+        Short discountPercent = row.getDiscountPercent();
         return new PlacementContent(
                 new Schedule(row.getDurationDays(), row.getStartDate()),
                 new Info(row.getLine1(), row.getLine2()),
                 new Offer(row.getOfferType() == null ? null : OfferType.fromWire(row.getOfferType()),
-                          terms.currency(), terms.originalPrice(), terms.dealPrice(), terms.discountMonths(),
+                          terms.currency(), terms.originalPrice(), terms.dealPrice(),
+                          discountPercent == null ? null : discountPercent.intValue(), terms.discountMonths(),
                           terms.trialDays(), terms.billingPeriod(), terms.creditType(), terms.creditAmount(),
                           terms.estimatedValue(), terms.customText(), row.getDealLabel(), row.getButtonText(),
                           row.getDestinationUrl(), row.getSpotlightText(), row.getBannerBadge()));

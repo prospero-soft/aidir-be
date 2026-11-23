@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.jooq.Check;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -29,6 +30,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -106,6 +108,11 @@ public class DealPlacement extends TableImpl<DealPlacementRecord> {
      * The column <code>public.deal_placement.offer_terms</code>.
      */
     public final TableField<DealPlacementRecord, JSONB> OFFER_TERMS = createField(DSL.name("offer_terms"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.deal_placement.discount_percent</code>.
+     */
+    public final TableField<DealPlacementRecord, Short> DISCOUNT_PERCENT = createField(DSL.name("discount_percent"), SQLDataType.SMALLINT, this, "");
 
     /**
      * The column <code>public.deal_placement.deal_label</code>.
@@ -250,6 +257,13 @@ public class DealPlacement extends TableImpl<DealPlacementRecord> {
             _dealPlacementKind = new DealPlacementKindPath(this, Keys.DEAL_PLACEMENT__DEAL_PLACEMENT_PLACEMENT_FKEY, null);
 
         return _dealPlacementKind;
+    }
+
+    @Override
+    public List<Check<DealPlacementRecord>> getChecks() {
+        return Arrays.asList(
+            Internal.createCheck(this, DSL.name("deal_placement_discount_percent_check"), "(((discount_percent >= 0) AND (discount_percent <= 100)))", true)
+        );
     }
 
     @Override

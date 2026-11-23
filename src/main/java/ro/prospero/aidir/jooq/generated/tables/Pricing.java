@@ -10,13 +10,9 @@ import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.InverseForeignKey;
 import org.jooq.Name;
-import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
-import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -31,8 +27,6 @@ import org.jooq.impl.TableImpl;
 
 import ro.prospero.aidir.jooq.generated.Keys;
 import ro.prospero.aidir.jooq.generated.Public;
-import ro.prospero.aidir.jooq.generated.tables.Tool.ToolPath;
-import ro.prospero.aidir.jooq.generated.tables.ToolSubmission.ToolSubmissionPath;
 import ro.prospero.aidir.jooq.generated.tables.records.PricingRecord;
 
 
@@ -91,39 +85,6 @@ public class Pricing extends TableImpl<PricingRecord> {
         this(DSL.name("pricing"), null);
     }
 
-    public <O extends Record> Pricing(Table<O> path, ForeignKey<O, PricingRecord> childPath, InverseForeignKey<O, PricingRecord> parentPath) {
-        super(path, childPath, parentPath, PRICING);
-    }
-
-    /**
-     * A subtype implementing {@link Path} for simplified path-based joins.
-     */
-    public static class PricingPath extends Pricing implements Path<PricingRecord> {
-
-        private static final long serialVersionUID = 1L;
-        public <O extends Record> PricingPath(Table<O> path, ForeignKey<O, PricingRecord> childPath, InverseForeignKey<O, PricingRecord> parentPath) {
-            super(path, childPath, parentPath);
-        }
-        private PricingPath(Name alias, Table<PricingRecord> aliased) {
-            super(alias, aliased);
-        }
-
-        @Override
-        public PricingPath as(String alias) {
-            return new PricingPath(DSL.name(alias), this);
-        }
-
-        @Override
-        public PricingPath as(Name alias) {
-            return new PricingPath(alias, this);
-        }
-
-        @Override
-        public PricingPath as(Table<?> alias) {
-            return new PricingPath(alias.getQualifiedName(), this);
-        }
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -132,31 +93,6 @@ public class Pricing extends TableImpl<PricingRecord> {
     @Override
     public List<UniqueKey<PricingRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.PRICING_TYPE_KEY);
-    }
-
-    private transient ToolPath _tool;
-
-    /**
-     * Get the implicit to-many join path to the <code>public.tool</code> table
-     */
-    public ToolPath tool() {
-        if (_tool == null)
-            _tool = new ToolPath(this, null, Keys.TOOL__TOOL_PRICING_FKEY.getInverseKey());
-
-        return _tool;
-    }
-
-    private transient ToolSubmissionPath _toolSubmission;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.tool_submission</code> table
-     */
-    public ToolSubmissionPath toolSubmission() {
-        if (_toolSubmission == null)
-            _toolSubmission = new ToolSubmissionPath(this, null, Keys.TOOL_SUBMISSION__TOOL_SUBMISSION_PRICING_FKEY.getInverseKey());
-
-        return _toolSubmission;
     }
 
     @Override

@@ -73,9 +73,10 @@ public class AdminDealEndpoint {
     @PostMapping(path = "devSubmit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public DealDTO devSubmit(@RequestParam int vendorIndex,
+                             @RequestParam(required = false) Integer startedDaysAgo,
                              @RequestPart("payload") String payloadJson,
                              MultipartRequest request) throws JsonProcessingException {
-        return dealReviewService.devSubmit(vendorIndex, requestReader.payload(payloadJson),
+        return dealReviewService.devSubmit(vendorIndex, startedDaysAgo, requestReader.payload(payloadJson),
                                            requestReader.logo(request));
     }
 
@@ -83,9 +84,10 @@ public class AdminDealEndpoint {
     @PostMapping(path = "devSubmitAs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public DealDTO devSubmitAs(@RequestParam String vendorEmail,
+                               @RequestParam(required = false) Integer startedDaysAgo,
                                @RequestPart("payload") String payloadJson,
                                MultipartRequest request) throws JsonProcessingException {
-        return dealReviewService.devSubmitAs(vendorEmail, requestReader.payload(payloadJson),
+        return dealReviewService.devSubmitAs(vendorEmail, startedDaysAgo, requestReader.payload(payloadJson),
                                              requestReader.logo(request));
     }
 }

@@ -8,19 +8,51 @@
 
 === Try to use figma to add learning page
 
-=== update categories with newly-defined set
+=== Deal directory: add 'Claim' button to cards?
 
-=== [FE] tools: remove verified sticker, since all tools need to be verified to be listed
+=== Deals: should we allow deals to target a specific plan for a tool?
+This would also show up in the tool details screen on the targeted plan.
 
-=== [FE] tool listings payment model type: paid -> subscription
+=== Deals: should standard placement be included in any placement?
 
-=== [FE] tool details: share on social -> should open up a dropdown with x, facebook, linkedin, bluesky, reddit
+=== open-source tools, where to capture and display this information?
+
+=== link previews for shared tool and article pages
+X, Facebook and LinkedIn build a link's preview card from the Open Graph and Twitter Card tags in the page's
+HTML, and their crawlers do not run JavaScript. Caddy answers every client-side route with the same
+`index.html`, which has no such tags and the title `aidir-fe`, so a shared `/tool/:id` or `/news/:slug` shows
+neither the tool's or article's name, description nor image.
+
+Serve the tags per page, from the backend or a prerender step. Having the backend fill them into `index.html`
+for those two routes gives every visitor the same response, with no user-agent detection. Either way:
+
+* set `og:title`, `og:description`, `og:image`, `og:url`, `og:type` and `twitter:card`, plus the page's `<title>`
+* make the URLs absolute: logo URLs are root-relative `/media` paths, so this needs a configured public origin
+* provide a default image for tools with no logo and articles with no image, and check the formats vendors
+  upload, since the platforms do not accept SVG for preview images
+* HTML-escape the values, which are vendor-submitted
+* apply the public pages' visibility rules, so a scheduled article's tags do not appear before its publish date
+
+The test server's basic auth turns crawlers away, so checking the cards with the platforms' preview tools needs
+a publicly reachable deployment.
 
 === [FE] tool details: get started in top card on sidebar (should  link to product page)
 
 === [FE] tool details: when logged in as vendor promote your AI tool should disappear, if looking at your own product page should be replaced with upgrade plan if an upgrade is available
 
 === [FE] tool details: start learning link to learning directory(?)
+
+=== newsletter support
+==== [FE] newsletter editing dashboard
+===== tool newsletter editing
+select candidate tools, select candidate articles, compose layout from template, add optional body text, submit to newsletter review queue
+
+===== deal newsletter editing
+select candidate deals, rank them, compose layout from template, submit to newsletter review queue
+
+==== [FE] newsletter review queue
+
+==== [BE] newsletter data model
 
 === deal scheduling
 right now vendors can set up deals by selecting any future date in the calendar, but many deal slots are limited in number; I need to devise a mechanism  to signal campaign availability so we don't promise things we can't deliver.
@@ -71,6 +103,25 @@ The vendor dashboard's Deals page (`VendorDeals.tsx` in aidir-fe) follows the Fi
 6. Destination URL check: the Figma "Action Required" card warns when a deal's destination URL is unavailable; nothing checks URLs.
 7. Campaign creation: "Create a campaign" is inert; see "campaigns" above.
 8. Activity log: "Recent Activity" is derived from each deal's created, submitted and reviewed timestamps; there is no event log.
+
+=== deals directory: Member Benefits filter
+The directory's Advanced Filters list Public, Registered User, Loyalty Member and Exclusive Partner deals, all disabled. They depend on expanding the rewards program so deals can be marked as member-specific. Needs:
+
+1. An access tier on the deal, chosen at creation. The "Members Only" label and the Members tab are cosmetic until then.
+2. Gating on the server: `GET /api/deals` is public and returns each offer's `destinationUrl`, so a gated deal's link must be left out for visitors who don't qualify.
+3. A way to claim a deal: directory cards have no link or button.
+4. A loyalty membership and a partner concept. The rewards pages are front end only, with no tables behind them.
+
+=== deals: take payment for placements
+The creation form prices each placement, but no payment is taken. A vendor must have a published tool before being charged: `DealService.submit` refuses a vendor without one, and the form says so on opening and disables Submit. Put the payment step behind that check.
+
+=== deals: remove the sponsored fields if the feature is dropped
+The deal creation form has no control for `deal.sponsored`, so every deal saves it as false and nothing acts on it. `deal.sponsored_label` is still collected, but only the vendor's preview and summary and the admin review show it, never the public directory card. If the decision is to drop sponsorship labelling entirely, remove both:
+
+1. [BE] The two columns in `00000-init.sql`, which means recreating the database and regenerating the jOOQ classes.
+2. [BE] The fields in `DealPayload` and `DealDTO`, their reads and writes in `DealRows` and `DealService`, and their uses in `VendorDealEndpointTest`.
+3. [FE] `sponsored` and `sponsoredLabel` in `src/types/deal.ts`, `useDealCreationForm.ts`, `dealPayload.ts` and `dealTestData.ts`.
+4. [FE] The Sponsored Label input in `SponsorshipSection.tsx`, the label on `DealCardPreview` and its default in `previewDefaults.ts`, and the label rows in `DealSummaryPage` and `DealReviewDetails`.
 
 
 === news: handle templates and editor
@@ -187,6 +238,44 @@ section of their listing: general information, logo, overview, features, integra
 4. A vendor with more than one listing sees only the most recently approved one. The page's product
    switcher is a static button for now.
 
+=== vendor plans: align with every tool being verified
+Every tool has to be verified to be listed, so tools, deals and courses show no verified badge, but the
+vendor plans and the promotional copy around them still sell one. The talent plans are out of scope: talent
+profiles keep their verified badge, and `UserPlanKey` has its own `verified` plan.
+
+==== decide what the Verified plan sells
+The €199 plan is named Verified, its tagline is "Build trust with verification", and the badge is its first
+listed benefit. Decide whether it gets a new name and what replaces the badge in its pitch; Enhanced profile,
+Priority listing, Trust score display and Weekly analytics are the benefits it has left. Renaming the plan
+also means renaming its key: `PlanKey`, the `plan` and grant rows seeded in `00000-init.sql`, existing
+subscriptions, `PLAN_KEYS` in `vendor-onboarding/types.ts`, and test data that picks plans from that list.
+
+==== [BE] remove the vendor verified badge entitlement
+`vendor_verified_badge` is seeded as a feature with grants on the Verified, Growth and Premium plans, and no
+code reads it. Remove the feature and its grants in a new changeset.
+
+==== [BE] drop `verified` from public deals
+`PublicDealDTO.verified` is derived from the vendor's plan in `PublicDealService`, and no deal card reads it.
+Remove the field and the plan lookup behind it, along with `verified` on `PublicDeal` in the front end's
+`src/types/deal.ts`.
+
+==== [FE] remove the badge from plan and promotional copy
+* `vendor-onboarding/constants.ts`: the Verified plan's feature list, the "Verified badge" comparison row and
+  the "Your verified badge" onboarding step
+* `vendor-dashboard/tool-profile/ListingStatusCard.tsx`: the Verification row derives from the plan and shows
+  free listings as "Not verified"
+* `vendor-dashboard/CurrentPlanCard.tsx` and `vendor-dashboard/billing/` (`BillingCurrentPlanCard`,
+  `FeatureComparisonCard`, `InvoicesCard`): the plan name, once it is decided
+* `deals/DealsCtaSection.tsx`: "Verified deal badge" on the paid Promote One Deal card
+* `learning/PublishCourseCta.tsx`: "Verified provider badge"
+* `sections/Hero.tsx`, `sections/AudienceSection.tsx` and `LoginPage.tsx`: verified trust badges as a vendor
+  benefit
+* `PromoBar.tsx` and `deal-creation/previews/previewDefaults.ts`: "Get verified status"
+
+==== update "featured and trending signals"
+That task still asks for verification wired to the vendor tier that sells it, and describes a Verified entry
+in the navigation. Remove both once the plan is settled.
+
 === vendor onboarding: AI Directory Rewards opt-in
 The product profile step of vendor onboarding asks the vendor to include their deals in the AI Directory
 Rewards program, which also means agreeing to the Rewards Program Policy. The front end keeps the answer as
@@ -230,8 +319,8 @@ featured and trending signals.
 ==== rating per user per tool
 ==== compute average rating for tools
 Nothing in the schema holds a rating. Until it does, the directory cards draw their stars from
-`src/components/search/placeholders.ts` on the front end and the rating rows in the filter sidebar render
-inert - the sort dropdown deliberately does not offer Rating, because ordering the catalogue by a
+`src/components/search/placeholders.ts` on the front end and the filter sidebar's Rating rows (4+ stars,
+3+ stars, Not Yet Rated) render inert - the sort dropdown deliberately does not offer Rating, because ordering the catalogue by a
 stand-in value looks like a bug rather than a placeholder. That file and the sidebar's Rating group are
 the two call sites to remove when this lands.
 
@@ -248,9 +337,9 @@ column. Both tabs currently fall through to the newest listings and the Verified
 unfiltered directory. Needs the counters (which pairs with "store search/query metrics"), a curation flag
 for featured, and verification wired to the vendor tier that sells it.
 
-=== directory "Sales" filter: tools with a running deal
-The directory's Categories filter ends with a "Sales" row that narrows the list to tools with a deal running
-right now. Nothing links a deal to a directory listing in what `/api/tool/browse` serves: the response has
+=== directory "Discounted" filter: tools with a running deal
+The directory's Pricing Range filter ends with a "Discounted" row that narrows the list to tools with a deal
+running right now. Nothing links a deal to a directory listing in what `/api/tool/browse` serves: the response has
 no facet count for it, the query no parameter, and `ToolCardDTO` no flag. Needs all three, with "running"
 meaning approved and inside its scheduled window. Until then the front end renders the row disabled in
 `src/components/search/FiltersSidebar.tsx`.
@@ -341,8 +430,6 @@ exactly how the front end ended up with two disagreeing category lists. `tool_su
 the join table for this and is still never written to.
 
 === auth
-==== Add Spring security
-==== add login support
 ==== sign in with... support
 
 === how to track social media shares?
@@ -395,16 +482,6 @@ the join table for this and is still never written to.
 |https://www.ionos.co.uk/servers/vps
 |===
 
-=== look for loyalty programme framework
-
-
-=== Find out how to serve static pages from external directory
-
-=== Check directus/strapi video link support
-
-=== Design initial database tables
-For this phase, just the minimum amount of structure that would support phase 0 features.
-
 ==== User accounts
 [square]
 * registration
@@ -451,28 +528,3 @@ Q: how are we going to accept payments?
 ** created
 ** expires
 ** expired? (bool flag for quick filtering)
-
-
-==== Taxonomy (categories/tags)
-Should be covered by listing table.
-
-==== Newsletter
-Users/emails that subscribe to the newsletter should be added to a table, support easy unsubscribe. Assuming we won't require an account for subscribing to the newsletter, the email address is basically the only piece of data we need to store.
-
-* table
-** email
-
-==== Analytics
-Q: look into some off the shelf solutions for this
-
-==== Languages
-Multilingual support should hopefully be covered by the CMS, a lot of decisions hang on where we store most of the site data (and the CMS obviously makes sense as a general solution)
-
-=== Evaluate CMS options
-
-Since this is one of the core features of the website, choosing the right CMS is going to be an essential decision. Most likely it will run in headless mode: the site will retrieve document information via a REST api and populate whatever custom components we define.
-
-It'll also be used for the blog and the newsletter. While the blog is part of the site and will use the same rendering strategy as the other documents, the newsletter will probably use whatever the CMS supports, so I need to weigh its document rendering features.
-
-Can the CMS push notifications to the backend when a new document is created, so the backend is aware? (listings, for example, blog posts etc.)
-

@@ -30,6 +30,7 @@ import java.util.UUID;
 import static ro.prospero.aidir.jooq.generated.Tables.CATEGORY;
 import static ro.prospero.aidir.jooq.generated.Tables.DEAL;
 import static ro.prospero.aidir.jooq.generated.Tables.DEAL_PLACEMENT;
+import static ro.prospero.aidir.jooq.generated.Tables.TOOL;
 
 /**
  * A vendor's own deals: saving drafts, submitting them for review, and deleting the ones not yet approved.
@@ -171,6 +172,7 @@ public class DealService {
         dslContext.transaction(cfg -> {
             DSLContext tx = DSL.using(cfg);
             requireEditable(lockOwned(tx, accountId, dealId));
+            requirePublishedTool(tx, accountId);
 
             DealDTO deal = dealRows.readOne(tx, DEAL.ID.eq(dealId))
                                    .map(DealRows.StoredDeal::deal)
@@ -211,8 +213,7 @@ public class DealService {
     /** Inserts a row per chosen placement. */
     private void writePlacements(DSLContext tx, long dealId, DealPayload payload) {
         for (Placement placement : new LinkedHashSet<>(payload.placements())) {
-            PlacementContent content = placement.hasContent() ? payload.perPlacement().get(placement.wire()) : null;
-            dealRows.insertPlacement(tx, dealId, placement, content);
+            dealRows.insertPlacement(tx, dealId, placement, payload.perPlacement().get(placement.wire()));
         }
     }
 
@@ -234,9 +235,8 @@ public class DealService {
         payload.placements().forEach(placement -> chosen.add(placement.wire()));
 
         payload.perPlacement().keySet().forEach(key -> {
-            boolean known = Placement.find(key).map(Placement::hasContent).orElse(false);
-            if (!known) {
-                violations.add("perPlacement." + key + ": not a placement with content");
+            if (Placement.find(key).isEmpty()) {
+                violations.add("perPlacement." + key + ": not a placement");
             } else if (!chosen.contains(key)) {
                 violations.add("perPlacement." + key + ": the placement is not chosen");
             }
@@ -281,6 +281,17 @@ public class DealService {
                     ? "This deal is waiting for review and can't be changed."
                     : "This deal has been approved and can't be changed.";
             throw new ResponseStatusException(HttpStatus.CONFLICT, detail);
+        }
+    }
+
+    /**
+     * A vendor's account exists from onboarding, before its tool is approved. The deal form says so up front;
+     * this is what holds if the request arrives some other way.
+     */
+    private static void requirePublishedTool(DSLContext tx, long accountId) {
+        if (!tx.fetchExists(TOOL, TOOL.ACCOUNT_ID.eq(accountId).and(TOOL.PUBLISHED.isTrue()))) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                                              "Your tool must be approved and listed before you can submit a deal.");
         }
     }
 

@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ro.prospero.aidir.data.ToolAttributes;
 import ro.prospero.aidir.data.VendorOnboardingResult;
 import ro.prospero.aidir.data.VendorSubmissionPayload;
-import ro.prospero.aidir.data.VendorSubmissionPayload.PricingPlan;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -51,22 +51,27 @@ public class VendorOnboardingService {
     private final SubscriptionService subscriptionService;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+    private final ToolAttributeVocabulary toolAttributeVocabulary;
 
     public VendorOnboardingService(DSLContext dslContext,
                                    FileStorageService fileStorageService,
                                    SubscriptionService subscriptionService,
                                    PasswordEncoder passwordEncoder,
-                                   ObjectMapper objectMapper) {
+                                   ObjectMapper objectMapper,
+                                   ToolAttributeVocabulary toolAttributeVocabulary) {
         this.dslContext = dslContext;
         this.fileStorageService = fileStorageService;
         this.subscriptionService = subscriptionService;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
+        this.toolAttributeVocabulary = toolAttributeVocabulary;
     }
 
     public VendorOnboardingResult onboard(VendorSubmissionPayload payload,
                                           MultipartFile logo,
                                           List<MultipartFile> screenshots) {
+        toolAttributeVocabulary.requireKnown(attributesOf(payload.product()));
+
         // Files are written inside the transaction because their directory is named after the submission
         // id, which only exists once the row is in. Whatever was written before a failure is tracked here
         // so it can be removed: the database unwinds itself, the filesystem does not.
@@ -123,21 +128,30 @@ public class VendorOnboardingService {
      */
     private long insertSubmission(DSLContext tx, long accountId, VendorSubmissionPayload payload) {
         VendorSubmissionPayload.Product product = payload.product();
+        ToolPricing.Derived pricing = ToolPricing.of(product.plans());
+        ToolAttributes attributes = attributesOf(product);
         Long submissionId = tx.insertInto(TOOL_SUBMISSION)
                 .set(TOOL_SUBMISSION.ACCOUNT_ID, accountId)
                 .set(TOOL_SUBMISSION.NAME, product.name())
                 // The product has no URL of its own in the form; the company's site is what a reviewer follows.
                 .set(TOOL_SUBMISSION.URL, payload.company().websiteUrl())
-                .set(TOOL_SUBMISSION.PRICING, pricingOf(product))
+                .set(TOOL_SUBMISSION.PRICING_MODELS, toJsonb(pricing.models()))
+                .set(TOOL_SUBMISSION.PRICE_RANGES, toJsonb(pricing.priceRanges()))
+                .set(TOOL_SUBMISSION.LOWEST_MONTHLY_CENTS, pricing.lowestMonthlyCents())
                 .set(TOOL_SUBMISSION.SHORT_DESCRIPTION, product.shortDescription())
                 .set(TOOL_SUBMISSION.LONG_DESCRIPTION, product.longDescription())
                 .set(TOOL_SUBMISSION.TAGS, toJsonb(product.tags()))
                 .set(TOOL_SUBMISSION.CATEGORIES, toJsonb(product.categories()))
                 .set(TOOL_SUBMISSION.FEATURES, toJsonb(product.features()))
                 .set(TOOL_SUBMISSION.PLANS, toJsonb(product.plans()))
-                .set(TOOL_SUBMISSION.FREE_TIER_PLAN_ID, product.freeTierPlanId())
                 .set(TOOL_SUBMISSION.HIGHLIGHT_PLAN_ID, product.highlightPlanId())
                 .set(TOOL_SUBMISSION.INTEGRATIONS, toJsonb(product.integrations()))
+                .set(TOOL_SUBMISSION.PLATFORMS, toJsonb(attributes.platforms()))
+                .set(TOOL_SUBMISSION.TARGET_USERS, toJsonb(attributes.targetUsers()))
+                .set(TOOL_SUBMISSION.LANGUAGES, toJsonb(attributes.languages()))
+                .set(TOOL_SUBMISSION.AI_TECHNOLOGIES, toJsonb(attributes.aiTechnologies()))
+                .set(TOOL_SUBMISSION.DEPLOYMENTS, toJsonb(attributes.deployments()))
+                .set(TOOL_SUBMISSION.INDUSTRIES, toJsonb(attributes.industries()))
                 .set(TOOL_SUBMISSION.DEMO_VIDEO_URL, product.demoVideoUrl())
                 .set(TOOL_SUBMISSION.SUBMITTED_BY, AccountService.normalizeEmail(payload.company().workEmail()))
                 .returningResult(TOOL_SUBMISSION.ID)
@@ -207,8 +221,8 @@ public class VendorOnboardingService {
                     MONTHLY, accountId, planName);
     }
 
-    private static String pricingOf(VendorSubmissionPayload.Product product) {
-        return ToolPricing.of(product.plans(), product.freeTierPlanId(), PricingPlan::id, PricingPlan::price);
+    private static ToolAttributes attributesOf(VendorSubmissionPayload.Product product) {
+        return product.attributes() == null ? ToolAttributes.none() : product.attributes();
     }
 
     private JSONB toJsonb(Object value) {

@@ -98,7 +98,7 @@ public class ToolService {
         return new ToolDTO(record.getId(),
                            record.getName(),
                            record.getUrl(),
-                           record.getPricing(),
+                           JsonbArrays.readStringArray(record.getPricingModels()),
                            record.getShortDescription(),
                            record.getLongDescription(),
                            JsonbArrays.readStringArray(record.getCategories()),

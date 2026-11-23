@@ -23,7 +23,7 @@ import java.util.Map;
  * {@link ro.prospero.aidir.service.DealSubmissionRules}.
  *
  * <p>The product fields describe the deal in every placement it runs in; {@code perPlacement} is keyed by
- * {@link Placement#wire()} and only holds the placements with content of their own.
+ * {@link Placement#wire()}.
  *
  * <p>A new logo travels as a {@code logo} multipart part beside this payload. {@code logoUrl} is how a saved
  * logo survives an edit: sent back as it was read, the stored logo is kept; sent as null, it is removed. A new
@@ -70,11 +70,15 @@ public record DealPayload(@NotNull List<Placement> placements,
                        @Size(max = 80) String line2) {
     }
 
-    /** Flat, like the form: which of the type-specific fields matter depends on {@code offerType}. */
+    /**
+     * Flat, like the form: which of the type-specific fields matter depends on {@code offerType}.
+     * {@code discountPercent} is only read from a percentage offer; for the others the backend derives it.
+     */
     public record Offer(OfferType offerType,
                         @Pattern(regexp = CURRENCIES) String currency,
                         @PositiveOrZero BigDecimal originalPrice,
                         @PositiveOrZero BigDecimal dealPrice,
+                        @Min(0) @Max(100) Integer discountPercent,
                         @Min(1) @Max(120) Integer discountMonths,
                         @Min(1) @Max(366) Integer trialDays,
                         @Pattern(regexp = BILLING_PERIODS) String billingPeriod,

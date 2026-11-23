@@ -16,7 +16,7 @@ import java.util.List;
 public record ToolDTO(Long id,
                       String name,
                       String url,
-                      String pricing,
+                      List<String> pricingModels,
                       String shortDescription,
                       String longDescription,
                       List<String> categories,

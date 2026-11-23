@@ -92,10 +92,9 @@ public class DrupalService {
             tool.tags().forEach(tagArray::add);
         }
 
-        //todo: pricing is a list(text) apparently, I'll have to figure out support for this in the UI/backend
-        if (tool.pricing() != null) {
+        if (tool.pricingModels() != null) {
             ArrayNode pricingArray = attrs.putArray("field_pricing");
-            pricingArray.add(tool.pricing());
+            tool.pricingModels().forEach(pricingArray::add);
         }
 
         // Link field

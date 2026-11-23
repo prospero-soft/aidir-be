@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ro.prospero.aidir.data.JsonbArrays;
+import ro.prospero.aidir.data.ToolAttributes;
 import ro.prospero.aidir.data.ToolDetailsDTO;
+import ro.prospero.aidir.data.ToolPlan;
 import ro.prospero.aidir.data.VendorToolDTO;
 import ro.prospero.aidir.data.VendorToolEdit;
 import ro.prospero.aidir.event.ToolUploadEventPublisher;
@@ -48,7 +50,7 @@ public class VendorToolService {
 
     private static final TypeReference<ArrayList<ToolDetailsDTO.Feature>> FEATURES = new TypeReference<>() {
     };
-    private static final TypeReference<ArrayList<ToolDetailsDTO.Plan>> PLANS = new TypeReference<>() {
+    private static final TypeReference<ArrayList<ToolPlan>> PLANS = new TypeReference<>() {
     };
     private static final TypeReference<ArrayList<VendorToolDTO.Faq>> FAQS = new TypeReference<>() {
     };
@@ -59,19 +61,22 @@ public class VendorToolService {
     private final FileStorageService fileStorageService;
     private final ToolService toolService;
     private final ToolUploadEventPublisher toolUploadEventPublisher;
+    private final ToolAttributeVocabulary toolAttributeVocabulary;
 
     public VendorToolService(DSLContext dslContext,
                              ObjectMapper objectMapper,
                              MediaUrls mediaUrls,
                              FileStorageService fileStorageService,
                              ToolService toolService,
-                             ToolUploadEventPublisher toolUploadEventPublisher) {
+                             ToolUploadEventPublisher toolUploadEventPublisher,
+                             ToolAttributeVocabulary toolAttributeVocabulary) {
         this.dslContext = dslContext;
         this.objectMapper = objectMapper;
         this.mediaUrls = mediaUrls;
         this.fileStorageService = fileStorageService;
         this.toolService = toolService;
         this.toolUploadEventPublisher = toolUploadEventPublisher;
+        this.toolAttributeVocabulary = toolAttributeVocabulary;
     }
 
     public Optional<VendorToolDTO> find(long vendorId) {
@@ -127,16 +132,32 @@ public class VendorToolService {
         });
     }
 
-    /** The directory's free / freemium / paid filter reads {@code pricing}, so it is re-derived from the plans. */
+    /** The directory's pricing filters and price sort read what is derived from the plans, so it is derived again. */
     public VendorToolDTO updatePricing(long vendorId, VendorToolEdit.Pricing pricing) {
-        String reference = ToolPricing.of(pricing.plans(), pricing.freeTierPlanId(),
-                                          VendorToolEdit.Plan::id, VendorToolEdit.Plan::price);
+        ToolPricing.Derived derived = ToolPricing.of(pricing.plans());
         return write(vendorId, true, (tx, tool) -> {
             tx.update(TOOL)
               .set(TOOL.PLANS, toJsonb(pricing.plans()))
-              .set(TOOL.FREE_TIER_PLAN_ID, pricing.freeTierPlanId())
               .set(TOOL.HIGHLIGHT_PLAN_ID, pricing.highlightPlanId())
-              .set(TOOL.PRICING, reference)
+              .set(TOOL.PRICING_MODELS, toJsonb(derived.models()))
+              .set(TOOL.PRICE_RANGES, toJsonb(derived.priceRanges()))
+              .set(TOOL.LOWEST_MONTHLY_CENTS, derived.lowestMonthlyCents())
+              .where(TOOL.ID.eq(tool.getId()))
+              .execute();
+            return List.of();
+        });
+    }
+
+    public VendorToolDTO updateAttributes(long vendorId, ToolAttributes attributes) {
+        toolAttributeVocabulary.requireKnown(attributes);
+        return write(vendorId, false, (tx, tool) -> {
+            tx.update(TOOL)
+              .set(TOOL.PLATFORMS, toJsonb(attributes.platforms()))
+              .set(TOOL.TARGET_USERS, toJsonb(attributes.targetUsers()))
+              .set(TOOL.LANGUAGES, toJsonb(attributes.languages()))
+              .set(TOOL.AI_TECHNOLOGIES, toJsonb(attributes.aiTechnologies()))
+              .set(TOOL.DEPLOYMENTS, toJsonb(attributes.deployments()))
+              .set(TOOL.INDUSTRIES, toJsonb(attributes.industries()))
               .where(TOOL.ID.eq(tool.getId()))
               .execute();
             return List.of();
@@ -319,7 +340,7 @@ public class VendorToolService {
         return new VendorToolDTO(id,
                                  tool.getName(),
                                  tool.getUrl(),
-                                 tool.getPricing(),
+                                 JsonbArrays.readStringArray(tool.getPricingModels()),
                                  tool.getShortDescription(),
                                  tool.getLongDescription(),
                                  JsonbArrays.readStringArray(tool.getCategories()),
@@ -327,9 +348,14 @@ public class VendorToolService {
                                  toolService.findLogoUrls(List.of(id)).get(id),
                                  JsonbArrays.read(tool.getFeatures(), FEATURES),
                                  JsonbArrays.read(tool.getPlans(), PLANS),
-                                 tool.getFreeTierPlanId(),
                                  tool.getHighlightPlanId(),
                                  JsonbArrays.readStringArray(tool.getIntegrations()),
+                                 new ToolAttributes(JsonbArrays.readStringArray(tool.getPlatforms()),
+                                                    JsonbArrays.readStringArray(tool.getTargetUsers()),
+                                                    JsonbArrays.readStringArray(tool.getLanguages()),
+                                                    JsonbArrays.readStringArray(tool.getAiTechnologies()),
+                                                    JsonbArrays.readStringArray(tool.getDeployments()),
+                                                    JsonbArrays.readStringArray(tool.getIndustries())),
                                  tool.getDemoVideoUrl(),
                                  screenshots,
                                  JsonbArrays.read(tool.getFaqs(), FAQS),

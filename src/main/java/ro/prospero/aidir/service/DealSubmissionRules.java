@@ -28,6 +28,9 @@ public final class DealSubmissionRules {
     static final Set<Integer> SCHEDULE_DAYS = Set.of(7, 14, 30, 60, 90);
     static final Set<Integer> DISCOUNT_MONTHS = Set.of(1, 3, 6, 12, 24);
     static final Set<Integer> TRIAL_DAYS = Set.of(7, 14, 30, 60);
+    /** A 100% discount is a free offer, which has offer types of its own. */
+    private static final int MIN_DISCOUNT_PERCENT = 1;
+    private static final int MAX_DISCOUNT_PERCENT = 99;
 
     private DealSubmissionRules() {
     }
@@ -52,9 +55,6 @@ public final class DealSubmissionRules {
         checkBasics(new Fields(null, violations), basics);
 
         for (Placement placement : placements) {
-            if (!placement.hasContent()) {
-                continue;
-            }
             Fields fields = new Fields(placement.wire(), violations);
             PlacementContent content = perPlacement.get(placement.wire());
             if (content == null) {
@@ -98,11 +98,9 @@ public final class DealSubmissionRules {
 
         if (placement == Placement.SPOTLIGHTS) {
             fields.requireText(offer.spotlightText(), "spotlightText", "Spotlight Text is required");
-            return;
         }
         if (placement == Placement.BANNER) {
             fields.requireText(offer.bannerBadge(), "bannerBadge", "Banner Badge is required");
-            return;
         }
 
         fields.requireText(offer.buttonText(), "buttonText", "Choose a button text");
@@ -112,11 +110,21 @@ public final class DealSubmissionRules {
         }
         switch (offer.offerType()) {
             case PERCENTAGE -> {
-                checkDiscount(fields, offer, "Deal Price");
+                fields.require(offer.currency() != null, "currency", "Choose a currency");
+                fields.require(positive(offer.originalPrice()), "originalPrice", "Original Price is required");
+                Integer percent = offer.discountPercent();
+                fields.require(percent != null && percent >= MIN_DISCOUNT_PERCENT && percent <= MAX_DISCOUNT_PERCENT,
+                               "discountPercent", "Enter a discount between 1% and 99%");
                 fields.require(offer.discountMonths() != null && DISCOUNT_MONTHS.contains(offer.discountMonths()),
                                "discountMonths", "Choose a discount duration");
             }
             case FIXED -> checkDiscount(fields, offer, "Deal Price");
+            case FREE_MONTHS -> {
+                fields.require(offer.currency() != null, "currency", "Choose a currency");
+                fields.require(positive(offer.originalPrice()), "originalPrice", "Monthly Price is required");
+                fields.require(offer.discountMonths() != null && DISCOUNT_MONTHS.contains(offer.discountMonths()),
+                               "discountMonths", "Choose how many months are free");
+            }
             case LIFETIME -> checkDiscount(fields, offer, "Lifetime Price");
             case TRIAL -> {
                 fields.require(offer.trialDays() != null && TRIAL_DAYS.contains(offer.trialDays()),
@@ -125,7 +133,7 @@ public final class DealSubmissionRules {
                 fields.require(positive(offer.dealPrice()), "dealPrice", "Regular Price After Trial is required");
                 fields.require(offer.billingPeriod() != null, "billingPeriod", "Choose a billing period");
             }
-            case CREDITS -> {
+            case CREDITS, BONUS_CREDITS -> {
                 fields.require(offer.creditType() != null, "creditType", "Choose a credit type");
                 fields.require(positive(offer.creditAmount()), "creditAmount", "Credit Amount is required");
                 fields.require(offer.currency() != null, "currency", "Choose a currency");

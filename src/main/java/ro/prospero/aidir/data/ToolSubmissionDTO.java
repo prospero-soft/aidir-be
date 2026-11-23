@@ -17,7 +17,7 @@ public class ToolSubmissionDTO {
     private Long id;
     private String name;
     private String url;
-    private String pricing;
+    private List<String> pricingModels;
     private String shortDescription;
     private String longDescription;
     /** Plural, because the column is: a tool is listed under every category it was submitted for. */

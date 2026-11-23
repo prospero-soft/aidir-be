@@ -60,11 +60,6 @@ public class DealPlacementKind extends TableImpl<DealPlacementKindRecord> {
      */
     public final TableField<DealPlacementKindRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR.nullable(false), this, "");
 
-    /**
-     * The column <code>public.deal_placement_kind.has_content</code>.
-     */
-    public final TableField<DealPlacementKindRecord, Boolean> HAS_CONTENT = createField(DSL.name("has_content"), SQLDataType.BOOLEAN.nullable(false), this, "");
-
     private DealPlacementKind(Name alias, Table<DealPlacementKindRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

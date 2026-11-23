@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.server.ResponseStatusException;
+import ro.prospero.aidir.data.ToolAttributes;
 import ro.prospero.aidir.data.VendorToolDTO;
 import ro.prospero.aidir.data.VendorToolEdit;
 import ro.prospero.aidir.exception.ApiPayloadValidationException;
@@ -85,6 +86,12 @@ public class VendorToolEndpoint {
     public VendorToolDTO pricing(@AuthenticationPrincipal AccountPrincipal principal,
                                  @RequestBody VendorToolEdit.Pricing body) {
         return vendorToolService.updatePricing(vendorId(principal), validate(body));
+    }
+
+    @PutMapping(path = "attributes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public VendorToolDTO attributes(@AuthenticationPrincipal AccountPrincipal principal,
+                                    @RequestBody ToolAttributes body) {
+        return vendorToolService.updateAttributes(vendorId(principal), body);
     }
 
     @PutMapping(path = "faqs", consumes = MediaType.APPLICATION_JSON_VALUE)

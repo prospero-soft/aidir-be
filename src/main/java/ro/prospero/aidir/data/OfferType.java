@@ -7,9 +7,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum OfferType {
     PERCENTAGE("percentage"),
     FIXED("fixed"),
+    FREE_MONTHS("free-months"),
     LIFETIME("lifetime"),
     TRIAL("trial"),
     CREDITS("credits"),
+    BONUS_CREDITS("bonus-credits"),
     CUSTOM("custom");
 
     private final String wire;

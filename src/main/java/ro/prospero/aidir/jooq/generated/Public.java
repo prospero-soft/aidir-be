@@ -68,6 +68,7 @@ import ro.prospero.aidir.jooq.generated.tables.TalentProfile;
 import ro.prospero.aidir.jooq.generated.tables.TalentProject;
 import ro.prospero.aidir.jooq.generated.tables.TalentSkill;
 import ro.prospero.aidir.jooq.generated.tables.Tool;
+import ro.prospero.aidir.jooq.generated.tables.ToolAttributeOption;
 import ro.prospero.aidir.jooq.generated.tables.ToolImageMetadata;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmission;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmissionCategory;
@@ -373,6 +374,11 @@ public class Public extends SchemaImpl {
     public final Tool TOOL = Tool.TOOL;
 
     /**
+     * The table <code>public.tool_attribute_option</code>.
+     */
+    public final ToolAttributeOption TOOL_ATTRIBUTE_OPTION = ToolAttributeOption.TOOL_ATTRIBUTE_OPTION;
+
+    /**
      * The table <code>public.tool_image_metadata</code>.
      */
     public final ToolImageMetadata TOOL_IMAGE_METADATA = ToolImageMetadata.TOOL_IMAGE_METADATA;
@@ -465,6 +471,7 @@ public class Public extends SchemaImpl {
             TalentProject.TALENT_PROJECT,
             TalentSkill.TALENT_SKILL,
             Tool.TOOL,
+            ToolAttributeOption.TOOL_ATTRIBUTE_OPTION,
             ToolImageMetadata.TOOL_IMAGE_METADATA,
             ToolSubmission.TOOL_SUBMISSION,
             ToolSubmissionCategory.TOOL_SUBMISSION_CATEGORY,

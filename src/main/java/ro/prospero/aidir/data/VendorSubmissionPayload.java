@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -47,12 +48,17 @@ public record VendorSubmissionPayload(
             List<String> categories,
             List<FeatureEntry> features,
             String demoVideoUrl,
-            List<PricingPlan> plans,
-            String freeTierPlanId,
+            @NotEmpty @Valid List<ToolPlan> plans,
             String highlightPlanId,
             List<String> integrations,
+            ToolAttributes attributes,
             List<String> tags
             ) {
+        @JsonIgnore
+        @AssertTrue(message = "a product can have only one free plan")
+        public boolean isOneFreePlan() {
+            return ToolPlan.hasAtMostOneFree(plans);
+        }
     }
 
     /**
@@ -73,14 +79,5 @@ public record VendorSubmissionPayload(
     }
 
     public record FeatureEntry(String id, String title, String description) {
-    }
-
-    public record PricingPlan(
-            String id,
-            String name,
-            String price,
-            String billingType,
-            List<String> features
-    ) {
     }
 }

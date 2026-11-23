@@ -61,6 +61,7 @@ import ro.prospero.aidir.jooq.generated.tables.TalentProfile;
 import ro.prospero.aidir.jooq.generated.tables.TalentProject;
 import ro.prospero.aidir.jooq.generated.tables.TalentSkill;
 import ro.prospero.aidir.jooq.generated.tables.Tool;
+import ro.prospero.aidir.jooq.generated.tables.ToolAttributeOption;
 import ro.prospero.aidir.jooq.generated.tables.ToolImageMetadata;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmission;
 import ro.prospero.aidir.jooq.generated.tables.ToolSubmissionCategory;
@@ -357,6 +358,11 @@ public class Tables {
      * The table <code>public.tool</code>.
      */
     public static final Tool TOOL = Tool.TOOL;
+
+    /**
+     * The table <code>public.tool_attribute_option</code>.
+     */
+    public static final ToolAttributeOption TOOL_ATTRIBUTE_OPTION = ToolAttributeOption.TOOL_ATTRIBUTE_OPTION;
 
     /**
      * The table <code>public.tool_image_metadata</code>.

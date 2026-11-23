@@ -78,227 +78,325 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     }
 
     /**
-     * Setter for <code>public.tool_submission.pricing</code>.
+     * Setter for <code>public.tool_submission.pricing_models</code>.
      */
-    public void setPricing(String value) {
+    public void setPricingModels(JSONB value) {
         set(4, value);
     }
 
     /**
-     * Getter for <code>public.tool_submission.pricing</code>.
+     * Getter for <code>public.tool_submission.pricing_models</code>.
      */
-    public String getPricing() {
-        return (String) get(4);
+    public JSONB getPricingModels() {
+        return (JSONB) get(4);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.price_ranges</code>.
+     */
+    public void setPriceRanges(JSONB value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.price_ranges</code>.
+     */
+    public JSONB getPriceRanges() {
+        return (JSONB) get(5);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.lowest_monthly_cents</code>.
+     */
+    public void setLowestMonthlyCents(Integer value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.lowest_monthly_cents</code>.
+     */
+    public Integer getLowestMonthlyCents() {
+        return (Integer) get(6);
     }
 
     /**
      * Setter for <code>public.tool_submission.short_description</code>.
      */
     public void setShortDescription(String value) {
-        set(5, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.short_description</code>.
      */
     public String getShortDescription() {
-        return (String) get(5);
+        return (String) get(7);
     }
 
     /**
      * Setter for <code>public.tool_submission.long_description</code>.
      */
     public void setLongDescription(String value) {
-        set(6, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.long_description</code>.
      */
     public String getLongDescription() {
-        return (String) get(6);
+        return (String) get(8);
     }
 
     /**
      * Setter for <code>public.tool_submission.tags</code>.
      */
     public void setTags(JSONB value) {
-        set(7, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.tags</code>.
      */
     public JSONB getTags() {
-        return (JSONB) get(7);
+        return (JSONB) get(9);
     }
 
     /**
      * Setter for <code>public.tool_submission.categories</code>.
      */
     public void setCategories(JSONB value) {
-        set(8, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.categories</code>.
      */
     public JSONB getCategories() {
-        return (JSONB) get(8);
+        return (JSONB) get(10);
     }
 
     /**
      * Setter for <code>public.tool_submission.features</code>.
      */
     public void setFeatures(JSONB value) {
-        set(9, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.features</code>.
      */
     public JSONB getFeatures() {
-        return (JSONB) get(9);
+        return (JSONB) get(11);
     }
 
     /**
      * Setter for <code>public.tool_submission.plans</code>.
      */
     public void setPlans(JSONB value) {
-        set(10, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.plans</code>.
      */
     public JSONB getPlans() {
-        return (JSONB) get(10);
-    }
-
-    /**
-     * Setter for <code>public.tool_submission.free_tier_plan_id</code>.
-     */
-    public void setFreeTierPlanId(String value) {
-        set(11, value);
-    }
-
-    /**
-     * Getter for <code>public.tool_submission.free_tier_plan_id</code>.
-     */
-    public String getFreeTierPlanId() {
-        return (String) get(11);
+        return (JSONB) get(12);
     }
 
     /**
      * Setter for <code>public.tool_submission.highlight_plan_id</code>.
      */
     public void setHighlightPlanId(String value) {
-        set(12, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.highlight_plan_id</code>.
      */
     public String getHighlightPlanId() {
-        return (String) get(12);
+        return (String) get(13);
     }
 
     /**
      * Setter for <code>public.tool_submission.integrations</code>.
      */
     public void setIntegrations(JSONB value) {
-        set(13, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.integrations</code>.
      */
     public JSONB getIntegrations() {
-        return (JSONB) get(13);
+        return (JSONB) get(14);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.platforms</code>.
+     */
+    public void setPlatforms(JSONB value) {
+        set(15, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.platforms</code>.
+     */
+    public JSONB getPlatforms() {
+        return (JSONB) get(15);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.target_users</code>.
+     */
+    public void setTargetUsers(JSONB value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.target_users</code>.
+     */
+    public JSONB getTargetUsers() {
+        return (JSONB) get(16);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.languages</code>.
+     */
+    public void setLanguages(JSONB value) {
+        set(17, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.languages</code>.
+     */
+    public JSONB getLanguages() {
+        return (JSONB) get(17);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.ai_technologies</code>.
+     */
+    public void setAiTechnologies(JSONB value) {
+        set(18, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.ai_technologies</code>.
+     */
+    public JSONB getAiTechnologies() {
+        return (JSONB) get(18);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.deployments</code>.
+     */
+    public void setDeployments(JSONB value) {
+        set(19, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.deployments</code>.
+     */
+    public JSONB getDeployments() {
+        return (JSONB) get(19);
+    }
+
+    /**
+     * Setter for <code>public.tool_submission.industries</code>.
+     */
+    public void setIndustries(JSONB value) {
+        set(20, value);
+    }
+
+    /**
+     * Getter for <code>public.tool_submission.industries</code>.
+     */
+    public JSONB getIndustries() {
+        return (JSONB) get(20);
     }
 
     /**
      * Setter for <code>public.tool_submission.demo_video_url</code>.
      */
     public void setDemoVideoUrl(String value) {
-        set(14, value);
+        set(21, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.demo_video_url</code>.
      */
     public String getDemoVideoUrl() {
-        return (String) get(14);
+        return (String) get(21);
     }
 
     /**
      * Setter for <code>public.tool_submission.submitted_by</code>.
      */
     public void setSubmittedBy(String value) {
-        set(15, value);
+        set(22, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.submitted_by</code>.
      */
     public String getSubmittedBy() {
-        return (String) get(15);
+        return (String) get(22);
     }
 
     /**
      * Setter for <code>public.tool_submission.submitted_at</code>.
      */
     public void setSubmittedAt(OffsetDateTime value) {
-        set(16, value);
+        set(23, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.submitted_at</code>.
      */
     public OffsetDateTime getSubmittedAt() {
-        return (OffsetDateTime) get(16);
+        return (OffsetDateTime) get(23);
     }
 
     /**
      * Setter for <code>public.tool_submission.approved_at</code>.
      */
     public void setApprovedAt(OffsetDateTime value) {
-        set(17, value);
+        set(24, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.approved_at</code>.
      */
     public OffsetDateTime getApprovedAt() {
-        return (OffsetDateTime) get(17);
+        return (OffsetDateTime) get(24);
     }
 
     /**
      * Setter for <code>public.tool_submission.approved</code>.
      */
     public void setApproved(Boolean value) {
-        set(18, value);
+        set(25, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.approved</code>.
      */
     public Boolean getApproved() {
-        return (Boolean) get(18);
+        return (Boolean) get(25);
     }
 
     /**
      * Setter for <code>public.tool_submission.published</code>.
      */
     public void setPublished(Boolean value) {
-        set(19, value);
+        set(26, value);
     }
 
     /**
      * Getter for <code>public.tool_submission.published</code>.
      */
     public Boolean getPublished() {
-        return (Boolean) get(19);
+        return (Boolean) get(26);
     }
 
     // -------------------------------------------------------------------------
@@ -324,23 +422,30 @@ public class ToolSubmissionRecord extends UpdatableRecordImpl<ToolSubmissionReco
     /**
      * Create a detached, initialised ToolSubmissionRecord
      */
-    public ToolSubmissionRecord(Long id, Long accountId, String name, String url, String pricing, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String freeTierPlanId, String highlightPlanId, JSONB integrations, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean published) {
+    public ToolSubmissionRecord(Long id, Long accountId, String name, String url, JSONB pricingModels, JSONB priceRanges, Integer lowestMonthlyCents, String shortDescription, String longDescription, JSONB tags, JSONB categories, JSONB features, JSONB plans, String highlightPlanId, JSONB integrations, JSONB platforms, JSONB targetUsers, JSONB languages, JSONB aiTechnologies, JSONB deployments, JSONB industries, String demoVideoUrl, String submittedBy, OffsetDateTime submittedAt, OffsetDateTime approvedAt, Boolean approved, Boolean published) {
         super(ToolSubmission.TOOL_SUBMISSION);
 
         setId(id);
         setAccountId(accountId);
         setName(name);
         setUrl(url);
-        setPricing(pricing);
+        setPricingModels(pricingModels);
+        setPriceRanges(priceRanges);
+        setLowestMonthlyCents(lowestMonthlyCents);
         setShortDescription(shortDescription);
         setLongDescription(longDescription);
         setTags(tags);
         setCategories(categories);
         setFeatures(features);
         setPlans(plans);
-        setFreeTierPlanId(freeTierPlanId);
         setHighlightPlanId(highlightPlanId);
         setIntegrations(integrations);
+        setPlatforms(platforms);
+        setTargetUsers(targetUsers);
+        setLanguages(languages);
+        setAiTechnologies(aiTechnologies);
+        setDeployments(deployments);
+        setIndustries(industries);
         setDemoVideoUrl(demoVideoUrl);
         setSubmittedBy(submittedBy);
         setSubmittedAt(submittedAt);

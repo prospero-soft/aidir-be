@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ro.prospero.aidir.data.JsonbArrays;
 import ro.prospero.aidir.data.ToolCardDTO;
 import ro.prospero.aidir.data.ToolDetailsDTO;
+import ro.prospero.aidir.data.ToolPlan;
 import ro.prospero.aidir.jooq.generated.tables.records.ToolRecord;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ToolDetailsService {
 
     private static final TypeReference<ArrayList<ToolDetailsDTO.Feature>> FEATURES = new TypeReference<>() {
     };
-    private static final TypeReference<ArrayList<ToolDetailsDTO.Plan>> PLANS = new TypeReference<>() {
+    private static final TypeReference<ArrayList<ToolPlan>> PLANS = new TypeReference<>() {
     };
 
     private final DSLContext dslContext;
@@ -57,7 +58,6 @@ public class ToolDetailsService {
                                   tool.getLongDescription(),
                                   JsonbArrays.read(tool.getFeatures(), FEATURES),
                                   JsonbArrays.read(tool.getPlans(), PLANS),
-                                  tool.getFreeTierPlanId(),
                                   tool.getHighlightPlanId(),
                                   JsonbArrays.readStringArray(tool.getIntegrations()),
                                   tool.getDemoVideoUrl(),
@@ -81,7 +81,7 @@ public class ToolDetailsService {
         return toolCards.toCards(dslContext.selectFrom(TOOL)
                                            .where(TOOL.PUBLISHED.isTrue())
                                            .and(TOOL.ID.ne(id))
-                                           .and(ToolConditions.inCategories(categories))
+                                           .and(ToolConditions.containsAny(TOOL.CATEGORIES, categories))
                                            .orderBy(TOOL.APPROVED_AT.desc(), TOOL.ID.desc())
                                            .limit(SIMILAR_LIMIT)
                                            .fetch());
